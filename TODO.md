@@ -73,7 +73,7 @@ Generate professional KDoc-based API documentation.
 
 ---
 
-### 3. Binary Compatibility Validator
+### 3. Binary Compatibility Validator ✅ **COMPLETE**
 Prevent accidental breaking changes to public API.
 
 **Benefits:**
@@ -84,15 +84,27 @@ Prevent accidental breaking changes to public API.
 - Protects library users from unexpected breaks
 
 **Implementation:**
-- [ ] Add `kotlinx-binary-compatibility-validator` plugin
-- [ ] Generate initial API dumps for all modules
-- [ ] Configure exclusions for internal APIs
-- [ ] Add validation to CI/CD pipeline
-- [ ] Document API change workflow
+- [x] Add `kotlinx-binary-compatibility-validator` plugin (v0.18.1)
+- [x] Generate initial API dumps for all modules
+- [x] Configure exclusions for internal APIs (samples, BOM, internal packages)
+- [x] Add validation to CI/CD pipeline (runs with `check`)
+- [x] Document API change workflow
+- [x] Enable experimental KLib ABI validation for multiplatform
+- [x] Add comprehensive documentation (`docs/docs/development/api-compatibility.md`)
+
+**Usage:**
+```bash
+# Generate/update API dumps
+./gradlew apiDump
+
+# Verify API compatibility (runs automatically in CI)
+./gradlew apiCheck
+```
 
 **Resources:**
 - [Binary Compatibility Validator](https://github.com/Kotlin/binary-compatibility-validator)
 - [Semantic Versioning](https://semver.org/)
+- [Documentation](docs/docs/development/api-compatibility.md)
 
 ---
 
@@ -269,6 +281,7 @@ Expand sample applications for better demonstration.
 
 - [x] **GitHub Actions CI/CD** - Build, test, publish, and deploy workflows
 - [x] **Dokka API Documentation** - KDoc generation with GitHub Pages deployment
+- [x] **Binary Compatibility Validator** - API stability tracking with BCV
 - [x] Enhanced `gradle.properties` with performance optimizations
 - [x] Community health files (CODE_OF_CONDUCT, SECURITY, CONTRIBUTING, LICENSE, NOTICE)
 - [x] Migrate `buildSrc` to `build-logic`

@@ -5,6 +5,11 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
+# Binary Compatibility Validator - Keep API dumps (they should be committed!)
+# Only ignore the build/ directory dumps (generated during validation)
+!**/api/
+**/build/api/
+
 # Kotlin
 *.kotlin_module
 *.kotlin_builtins

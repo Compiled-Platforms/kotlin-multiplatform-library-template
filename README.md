@@ -9,11 +9,13 @@ A template for managing multiple Kotlin Multiplatform libraries in a single mono
 - **Convention Plugin**: Shared Gradle configuration to reduce boilerplate
 - **Maven Central Publishing**: Pre-configured for publishing to Maven Central
 - **Multiplatform Support**: JVM, Android, iOS, and Linux targets
+- **API Compatibility Validation**: Binary compatibility checks with BCV
 - **Detekt Integration**: Static code analysis for code quality
 - **Git Hooks (Lefthook)**: Automated pre-commit/pre-push checks
 - **Changelog Generation (git-cliff)**: Automatic changelog from conventional commits
 - **EditorConfig**: Consistent code formatting across all editors
 - **MkDocs Documentation**: Beautiful documentation with Material theme
+- **Dokka API Docs**: Professional KDoc-based API documentation
 - **BOM Support**: Bill of Materials for version management
 - **Sample Applications**: Full sample apps for each library
 - **CI/CD Ready**: GitHub Actions workflows for build and publish
