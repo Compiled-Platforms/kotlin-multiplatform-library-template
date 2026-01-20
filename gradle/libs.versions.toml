@@ -1,6 +1,6 @@
 [versions]
 agp = "8.13.0"
-kotlin = "2.2.20"
+kotlin = "2.3.0"
 android-minSdk = "24"
 android-compileSdk = "36"
 vanniktechMavenPublish = "0.34.0"
@@ -11,8 +11,8 @@ kover = "0.9.4"
 
 # Common library versions (examples)
 kotlinx-coroutines = "1.10.2"
-kotlinx-serialization = "1.8.0"
-kotlinx-datetime = "0.6.1"
+kotlinx-serialization = "1.9.0"
+kotlinx-datetime = "0.7.1-0.6.x-compat"
 turbine = "1.2.1"
 
 [libraries]
