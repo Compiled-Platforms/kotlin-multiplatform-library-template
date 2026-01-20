@@ -149,7 +149,7 @@ Track test coverage across all platforms.
 
 ---
 
-### 5. Dependency Updates Automation
+### 5. Dependency Updates Automation ✅ **COMPLETE**
 Keep dependencies up-to-date automatically.
 
 **Benefits:**
@@ -160,15 +160,33 @@ Keep dependencies up-to-date automatically.
 - Reduces maintenance burden
 
 **Implementation:**
-- [ ] Choose between Renovate or Dependabot
-- [ ] Create configuration file (`.github/renovate.json` or `.github/dependabot.yml`)
-- [ ] Configure update schedules
-- [ ] Set up grouping rules for related dependencies
-- [ ] Configure auto-merge rules for low-risk updates
+- [x] Choose between Renovate or Dependabot (Chose Dependabot)
+- [x] Create configuration file (`.github/dependabot.yml`)
+- [x] Configure update schedules (Weekly for Gradle, Monthly for Actions/Docs)
+- [x] Set up grouping rules for related dependencies (Kotlin, Android, Dev Tools)
+- [x] Add comprehensive documentation (`docs/docs/development/dependency-updates.md`)
+- [ ] Configure auto-merge rules for low-risk updates - Optional (can be done later)
+
+**Why Dependabot:**
+- Built-in to GitHub (zero setup for template users)
+- Supports grouped updates (addresses PR noise)
+- Handles monorepos well
+- Simpler for template adoption
+
+**Configuration:**
+```yaml
+# .github/dependabot.yml
+groups:
+  kotlin:          # All Kotlin ecosystem updates
+  android:         # Android/AGP updates
+  dev-tools:       # Detekt, Dokka, Kover, BCV
+  github-actions:  # GitHub Actions updates
+  mkdocs:          # Documentation dependencies
+```
 
 **Resources:**
-- [Renovate](https://docs.renovatebot.com/)
-- [Dependabot](https://docs.github.com/en/code-security/dependabot)
+- [Dependabot Documentation](https://docs.github.com/en/code-security/dependabot)
+- [Configuration](docs/docs/development/dependency-updates.md)
 
 ---
 
@@ -299,6 +317,7 @@ Expand sample applications for better demonstration.
 - [x] **Dokka API Documentation** - KDoc generation with GitHub Pages deployment
 - [x] **Binary Compatibility Validator** - API stability tracking with BCV
 - [x] **Kover Code Coverage** - Test coverage tracking and reporting
+- [x] **Dependabot Dependency Updates** - Automated updates with smart grouping
 - [x] Enhanced `gradle.properties` with performance optimizations
 - [x] Community health files (CODE_OF_CONDUCT, SECURITY, CONTRIBUTING, LICENSE, NOTICE)
 - [x] Migrate `buildSrc` to `build-logic`

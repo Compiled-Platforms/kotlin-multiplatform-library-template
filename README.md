@@ -11,6 +11,7 @@ A template for managing multiple Kotlin Multiplatform libraries in a single mono
 - **Multiplatform Support**: JVM, Android, iOS, and Linux targets
 - **API Compatibility Validation**: Binary compatibility checks with BCV
 - **Code Coverage (Kover)**: Test coverage tracking and reporting
+- **Dependency Updates (Dependabot)**: Automated dependency updates with smart grouping
 - **Detekt Integration**: Static code analysis for code quality
 - **Git Hooks (Lefthook)**: Automated pre-commit/pre-push checks
 - **Changelog Generation (git-cliff)**: Automatic changelog from conventional commits

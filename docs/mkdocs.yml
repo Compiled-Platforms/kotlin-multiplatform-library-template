@@ -97,6 +97,7 @@ nav:
     - Publishing: development/publishing.md
     - API Compatibility: development/api-compatibility.md
     - Code Coverage: development/code-coverage.md
+    - Dependency Updates: development/dependency-updates.md
     - Documentation: development/documentation.md
     - GitHub Actions: development/github-actions.md
     - R8 Optimization: development/r8-optimization.md
