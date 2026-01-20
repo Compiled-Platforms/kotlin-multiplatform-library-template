@@ -13,5 +13,15 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "multiplatform-library-template"
-include(":library")
+rootProject.name = "kotlin-multiplatform-monorepo"
+
+// Auto-discover all library modules in the libraries/ directory
+file("libraries").listFiles()?.forEach { libraryDir ->
+    if (libraryDir.isDirectory && file("${libraryDir.path}/build.gradle.kts").exists()) {
+        val libraryName = libraryDir.name
+        include(":libraries:$libraryName")
+    }
+}
+
+// You can also manually include specific modules if needed:
+// include(":libraries:my-custom-library")

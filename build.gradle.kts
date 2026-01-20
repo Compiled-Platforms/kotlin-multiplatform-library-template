@@ -1,5 +1,13 @@
+// Root build file for the Kotlin Multiplatform Monorepo
+// Convention plugins are defined in buildSrc/
+
 plugins {
-    alias(libs.plugins.android.kotlin.multiplatform.library) apply false
-    alias(libs.plugins.kotlinMultiplatform) apply  false
-    alias(libs.plugins.vanniktech.mavenPublish) apply false
+    // Apply plugins to root project if needed
+}
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
 }
