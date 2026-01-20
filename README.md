@@ -10,6 +10,35 @@ A template for managing multiple Kotlin Multiplatform libraries in a single mono
 - **Maven Central Publishing**: Pre-configured for publishing to Maven Central
 - **Multiplatform Support**: JVM, Android, iOS, and Linux targets
 - **CI/CD Ready**: GitHub Actions workflows for build and publish
+- **Setup Script**: Interactive script to customize the template with your values
+
+## 🎬 Getting Started
+
+### First Time Setup
+
+After cloning this template, run the setup script to customize it with your own values:
+
+```bash
+./setup.sh
+```
+
+The script will prompt you for:
+- **Maven Group ID**: Your package identifier (e.g., `com.example.libraries`)
+- **Project Name**: Your project name (e.g., `my-kmp-libraries`)
+- **GitHub Organization**: Your GitHub username or organization
+- **Developer Info**: Name and GitHub username for POM files
+
+The setup script will automatically update all configuration files, package names, and documentation.
+
+### Manual Setup (Alternative)
+
+If you prefer to set things up manually, update the following:
+
+1. **Group ID**: Replace `com.compiledplatforms.kmp.library` throughout the project
+2. **Project Name**: Update `rootProject.name` in `settings.gradle.kts`
+3. **GitHub URLs**: Update repository URLs in POM configurations
+4. **Package Names**: Update package declarations in Kotlin source files
+5. **Developer Info**: Update POM metadata in build files
 
 ## 📁 Project Structure
 
@@ -35,6 +64,7 @@ kotlin-multiplatform-library-template/
 ├── .github/workflows/                 # CI/CD workflows
 ├── build.gradle.kts                   # Root build configuration
 ├── settings.gradle.kts                # Multi-project settings with auto-discovery
+├── setup.sh                           # Interactive setup script for customizing template
 └── README.md
 ```
 

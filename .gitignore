@@ -46,3 +46,6 @@ captures/
 *.dSYM.zip
 *.dSYM
 xcuserdata/
+
+# Setup script backups
+.setup-backup-*/
