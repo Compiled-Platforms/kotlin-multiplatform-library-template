@@ -3,7 +3,7 @@ plugins {
     id("com.vanniktech.maven.publish")
 }
 
-group = "io.github.kotlin"
+group = "com.compiledplatforms.kmp.library"
 version = "1.0.0"  // BOM has its own independent version
 
 description = "Bill of Materials for Kotlin Multiplatform libraries"
@@ -12,11 +12,11 @@ description = "Bill of Materials for Kotlin Multiplatform libraries"
 // Update these when you release new compatible versions
 dependencies.constraints {
     // Add your libraries here with their specific versions
-    api("io.github.kotlin:example-library:1.0.0")
+    api("com.compiledplatforms.kmp.library:example-library:1.0.0")
     
     // When you add more libraries, add them here with their versions:
-    // api("io.github.kotlin:another-library:2.3.0")
-    // api("io.github.kotlin:third-library:1.5.0")
+    // api("com.compiledplatforms.kmp.library:another-library:2.3.0")
+    // api("com.compiledplatforms.kmp.library:third-library:1.5.0")
 }
 
 // Maven publishing configuration
@@ -49,9 +49,9 @@ mavenPublishing {
         }
         
         scm {
-            url = "https://github.com/your-org/your-repo/"
-            connection = "scm:git:git://github.com/your-org/your-repo.git"
-            developerConnection = "scm:git:ssh://git@github.com/your-org/your-repo.git"
+            url = "https://github.com/compiledplatforms/kotlin-multiplatform-monorepo/"
+            connection = "scm:git:git://github.com/compiledplatforms/kotlin-multiplatform-monorepo.git"
+            developerConnection = "scm:git:ssh://git@github.com/compiledplatforms/kotlin-multiplatform-monorepo.git"
         }
     }
 }

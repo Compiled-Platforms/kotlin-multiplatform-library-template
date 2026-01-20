@@ -42,7 +42,7 @@ plugins {
     id("convention.library")
 }
 
-group = "io.github.kotlin"  // TODO: Update to your group
+group = "com.compiledplatforms.kmp.library"  // TODO: Update to your group
 version = "1.0.0"
 
 description = "TODO: Add description of your library"
@@ -105,7 +105,7 @@ fi
 echo "📄 Creating sample source file..."
 PACKAGE_NAME=$(echo "$LIBRARY_NAME" | sed 's/-/./g')
 cat > "$LIBRARY_DIR/src/commonMain/kotlin/HelloWorld.kt" << EOF
-package io.github.kotlin.$PACKAGE_NAME
+package com.compiledplatforms.kmp.library.$PACKAGE_NAME
 
 /**
  * A simple greeting function.
@@ -118,7 +118,7 @@ EOF
 # Create a sample test file
 echo "🧪 Creating sample test file..."
 cat > "$LIBRARY_DIR/src/commonTest/kotlin/HelloWorldTest.kt" << EOF
-package io.github.kotlin.$PACKAGE_NAME
+package com.compiledplatforms.kmp.library.$PACKAGE_NAME
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -145,7 +145,7 @@ TODO: Add description of your library
 
 \`\`\`kotlin
 dependencies {
-    implementation("io.github.kotlin:$LIBRARY_NAME:1.0.0")
+    implementation("com.compiledplatforms.kmp.library:$LIBRARY_NAME:1.0.0")
 }
 \`\`\`
 
@@ -153,14 +153,14 @@ dependencies {
 
 \`\`\`groovy
 dependencies {
-    implementation 'io.github.kotlin:$LIBRARY_NAME:1.0.0'
+    implementation 'com.compiledplatforms.kmp.library:$LIBRARY_NAME:1.0.0'
 }
 \`\`\`
 
 ## Usage
 
 \`\`\`kotlin
-import io.github.kotlin.$PACKAGE_NAME.greet
+import com.compiledplatforms.kmp.library.$PACKAGE_NAME.greet
 
 fun main() {
     println(greet("World"))

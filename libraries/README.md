@@ -29,7 +29,7 @@ plugins {
     id("convention.library")
 }
 
-group = "io.github.kotlin"  // Update to your group
+group = "com.compiledplatforms.kmp.library"  // Update to your group
 version = "1.0.0"
 
 description = "Description of your library"
@@ -209,8 +209,8 @@ When you add a new library, **manually add it to the BOM** in `bom/build.gradle.
 
 ```kotlin
 dependencies.constraints {
-    api("io.github.kotlin:example-library:1.0.0")
-    api("io.github.kotlin:my-new-library:1.0.0")  // Add your library here
+    api("com.compiledplatforms.kmp.library:example-library:1.0.0")
+    api("com.compiledplatforms.kmp.library:my-new-library:1.0.0")  // Add your library here
 }
 ```
 

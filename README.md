@@ -165,11 +165,11 @@ Import the BOM to get tested, compatible library versions:
 ```kotlin
 dependencies {
     // Import the BOM - specifies compatible versions
-    implementation(platform("io.github.kotlin:bom:1.0.0"))
+    implementation(platform("com.compiledplatforms.kmp.library:bom:1.0.0"))
     
     // Add libraries without version numbers
-    implementation("io.github.kotlin:example-library")
-    implementation("io.github.kotlin:another-library")
+    implementation("com.compiledplatforms.kmp.library:example-library")
+    implementation("com.compiledplatforms.kmp.library:another-library")
 }
 ```
 
@@ -177,7 +177,7 @@ dependencies {
 
 - Each library has its own version (e.g., `example-library:1.5.0`, `another-library:2.3.0`)
 - The BOM version (e.g., `1.0.0`) declares which library versions are tested together
-- Users can override BOM versions if needed: `implementation("io.github.kotlin:example-library:1.6.0")`
+- Users can override BOM versions if needed: `implementation("com.compiledplatforms.kmp.library:example-library:1.6.0")`
 
 ### For Monorepo Maintainers
 

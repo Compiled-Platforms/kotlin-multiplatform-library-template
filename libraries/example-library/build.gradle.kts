@@ -2,7 +2,7 @@ plugins {
     id("convention.library")
 }
 
-group = "io.github.kotlin"
+group = "com.compiledplatforms.kmp.library"
 version = "1.0.0"
 
 description = "An example Kotlin Multiplatform library"
@@ -42,9 +42,9 @@ mavenPublishing {
         }
         
         scm {
-            url = "https://github.com/your-org/your-repo/"
-            connection = "scm:git:git://github.com/your-org/your-repo.git"
-            developerConnection = "scm:git:ssh://git@github.com/your-org/your-repo.git"
+            url = "https://github.com/compiledplatforms/kotlin-multiplatform-monorepo/"
+            connection = "scm:git:git://github.com/compiledplatforms/kotlin-multiplatform-monorepo.git"
+            developerConnection = "scm:git:ssh://git@github.com/compiledplatforms/kotlin-multiplatform-monorepo.git"
         }
     }
 }

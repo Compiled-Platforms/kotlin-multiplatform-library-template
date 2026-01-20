@@ -1,4 +1,4 @@
-package io.github.kotlin.fibonacci
+package com.compiledplatforms.kmp.library.fibonacci
 
 /**
  * Sample application demonstrating the use of example-library.

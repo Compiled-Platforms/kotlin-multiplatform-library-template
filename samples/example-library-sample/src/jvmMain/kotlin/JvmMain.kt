@@ -6,5 +6,5 @@
  */
 fun main() {
     // Call the common main function from Main.kt
-    io.github.kotlin.fibonacci.main()
+    com.compiledplatforms.kmp.library.fibonacci.main()
 }

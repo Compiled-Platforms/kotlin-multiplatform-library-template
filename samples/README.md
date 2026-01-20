@@ -55,7 +55,7 @@ application {
 
 **src/commonMain/kotlin/Main.kt:**
 ```kotlin
-import io.github.kotlin.fibonacci.generateFibi
+import com.compiledplatforms.kmp.library.fibonacci.generateFibi
 
 fun main() {
     println("My Sample App")

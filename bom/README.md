@@ -15,11 +15,11 @@ Users of your libraries can import the BOM to simplify dependency management:
 ```kotlin
 dependencies {
     // Import the BOM
-    implementation(platform("io.github.kotlin:bom:1.0.0"))
+    implementation(platform("com.compiledplatforms.kmp.library:bom:1.0.0"))
     
     // Add libraries without versions
-    implementation("io.github.kotlin:example-library")
-    implementation("io.github.kotlin:another-library")
+    implementation("com.compiledplatforms.kmp.library:example-library")
+    implementation("com.compiledplatforms.kmp.library:another-library")
 }
 ```
 
@@ -27,9 +27,9 @@ dependencies {
 
 ```groovy
 dependencies {
-    implementation platform('io.github.kotlin:bom:1.0.0')
-    implementation 'io.github.kotlin:example-library'
-    implementation 'io.github.kotlin:another-library'
+    implementation platform('com.compiledplatforms.kmp.library:bom:1.0.0')
+    implementation 'com.compiledplatforms.kmp.library:example-library'
+    implementation 'com.compiledplatforms.kmp.library:another-library'
 }
 ```
 

@@ -108,9 +108,9 @@ If you want libraries to have independent versions, you can maintain the BOM man
 ```kotlin
 // bom/build.gradle.kts
 dependencies.constraints {
-    api("io.github.kotlin:example-library:1.0.0")
-    api("io.github.kotlin:another-library:2.3.0")
-    api("io.github.kotlin:third-library:1.5.0")
+    api("com.compiledplatforms.kmp.library:example-library:1.0.0")
+    api("com.compiledplatforms.kmp.library:another-library:2.3.0")
+    api("com.compiledplatforms.kmp.library:third-library:1.5.0")
 }
 ```
 
@@ -151,8 +151,8 @@ test-integration/
 // test-integration/build.gradle.kts
 dependencies {
     testImplementation(platform(project(":bom")))
-    testImplementation("io.github.kotlin:example-library")
-    testImplementation("io.github.kotlin:another-library")
+    testImplementation("com.compiledplatforms.kmp.library:example-library")
+    testImplementation("com.compiledplatforms.kmp.library:another-library")
 }
 ```
 

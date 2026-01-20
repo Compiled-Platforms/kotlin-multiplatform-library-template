@@ -23,9 +23,9 @@ Release a new BOM version when:
 
 ```kotlin
 dependencies.constraints {
-    api("io.github.kotlin:example-library:1.0.0")      // Current version
-    api("io.github.kotlin:another-library:2.3.0")      // Current version
-    api("io.github.kotlin:third-library:1.5.0")        // Current version
+    api("com.compiledplatforms.kmp.library:example-library:1.0.0")      // Current version
+    api("com.compiledplatforms.kmp.library:another-library:2.3.0")      // Current version
+    api("com.compiledplatforms.kmp.library:third-library:1.5.0")        // Current version
 }
 ```
 
@@ -94,9 +94,9 @@ Keep track of which BOM version contains which library versions:
    ```kotlin
    // bom/build.gradle.kts
    dependencies.constraints {
-       api("io.github.kotlin:example-library:1.0.0")
-       api("io.github.kotlin:another-library:2.4.0")  // Updated
-       api("io.github.kotlin:third-library:1.6.0")
+       api("com.compiledplatforms.kmp.library:example-library:1.0.0")
+       api("com.compiledplatforms.kmp.library:another-library:2.4.0")  // Updated
+       api("com.compiledplatforms.kmp.library:third-library:1.6.0")
    }
    version = "1.1.0"  // Increment BOM version
    ```
@@ -119,7 +119,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             // Specify a version range that you've tested
-            api("io.github.kotlin:library-a:1.0.0")  // Or use version ranges
+            api("com.compiledplatforms.kmp.library:library-a:1.0.0")  // Or use version ranges
         }
     }
 }
@@ -130,16 +130,16 @@ kotlin {
 ```kotlin
 // bom/build.gradle.kts
 dependencies.constraints {
-    api("io.github.kotlin:library-a:1.0.0")
-    api("io.github.kotlin:library-b:2.0.0")  // Declares library-a:1.0.0 as dependency
+    api("com.compiledplatforms.kmp.library:library-a:1.0.0")
+    api("com.compiledplatforms.kmp.library:library-b:2.0.0")  // Declares library-a:1.0.0 as dependency
 }
 ```
 
 When users import the BOM, they get tested versions:
 ```kotlin
 dependencies {
-    implementation(platform("io.github.kotlin:bom:1.0.0"))
-    implementation("io.github.kotlin:library-b")  // Gets 2.0.0
+    implementation(platform("com.compiledplatforms.kmp.library:bom:1.0.0"))
+    implementation("com.compiledplatforms.kmp.library:library-b")  // Gets 2.0.0
     // library-a:1.0.0 is automatically included (transitive from library-b)
 }
 ```

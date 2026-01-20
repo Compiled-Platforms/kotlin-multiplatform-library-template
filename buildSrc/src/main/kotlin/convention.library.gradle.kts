@@ -14,7 +14,7 @@ kotlin {
     jvm()
     
     androidLibrary {
-        namespace = "io.github.kotlin.${project.name.replace("-", ".")}"
+        namespace = "com.compiledplatforms.kmp.library.${project.name.replace("-", ".")}"
         compileSdk = libs.findVersion("android-compileSdk").get().toString().toInt()
         minSdk = libs.findVersion("android-minSdk").get().toString().toInt()
 
