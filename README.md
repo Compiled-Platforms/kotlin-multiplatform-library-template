@@ -19,7 +19,7 @@ A template for managing multiple Kotlin Multiplatform libraries in a single mono
 After cloning this template, run the setup script to customize it with your own values:
 
 ```bash
-./setup.sh
+./scripts/project-setup.sh
 ```
 
 The script will prompt you for:
@@ -60,11 +60,11 @@ kotlin-multiplatform-library-template/
 │   │   └── build.gradle.kts
 │   └── README.md                      # Guide for adding new libraries
 ├── scripts/
+│   ├── project-setup.sh               # Interactive setup script for customizing template
 │   └── create-library.sh              # Helper script to scaffold new libraries
 ├── .github/workflows/                 # CI/CD workflows
 ├── build.gradle.kts                   # Root build configuration
 ├── settings.gradle.kts                # Multi-project settings with auto-discovery
-├── setup.sh                           # Interactive setup script for customizing template
 └── README.md
 ```
 
