@@ -10,9 +10,10 @@ binaryCompatibilityValidator = "0.18.1"
 kover = "0.9.4"
 
 # Common library versions (examples)
-kotlinx-coroutines = "1.10.1"
+kotlinx-coroutines = "1.10.2"
 kotlinx-serialization = "1.8.0"
 kotlinx-datetime = "0.6.1"
+turbine = "1.2.1"
 
 [libraries]
 # Test dependencies
@@ -28,8 +29,10 @@ binary-compatibility-validator = { module = "org.jetbrains.kotlinx:binary-compat
 
 # Common Kotlin Multiplatform libraries (examples - add as needed)
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
+kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinx-coroutines" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-datetime" }
+turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 
 [plugins]
 android-kotlin-multiplatform-library = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }

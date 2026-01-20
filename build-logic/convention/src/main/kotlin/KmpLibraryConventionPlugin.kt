@@ -55,15 +55,17 @@ class KmpLibraryConventionPlugin : Plugin<Project> {
                 iosSimulatorArm64()
                 linuxX64()
 
-                sourceSets.apply {
-                    commonMain.dependencies {
-                        // Common dependencies will be added here by individual libraries
-                    }
-
-                    commonTest.dependencies {
-                        implementation(libs.findLibrary("kotlin-test").get())
-                    }
+            sourceSets.apply {
+                commonMain.dependencies {
+                    // Common dependencies will be added here by individual libraries
                 }
+
+                commonTest.dependencies {
+                    implementation(libs.findLibrary("kotlin-test").get())
+                    implementation(libs.findLibrary("kotlinx-coroutines-test").get())
+                    implementation(libs.findLibrary("turbine").get())
+                }
+            }
             }
 
             // Configure R8 consumer rules for Android after KMP configuration

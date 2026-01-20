@@ -9,6 +9,7 @@ A template for managing multiple Kotlin Multiplatform libraries in a single mono
 - **Convention Plugin**: Shared Gradle configuration to reduce boilerplate
 - **Maven Central Publishing**: Pre-configured for publishing to Maven Central
 - **Multiplatform Support**: JVM, Android, iOS, and Linux targets
+- **Testing Stack**: kotlin.test, kotlinx-coroutines-test, Turbine for comprehensive testing
 - **API Compatibility Validation**: Binary compatibility checks with BCV
 - **Code Coverage (Kover)**: Test coverage tracking and reporting
 - **Dependency Updates (Dependabot)**: Automated dependency updates with smart grouping

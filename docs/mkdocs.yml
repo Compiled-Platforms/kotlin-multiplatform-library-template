@@ -94,6 +94,7 @@ nav:
   - Development:
     - Setup: development/setup.md
     - Creating Libraries: development/creating-libraries.md
+    - Testing: development/testing.md
     - Publishing: development/publishing.md
     - API Compatibility: development/api-compatibility.md
     - Code Coverage: development/code-coverage.md
