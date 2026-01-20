@@ -11,6 +11,8 @@ A template for managing multiple Kotlin Multiplatform libraries in a single mono
 - **Multiplatform Support**: JVM, Android, iOS, and Linux targets
 - **Detekt Integration**: Static code analysis for code quality
 - **Git Hooks (Lefthook)**: Automated pre-commit/pre-push checks
+- **Changelog Generation (git-cliff)**: Automatic changelog from conventional commits
+- **EditorConfig**: Consistent code formatting across all editors
 - **MkDocs Documentation**: Beautiful documentation with Material theme
 - **BOM Support**: Bill of Materials for version management
 - **Sample Applications**: Full sample apps for each library
@@ -82,6 +84,7 @@ kotlin-multiplatform-library-template/
 - Xcode (for iOS targets, macOS only)
 - Python 3 (for setup scripts)
 - Lefthook (optional, for Git hooks)
+- git-cliff (optional, for changelog generation)
 
 ### Clone and Build
 
@@ -137,6 +140,51 @@ lefthook run pre-commit --no-tty
 pre-push:
   skip: true  # Disable pre-push checks locally
 ```
+
+### Generating Changelogs (git-cliff)
+
+The template uses git-cliff to automatically generate changelogs from conventional commits:
+
+**Install git-cliff:**
+
+```bash
+# macOS
+brew install git-cliff
+
+# Linux
+cargo install git-cliff
+
+# Or download from GitHub releases
+# https://github.com/orhun/git-cliff/releases
+```
+
+**Generate/update changelog:**
+
+```bash
+# Generate CHANGELOG.md from all commits
+git cliff -o CHANGELOG.md
+
+# Generate for unreleased changes
+git cliff --unreleased --tag 1.1.0 -o CHANGELOG.md
+
+# Generate for a specific version
+git cliff --tag 1.0.0 -o CHANGELOG.md
+
+# Preview without writing
+git cliff --unreleased
+```
+
+**What it generates:**
+
+Automatically groups commits by type:
+- 🚀 Features (`feat:`)
+- 🐛 Bug Fixes (`fix:`)
+- 📚 Documentation (`docs:`)
+- ⚡ Performance (`perf:`)
+- 🚜 Refactor (`refactor:`)
+- 🎨 Styling (`style:`)
+- 🧪 Testing (`test:`)
+- ⚙️ Miscellaneous (`chore:`, `ci:`)
 
 ### Adding a New Library
 
