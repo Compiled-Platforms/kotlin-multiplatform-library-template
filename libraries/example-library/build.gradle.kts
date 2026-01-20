@@ -1,5 +1,6 @@
 plugins {
     id("convention.library")
+    alias(libs.plugins.mokkery)
 }
 
 // Group and version are inherited from gradle.properties (GROUP and VERSION_NAME)

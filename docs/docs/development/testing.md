@@ -9,6 +9,7 @@ The template includes:
 - ✅ **kotlin.test** - Standard testing framework (works everywhere)
 - ✅ **kotlinx-coroutines-test** - Testing coroutines and suspend functions
 - ✅ **Turbine** - Simple and powerful Flow testing
+- ✅ **Mokkery** - Modern KMP mocking library (when you need mocks)
 - ✅ **Kover** - Code coverage tracking
 
 ## Quick Start
@@ -420,6 +421,146 @@ fun testHotFlow() = runTest {
 }
 ```
 
+## Mokkery (Mocking)
+
+**Mokkery** is a modern Kotlin Multiplatform mocking library that uses KSP for code generation.
+
+### When to Use Mokkery
+
+Use Mokkery when:
+- ❌ Interface has many methods (fake would be too large)
+- ❌ Need to verify specific interactions
+- ❌ Testing third-party APIs you don't control
+- ❌ Need to verify call order or count
+
+### Basic Usage
+
+```kotlin
+import dev.mokkery.answering.returns
+import dev.mokkery.everySuspend
+import dev.mokkery.mock
+import dev.mokkery.verifySuspend
+
+@Test
+fun testWithMock() = runTest {
+    // Create mock
+    val repository = mock<UserRepository>()
+    
+    // Setup behavior
+    everySuspend { repository.getUser("123") } returns User("test")
+    
+    // Use mock
+    val result = repository.getUser("123")
+    
+    // Verify
+    assertEquals(User("test"), result)
+    verifySuspend { repository.getUser("123") }
+}
+```
+
+### Mocking Suspend Functions
+
+```kotlin
+@Test
+fun testSuspendMocking() = runTest {
+    val api = mock<ApiService>()
+    
+    // Use everySuspend for suspend functions
+    everySuspend { api.fetchData(any()) } returns "data"
+    
+    val result = api.fetchData("id")
+    assertEquals("data", result)
+}
+```
+
+### Mocking Regular Functions
+
+```kotlin
+@Test
+fun testRegularMocking() {
+    val cache = mock<Cache>()
+    
+    // Use every for regular functions
+    every { cache.get("key") } returns "value"
+    
+    val result = cache.get("key")
+    assertEquals("value", result)
+}
+```
+
+### Mocking Exceptions
+
+```kotlin
+@Test
+fun testException() = runTest {
+    val api = mock<ApiService>()
+    
+    everySuspend { 
+        api.fetchData("error") 
+    } throws IOException("Network error")
+    
+    assertFailsWith<IOException> {
+        api.fetchData("error")
+    }
+}
+```
+
+### Verifying Interactions
+
+```kotlin
+@Test
+fun testVerification() = runTest {
+    val repository = mock<Repository>()
+    everySuspend { repository.save(any()) } returns Unit
+    
+    repository.save("data1")
+    repository.save("data2")
+    
+    // Verify call count
+    verifySuspend(exactly = 2) { repository.save(any()) }
+    
+    // Verify specific call
+    verifySuspend(exactly = 1) { repository.save("data1") }
+    
+    // Verify no calls
+    verifySuspend(exactly = 0) { repository.delete(any()) }
+}
+```
+
+### Argument Matchers
+
+```kotlin
+@Test
+fun testMatchers() = runTest {
+    val api = mock<ApiService>()
+    
+    // Match any argument
+    everySuspend { api.fetchUser(any()) } returns User("default")
+    
+    // Match specific value
+    everySuspend { api.fetchUser("admin") } returns User("admin")
+    
+    assertEquals(User("default"), api.fetchUser("user1"))
+    assertEquals(User("admin"), api.fetchUser("admin"))
+}
+```
+
+### Sequential Returns
+
+```kotlin
+@Test
+fun testSequentialReturns() = runTest {
+    val counter = mock<Counter>()
+    
+    // Return different values on each call
+    everySuspend { counter.next() } returns 1 returns 2 returns 3
+    
+    assertEquals(1, counter.next())
+    assertEquals(2, counter.next())
+    assertEquals(3, counter.next())
+}
+```
+
 ## Manual Fakes vs. Mocking
 
 For most library testing, **manual fakes** are simpler and more maintainable than mocking frameworks.
@@ -468,9 +609,10 @@ fun testWithFake() = runTest {
 
 ### When to Use Mocking
 
-Use mocking frameworks (like Mockative) when:
+Use mocking frameworks (Mokkery is included in this template) when:
 - ❌ Interface has many methods (fake would be too large)
 - ❌ Need to verify specific interactions
+- ❌ Testing third-party APIs you don't control
 - ❌ Testing legacy code with complex dependencies
 
 ## Platform-Specific Tests
@@ -780,25 +922,25 @@ fun testWithKotest() {
 }
 ```
 
-### Mockative (Optional)
-
-For complex mocking scenarios:
+### Example: Testing with Mokkery
 
 ```kotlin
-// Add Mockative plugin and dependency
-// See: https://github.com/mockative/mockative
-
-@Mock
-val repository = mock<DataRepository>()
+interface DataRepository {
+    suspend fun fetchData(id: String): String
+    suspend fun saveData(id: String, data: String)
+    // ... many more methods
+}
 
 @Test
-fun testWithMock() = runTest {
-    every { repository.getData() }.returns("mocked-data")
+fun testWithMokkery() = runTest {
+    val repository = mock<DataRepository>()
     
-    val result = repository.getData()
+    everySuspend { repository.fetchData("123") } returns "mocked-data"
+    
+    val result = repository.fetchData("123")
     assertEquals("mocked-data", result)
     
-    verify { repository.getData() }.wasInvoked()
+    verifySuspend { repository.fetchData("123") }
 }
 ```
 
@@ -807,8 +949,8 @@ fun testWithMock() = runTest {
 - [kotlin.test Documentation](https://kotlinlang.org/api/latest/kotlin.test/)
 - [kotlinx-coroutines-test Guide](https://kotlinlang.org/api/kotlinx.coroutines/kotlinx-coroutines-test/)
 - [Turbine GitHub](https://github.com/cashapp/turbine)
+- [Mokkery Documentation](https://mokkery.dev/)
 - [Kotest](https://kotest.io/)
-- [Mockative](https://github.com/mockative/mockative)
 
 ## Quick Reference
 
