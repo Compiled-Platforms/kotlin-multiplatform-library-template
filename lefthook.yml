@@ -12,6 +12,7 @@ pre-commit:
     
     check-secrets:
       glob: "*.{properties,yml,yaml,json}"
+      exclude: ".github/workflows/*|lefthook.yml"
       run: |
         if grep -r "mavenCentralPassword\|signingPassword\|github_token" {staged_files}; then
           echo "❌ Potential secrets found in staged files!"

@@ -96,6 +96,7 @@ nav:
     - Creating Libraries: development/creating-libraries.md
     - Publishing: development/publishing.md
     - Documentation: development/documentation.md
+    - GitHub Actions: development/github-actions.md
     - R8 Optimization: development/r8-optimization.md
   - About:
     - License: about/license.md
