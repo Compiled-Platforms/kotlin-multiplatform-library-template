@@ -9,6 +9,7 @@ plugins {
     alias(libs.plugins.detekt) apply false
     alias(libs.plugins.dokka)
     alias(libs.plugins.binaryCompatibilityValidator)
+    alias(libs.plugins.kover)
 }
 
 allprojects {
@@ -45,5 +46,34 @@ extensions.configure<kotlinx.validation.ApiValidationExtension> {
         enabled = true
         // Set to false for cross-platform builds (e.g., Linux host can't validate iOS)
         strictValidation = false
+    }
+}
+
+// Configure Kover for code coverage aggregation
+dependencies {
+    // Add library projects to coverage aggregation
+    subprojects.forEach { subproject ->
+        if (subproject.path.startsWith(":libraries:")) {
+            kover(subproject)
+        }
+    }
+}
+
+kover {
+    reports {
+        // Configure report filters
+        filters {
+            excludes {
+                // Exclude common generated code patterns
+                classes("*.BuildConfig")
+                classes("*.ComposableSingletons*")
+                classes("*_Factory")
+                classes("*_MembersInjector")
+                
+                // Exclude internal packages
+                packages("*.internal")
+                packages("*.internal.*")
+            }
+        }
     }
 }

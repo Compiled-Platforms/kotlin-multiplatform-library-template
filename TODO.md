@@ -110,7 +110,7 @@ Prevent accidental breaking changes to public API.
 
 ## Priority: Medium 📊
 
-### 4. Kover Code Coverage
+### 4. Kover Code Coverage ✅ **COMPLETE**
 Track test coverage across all platforms.
 
 **Benefits:**
@@ -121,14 +121,30 @@ Track test coverage across all platforms.
 - Helps identify untested code paths
 
 **Implementation:**
-- [ ] Add Kover plugin to convention plugin
-- [ ] Configure coverage thresholds
-- [ ] Generate coverage reports in CI/CD
-- [ ] Integrate with coverage reporting services (Codecov, Coveralls)
-- [ ] Add coverage badges to README
+- [x] Add Kover plugin to convention plugin (v0.9.4)
+- [x] Configure coverage thresholds (70% line coverage minimum)
+- [x] Generate coverage reports in CI/CD (HTML + XML)
+- [x] Configure exclusions for generated code and internal packages
+- [x] Add aggregated coverage reporting for all libraries
+- [x] Add comprehensive documentation (`docs/docs/development/code-coverage.md`)
+- [ ] Integrate with coverage reporting services (Codecov, Coveralls) - Optional
+- [ ] Add coverage badges to README - Optional
+
+**Usage:**
+```bash
+# Generate HTML coverage report
+./gradlew koverHtmlReport
+
+# Generate XML report (for CI)
+./gradlew koverXmlReport
+
+# Verify coverage meets thresholds
+./gradlew koverVerify
+```
 
 **Resources:**
 - [Kover Plugin](https://github.com/Kotlin/kotlinx-kover)
+- [Documentation](docs/docs/development/code-coverage.md)
 - [Codecov](https://codecov.io/)
 
 ---
@@ -282,6 +298,7 @@ Expand sample applications for better demonstration.
 - [x] **GitHub Actions CI/CD** - Build, test, publish, and deploy workflows
 - [x] **Dokka API Documentation** - KDoc generation with GitHub Pages deployment
 - [x] **Binary Compatibility Validator** - API stability tracking with BCV
+- [x] **Kover Code Coverage** - Test coverage tracking and reporting
 - [x] Enhanced `gradle.properties` with performance optimizations
 - [x] Community health files (CODE_OF_CONDUCT, SECURITY, CONTRIBUTING, LICENSE, NOTICE)
 - [x] Migrate `buildSrc` to `build-logic`

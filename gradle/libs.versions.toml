@@ -7,6 +7,7 @@ vanniktechMavenPublish = "0.34.0"
 detekt = "2.0.0-alpha.1"
 dokka = "2.1.0"
 binaryCompatibilityValidator = "0.18.1"
+kover = "0.9.4"
 
 # Common library versions (examples)
 kotlinx-coroutines = "1.10.1"
@@ -37,6 +38,7 @@ vanniktech-mavenPublish = { id = "com.vanniktech.maven.publish", version.ref = "
 detekt = { id = "dev.detekt", version.ref = "detekt" }
 dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
 binaryCompatibilityValidator = { id = "org.jetbrains.kotlinx.binary-compatibility-validator", version.ref = "binaryCompatibilityValidator" }
+kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
 
 # Additional plugin examples
 kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }

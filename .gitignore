@@ -10,6 +10,10 @@ build/
 !**/api/
 **/build/api/
 
+# Kover - Ignore coverage reports (generated during builds)
+**/build/reports/kover/
+**/.kover/
+
 # Kotlin
 *.kotlin_module
 *.kotlin_builtins

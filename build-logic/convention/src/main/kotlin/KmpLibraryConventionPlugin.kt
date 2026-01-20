@@ -20,6 +20,7 @@ class KmpLibraryConventionPlugin : Plugin<Project> {
                 apply("com.vanniktech.maven.publish")
                 apply("dev.detekt")
                 apply("org.jetbrains.dokka")
+                apply("org.jetbrains.kotlinx.kover")
             }
 
             // Access version catalog

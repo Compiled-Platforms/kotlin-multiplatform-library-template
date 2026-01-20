@@ -41,6 +41,10 @@ jobs:
         run: ./gradlew dokkaGeneratePublicationHtml --no-daemon
         if: matrix.os == 'ubuntu-latest'
         
+      - name: Generate Coverage Reports
+        run: ./gradlew koverXmlReport koverHtmlReport koverVerify --no-daemon
+        if: matrix.os == 'ubuntu-latest'
+        
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         if: matrix.os == 'ubuntu-latest'
@@ -67,6 +71,16 @@ jobs:
         with:
           name: dokka-docs
           path: libraries/*/build/dokka/html/
+          retention-days: 7
+          
+      - name: Upload coverage reports
+        uses: actions/upload-artifact@v4
+        if: matrix.os == 'ubuntu-latest'
+        with:
+          name: coverage-reports
+          path: |
+            build/reports/kover/**
+            libraries/*/build/reports/kover/**
           retention-days: 7
 
   # Separate job for Linux-specific tests
