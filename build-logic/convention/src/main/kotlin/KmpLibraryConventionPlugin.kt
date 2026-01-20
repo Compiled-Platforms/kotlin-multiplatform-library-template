@@ -19,6 +19,7 @@ class KmpLibraryConventionPlugin : Plugin<Project> {
                 apply("com.android.kotlin.multiplatform.library")
                 apply("com.vanniktech.maven.publish")
                 apply("dev.detekt")
+                apply("org.jetbrains.dokka")
             }
 
             // Access version catalog
@@ -88,6 +89,26 @@ class KmpLibraryConventionPlugin : Plugin<Project> {
                     "src/iosMain/kotlin",
                     "src/linuxX64Main/kotlin"
                 )
+            }
+
+            // Configure Dokka V2
+            extensions.configure<org.jetbrains.dokka.gradle.DokkaExtension> {
+                moduleName.set(project.name)
+                
+                // Configure publication-level settings
+                dokkaPublications.configureEach {
+                    // Suppress obvious functions (toString, equals, hashCode, etc.)
+                    suppressObviousFunctions.set(true)
+                }
+                
+                dokkaSourceSets.configureEach {
+                    // Include source links to GitHub  
+                    sourceLink {
+                        localDirectory.set(projectDir.resolve("src"))
+                        remoteUrl("https://github.com/Compiled-Platforms/kotlin-multiplatform-library-template/tree/main/${project.path.replace(":", "/")}/src")
+                        remoteLineSuffix.set("#L")
+                    }
+                }
             }
 
             // Configure Maven Publishing

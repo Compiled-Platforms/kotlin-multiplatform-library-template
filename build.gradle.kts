@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.android.kotlin.multiplatform.library) apply false
     alias(libs.plugins.vanniktech.mavenPublish) apply false
     alias(libs.plugins.detekt) apply false
+    alias(libs.plugins.dokka)
 }
 
 allprojects {
@@ -14,4 +15,9 @@ allprojects {
         google()
         mavenCentral()
     }
+}
+
+// Configure Dokka V2 for multi-module documentation
+extensions.configure<org.jetbrains.dokka.gradle.DokkaExtension> {
+    moduleName.set("Kotlin Multiplatform Libraries")
 }
