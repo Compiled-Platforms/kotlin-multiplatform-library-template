@@ -17,6 +17,7 @@ build/
 # Kotlin
 *.kotlin_module
 *.kotlin_builtins
+.kotlin/
 
 # IntelliJ IDEA
 .idea/
