@@ -1,10 +1,12 @@
 import com.android.build.api.dsl.androidLibrary
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import dev.detekt.gradle.Detekt
 
 plugins {
     id("org.jetbrains.kotlin.multiplatform")
     id("com.android.kotlin.multiplatform.library")
     id("com.vanniktech.maven.publish")
+    id("dev.detekt")
 }
 
 // Access version catalog
@@ -47,6 +49,20 @@ kotlin {
             implementation(libs.findLibrary("kotlin-test").get())
         }
     }
+}
+
+// Detekt configuration
+detekt {
+    buildUponDefaultConfig = true
+    allRules = false
+    config.setFrom(files("${rootProject.projectDir}/config/detekt/detekt.yaml"))
+    source.setFrom(
+        "src/commonMain/kotlin",
+        "src/jvmMain/kotlin",
+        "src/androidMain/kotlin",
+        "src/iosMain/kotlin",
+        "src/linuxX64Main/kotlin"
+    )
 }
 
 // Maven publishing configuration
