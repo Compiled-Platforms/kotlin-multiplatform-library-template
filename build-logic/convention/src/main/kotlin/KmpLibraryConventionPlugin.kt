@@ -64,6 +64,18 @@ class KmpLibraryConventionPlugin : Plugin<Project> {
                 }
             }
 
+            // Configure R8 consumer rules for Android after KMP configuration
+            afterEvaluate {
+                project.extensions.findByType(com.android.build.gradle.LibraryExtension::class.java)?.apply {
+                    val consumerRulesFile = project.file("consumer-rules.pro")
+                    if (consumerRulesFile.exists()) {
+                        defaultConfig {
+                            consumerProguardFiles(consumerRulesFile)
+                        }
+                    }
+                }
+            }
+
             // Configure Detekt
             extensions.configure<DetektExtension> {
                 buildUponDefaultConfig.set(true)
