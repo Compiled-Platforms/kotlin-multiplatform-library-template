@@ -2,8 +2,7 @@ plugins {
     id("convention.library")
 }
 
-group = "com.compiledplatforms.kmp.library"
-version = "1.0.0"
+// Group and version are inherited from gradle.properties (GROUP and VERSION_NAME)
 
 description = "An example Kotlin Multiplatform library"
 
@@ -16,9 +15,11 @@ kotlin {
 }
 
 // Maven publishing configuration
+// Group, version, and artifactId are automatically inherited:
+// - group from gradle.properties (GROUP)
+// - version from gradle.properties (VERSION_NAME)
+// - artifactId from project name (example-library)
 mavenPublishing {
-    coordinates(group.toString(), "example-library", version.toString())
-    
     pom {
         name = "Example Library"
         description = "An example Kotlin Multiplatform library demonstrating the monorepo structure"
