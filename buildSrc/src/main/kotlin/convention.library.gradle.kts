@@ -7,13 +7,16 @@ plugins {
     id("com.vanniktech.maven.publish")
 }
 
+// Access version catalog
+val libs = project.extensions.getByType<VersionCatalogsExtension>().named("libs")
+
 kotlin {
     jvm()
     
     androidLibrary {
         namespace = "io.github.kotlin.${project.name.replace("-", ".")}"
-        compileSdk = 36
-        minSdk = 24
+        compileSdk = libs.findVersion("android-compileSdk").get().toString().toInt()
+        minSdk = libs.findVersion("android-minSdk").get().toString().toInt()
 
         withJava() // enable java compilation support
         withHostTestBuilder {}.configure {}
@@ -41,7 +44,7 @@ kotlin {
         }
 
         commonTest.dependencies {
-            implementation("org.jetbrains.kotlin:kotlin-test:2.2.20")
+            implementation(libs.findLibrary("kotlin-test").get())
         }
     }
 }

@@ -103,6 +103,57 @@ This monorepo uses a convention plugin to share common configuration across all 
 - Sets up source sets and test dependencies
 - Configures Maven Central publishing with signing
 
+## 📚 Version Catalog
+
+The monorepo uses Gradle's version catalog (`gradle/libs.versions.toml`) to centralize all dependency versions.
+
+### Benefits
+- **Single Source of Truth**: All versions defined in one place
+- **Type-Safe**: IDE autocomplete for dependencies
+- **Consistency**: Ensures all libraries use the same versions
+- **Easy Updates**: Update a version once, applies everywhere
+
+### Usage in Libraries
+
+Add dependencies using the version catalog:
+
+```kotlin
+kotlin {
+    sourceSets {
+        commonMain.dependencies {
+            implementation(libs.kotlinx.coroutines.core)
+            implementation(libs.kotlinx.serialization.json)
+        }
+    }
+}
+```
+
+### Adding New Dependencies
+
+Edit `gradle/libs.versions.toml`:
+
+```toml
+[versions]
+ktor = "3.0.0"
+
+[libraries]
+ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
+```
+
+Then use in any library:
+
+```kotlin
+implementation(libs.ktor.client.core)
+```
+
+### Pre-configured Dependencies
+
+The catalog includes common KMP libraries:
+- `kotlinx-coroutines-core`
+- `kotlinx-serialization-json`
+- `kotlinx-datetime`
+- And more...
+
 ## 📦 Building and Testing
 
 ```bash

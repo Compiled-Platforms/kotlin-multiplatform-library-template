@@ -37,7 +37,9 @@ description = "Description of your library"
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            // Add your dependencies here
+            // Use the version catalog for dependencies
+            implementation(libs.kotlinx.coroutines.core)
+            implementation(libs.kotlinx.serialization.json)
         }
     }
 }
@@ -107,6 +109,57 @@ Build and test your new library:
 ./gradlew :libraries:my-new-library:test
 ```
 
+## Using the Version Catalog
+
+This monorepo uses Gradle's version catalog (`gradle/libs.versions.toml`) to centralize dependency versions.
+
+### Adding Dependencies
+
+To use a dependency from the version catalog in your library:
+
+```kotlin
+kotlin {
+    sourceSets {
+        commonMain.dependencies {
+            implementation(libs.kotlinx.coroutines.core)
+            implementation(libs.kotlinx.serialization.json)
+            implementation(libs.kotlinx.datetime)
+        }
+    }
+}
+```
+
+### Adding New Dependencies to the Catalog
+
+To add a new dependency to the catalog, edit `gradle/libs.versions.toml`:
+
+```toml
+[versions]
+ktor = "3.0.0"
+
+[libraries]
+ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
+```
+
+Then use it in your library:
+
+```kotlin
+commonMain.dependencies {
+    implementation(libs.ktor.client.core)
+}
+```
+
+### Adding Plugins from the Catalog
+
+You can also use plugins from the version catalog:
+
+```kotlin
+plugins {
+    id("convention.library")
+    alias(libs.plugins.kotlinx.serialization)
+}
+```
+
 ## Convention Plugin
 
 The monorepo uses a convention plugin located in `buildSrc/` to share common configuration:
@@ -114,12 +167,20 @@ The monorepo uses a convention plugin located in `buildSrc/` to share common con
 ### `convention.library`
 Sets up the Kotlin Multiplatform configuration with:
 - **Target platforms**: JVM, Android, iOS (x64, arm64, simulatorArm64), Linux x64
-- **Android SDK versions**: compile: 36, min: 24
+- **Android SDK versions**: Pulled from version catalog (compile: 36, min: 24)
 - **JVM target**: Java 11
-- **Common test dependencies**: kotlin-test
+- **Common test dependencies**: kotlin-test (from version catalog)
 - **Maven publishing**: Pre-configured for Maven Central with signing
 
 You can customize any of these settings in your library's `build.gradle.kts`.
+
+### Version Catalog in Convention Plugin
+
+The convention plugin automatically uses the version catalog for:
+- Android SDK versions (`android-compileSdk`, `android-minSdk`)
+- Test dependencies (`kotlin-test`)
+
+This ensures all libraries use consistent versions across the monorepo.
 
 ## Publishing Configuration
 
@@ -145,3 +206,12 @@ Then publish with:
 ## Example Library
 
 See `libraries/example-library/` for a complete example of a library in this monorepo.
+
+## Common Dependencies
+
+The version catalog includes several commonly used Kotlin Multiplatform libraries:
+- `kotlinx-coroutines-core` - Coroutines support
+- `kotlinx-serialization-json` - JSON serialization
+- `kotlinx-datetime` - Date and time handling
+
+Add more libraries to `gradle/libs.versions.toml` as needed by your projects.
