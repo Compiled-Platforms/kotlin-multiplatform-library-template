@@ -203,6 +203,21 @@ Then publish with:
 ./gradlew :libraries:my-new-library:publishAllPublicationsToMavenCentral
 ```
 
+## BOM (Bill of Materials)
+
+When you add a new library, **manually add it to the BOM** in `bom/build.gradle.kts`:
+
+```kotlin
+dependencies.constraints {
+    api("io.github.kotlin:example-library:1.0.0")
+    api("io.github.kotlin:my-new-library:1.0.0")  // Add your library here
+}
+```
+
+Then increment the BOM version and test the combination.
+
+See `bom/BOM_MANAGEMENT.md` for complete details on managing the BOM with independent library versions.
+
 ## Example Library
 
 See `libraries/example-library/` for a complete example of a library in this monorepo.

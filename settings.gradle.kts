@@ -15,6 +15,9 @@ dependencyResolutionManagement {
 
 rootProject.name = "kotlin-multiplatform-monorepo"
 
+// Include BOM (Bill of Materials)
+include(":bom")
+
 // Auto-discover all library modules in the libraries/ directory
 file("libraries").listFiles()?.forEach { libraryDir ->
     if (libraryDir.isDirectory && file("${libraryDir.path}/build.gradle.kts").exists()) {
