@@ -49,3 +49,6 @@ xcuserdata/
 
 # Setup script backups
 .setup-backup-*/
+
+# Lefthook
+.lefthook-local.yml

@@ -9,8 +9,13 @@ A template for managing multiple Kotlin Multiplatform libraries in a single mono
 - **Convention Plugin**: Shared Gradle configuration to reduce boilerplate
 - **Maven Central Publishing**: Pre-configured for publishing to Maven Central
 - **Multiplatform Support**: JVM, Android, iOS, and Linux targets
+- **Detekt Integration**: Static code analysis for code quality
+- **Git Hooks (Lefthook)**: Automated pre-commit/pre-push checks
+- **MkDocs Documentation**: Beautiful documentation with Material theme
+- **BOM Support**: Bill of Materials for version management
+- **Sample Applications**: Full sample apps for each library
 - **CI/CD Ready**: GitHub Actions workflows for build and publish
-- **Setup Script**: Interactive script to customize the template with your values
+- **Setup Scripts**: Interactive scripts to customize the template
 
 ## 🎬 Getting Started
 
@@ -75,6 +80,8 @@ kotlin-multiplatform-library-template/
 - Java 11 or higher
 - Android SDK (for Android targets)
 - Xcode (for iOS targets, macOS only)
+- Python 3 (for setup scripts)
+- Lefthook (optional, for Git hooks)
 
 ### Clone and Build
 
@@ -82,6 +89,53 @@ kotlin-multiplatform-library-template/
 git clone <your-repo-url>
 cd kotlin-multiplatform-library-template
 ./gradlew build
+```
+
+### Setting Up Git Hooks (Lefthook)
+
+The template includes Lefthook for automated Git hooks to maintain code quality:
+
+**Install Lefthook:**
+
+```bash
+# macOS
+brew install lefthook
+
+# Linux
+curl -1sLf 'https://dl.cloudsmith.io/public/evilmartians/lefthook/setup.rpm.sh' | sudo -E bash
+sudo yum install lefthook
+
+# Or download from GitHub releases
+# https://github.com/evilmartians/lefthook/releases
+```
+
+**Initialize hooks:**
+
+```bash
+lefthook install
+```
+
+**What's included:**
+
+- **Pre-commit**: Runs Detekt on changed Kotlin files, checks for secrets
+- **Commit-msg**: Validates commit message format (conventional commits)
+- **Pre-push**: Runs full build, warns when pushing to main/master
+
+**Skip hooks temporarily:**
+
+```bash
+# Skip all hooks
+LEFTHOOK=0 git commit -m "message"
+
+# Skip specific hook
+lefthook run pre-commit --no-tty
+```
+
+**Local overrides** (`.lefthook-local.yml` - not committed):
+
+```yaml
+pre-push:
+  skip: true  # Disable pre-push checks locally
 ```
 
 ### Adding a New Library
