@@ -202,6 +202,26 @@ See `bom/BOM_MANAGEMENT.md` for details on:
 ./gradlew :libraries:example-library:test
 ```
 
+## 🎯 Sample Applications
+
+The `samples/` directory contains full sample applications demonstrating library usage.
+
+### Running Samples
+
+```bash
+# Run a sample application
+./gradlew :samples:example-library-sample:run
+
+# Build all samples
+./gradlew :samples:build
+```
+
+### Creating New Samples
+
+See [`samples/README.md`](samples/README.md) for detailed instructions on creating sample applications.
+
+Samples use project dependencies to stay in sync with library changes and are automatically discovered.
+
 ## 🚢 Publishing
 
 ### Prerequisites

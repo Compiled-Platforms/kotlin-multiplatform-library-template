@@ -26,5 +26,14 @@ file("libraries").listFiles()?.forEach { libraryDir ->
     }
 }
 
+// Auto-discover all sample applications in the samples/ directory
+file("samples").listFiles()?.forEach { sampleDir ->
+    if (sampleDir.isDirectory && file("${sampleDir.path}/build.gradle.kts").exists()) {
+        val sampleName = sampleDir.name
+        include(":samples:$sampleName")
+    }
+}
+
 // You can also manually include specific modules if needed:
 // include(":libraries:my-custom-library")
+// include(":samples:my-custom-sample")
