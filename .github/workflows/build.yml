@@ -32,17 +32,17 @@ jobs:
           cache-read-only: ${{ github.ref != 'refs/heads/main' && github.ref != 'refs/heads/develop' }}
           
       - name: Build with Gradle
-        run: ./gradlew build --no-daemon --stacktrace
+        run: ./gradlew build --daemon
         
       - name: Run Detekt
-        run: ./gradlew detekt --no-daemon
+        run: ./gradlew detekt --daemon
         
       - name: Generate Dokka Documentation
-        run: ./gradlew dokkaGeneratePublicationHtml --no-daemon
+        run: ./gradlew dokkaGeneratePublicationHtml --daemon
         if: matrix.os == 'ubuntu-latest'
         
       - name: Generate Coverage Reports
-        run: ./gradlew koverXmlReport koverHtmlReport koverVerify --no-daemon
+        run: ./gradlew koverXmlReport koverHtmlReport koverVerify --daemon
         if: matrix.os == 'ubuntu-latest'
         
       - name: Upload build artifacts
