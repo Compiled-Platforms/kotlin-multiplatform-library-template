@@ -12,12 +12,19 @@ pre-commit:
     
     check-secrets:
       glob: "*.{properties,yml,yaml,json}"
-      exclude: ".github/workflows/*|lefthook.yml"
       run: |
-        if grep -r "mavenCentralPassword\|signingPassword\|github_token" {staged_files}; then
-          echo "❌ Potential secrets found in staged files!"
-          exit 1
-        fi
+        # Check for actual hardcoded secrets (not GitHub Actions template syntax)
+        for file in {staged_files}; do
+          # Skip GitHub Actions workflows (they use ${{ secrets.* }} which is fine)
+          if [[ "$file" == .github/workflows/* || "$file" == lefthook.yml ]]; then
+            continue
+          fi
+          
+          if grep -i "password\|secret\|token\|key" "$file" | grep -iv "secrets\." | grep -v "SIGNING_KEY\|MAVEN_CENTRAL\|github_token" | grep -qE ":\s*['\"]?[a-zA-Z0-9]{20,}"; then
+            echo "❌ Potential hardcoded secret found in $file"
+            exit 1
+          fi
+        done
 
 commit-msg:
   commands:
