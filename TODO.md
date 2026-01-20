@@ -267,13 +267,15 @@ Expand sample applications for better demonstration.
 
 ## Completed ✅
 
+- [x] **GitHub Actions CI/CD** - Build, test, publish, and deploy workflows
+- [x] **Dokka API Documentation** - KDoc generation with GitHub Pages deployment
 - [x] Enhanced `gradle.properties` with performance optimizations
 - [x] Community health files (CODE_OF_CONDUCT, SECURITY, CONTRIBUTING, LICENSE, NOTICE)
 - [x] Migrate `buildSrc` to `build-logic`
 - [x] R8 optimization support for Android libraries
 - [x] Detekt static code analysis
 - [x] MkDocs Material documentation
-- [x] Lefthook Git hooks
+- [x] Lefthook Git hooks (with GitHub Actions secret handling)
 - [x] EditorConfig for consistent formatting
 - [x] git-cliff for automated changelog generation
 - [x] Bill of Materials (BOM) support
