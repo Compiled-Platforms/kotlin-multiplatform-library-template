@@ -22,9 +22,7 @@ if [ ! -f "settings.gradle.kts" ]; then
 fi
 
 # Check if template has already been set up
-if [ ! -f ".template" ]; then
-    echo -e "${YELLOW}Warning: This appears to be a fresh template${NC}"
-else
+if [ -f ".template" ] && grep -q "configured" .template 2>/dev/null; then
     echo -e "${YELLOW}Note: Template has already been configured once${NC}"
     read -p "Do you want to reconfigure? (y/n): " -n 1 -r
     echo
