@@ -27,7 +27,7 @@ Automate building, testing, and publishing across all platforms.
 
 ---
 
-### 2. Dokka API Documentation ✅
+### 2. Dokka API Documentation ✅ **COMPLETE**
 Generate professional KDoc-based API documentation.
 
 **Benefits:**
@@ -42,8 +42,12 @@ Generate professional KDoc-based API documentation.
 - [x] Configure per-library documentation
 - [x] Configure multi-module documentation support
 - [x] Create documentation writing guidelines
-- [ ] Set up GitHub Pages deployment (in CI/CD)
-- [ ] Add documentation generation to CI/CD
+- [x] Add Dokka to version catalog
+- [x] Configure source links to GitHub
+- [x] Suppress obvious functions for cleaner docs
+- [x] Fix Dokka 2.x deprecation warnings
+
+**Note:** GitHub Pages deployment and CI/CD automation will be handled in **Task #1 (GitHub Actions CI/CD)**.
 
 **Resources:**
 - [Dokka Documentation](https://kotlinlang.org/docs/dokka-introduction.html)
@@ -56,7 +60,12 @@ Generate professional KDoc-based API documentation.
 
 # Generate docs for all libraries
 ./gradlew dokkaGeneratePublicationHtml
+
+# View generated docs
+open libraries/example-library/build/dokka/html/index.html
 ```
+
+**Location:** `libraries/{library-name}/build/dokka/html/index.html`
 
 ---
 
@@ -258,6 +267,7 @@ Expand sample applications for better demonstration.
 - [x] Community health files (CODE_OF_CONDUCT, SECURITY, CONTRIBUTING, LICENSE, NOTICE)
 - [x] Migrate `buildSrc` to `build-logic`
 - [x] R8 optimization support for Android libraries
+- [x] Dokka API documentation generation (HTML, per-library & multi-module)
 - [x] Detekt static code analysis
 - [x] MkDocs Material documentation
 - [x] Lefthook Git hooks
