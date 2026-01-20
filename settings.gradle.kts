@@ -13,7 +13,7 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "kotlin-multiplatform-monorepo"
+rootProject.name = "kotlin-multiplatform-library"
 
 // Include BOM (Bill of Materials)
 include(":bom")

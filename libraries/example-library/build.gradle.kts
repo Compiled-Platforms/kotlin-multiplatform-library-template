@@ -42,9 +42,9 @@ mavenPublishing {
         }
         
         scm {
-            url = "https://github.com/compiledplatforms/kotlin-multiplatform-monorepo/"
-            connection = "scm:git:git://github.com/compiledplatforms/kotlin-multiplatform-monorepo.git"
-            developerConnection = "scm:git:ssh://git@github.com/compiledplatforms/kotlin-multiplatform-monorepo.git"
+            url = "https://github.com/compiledplatforms/kotlin-multiplatform-library/"
+            connection = "scm:git:git://github.com/compiledplatforms/kotlin-multiplatform-library.git"
+            developerConnection = "scm:git:ssh://git@github.com/compiledplatforms/kotlin-multiplatform-library.git"
         }
     }
 }
