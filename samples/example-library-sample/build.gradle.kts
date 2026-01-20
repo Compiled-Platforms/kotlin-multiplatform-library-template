@@ -1,5 +1,5 @@
 plugins {
-    id("org.jetbrains.kotlin.multiplatform")
+    alias(libs.plugins.kotlinMultiplatform)
 }
 
 kotlin {

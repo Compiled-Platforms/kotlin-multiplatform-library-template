@@ -1,6 +1,6 @@
 plugins {
     id("java-platform")
-    id("com.vanniktech.maven.publish")
+    alias(libs.plugins.vanniktech.mavenPublish)
 }
 
 group = "com.compiledplatforms.kmp.library"
