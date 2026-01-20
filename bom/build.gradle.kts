@@ -49,9 +49,9 @@ mavenPublishing {
         }
         
         scm {
-            url = "https://github.com/compiledplatforms/kotlin-multiplatform-library/"
-            connection = "scm:git:git://github.com/compiledplatforms/kotlin-multiplatform-library.git"
-            developerConnection = "scm:git:ssh://git@github.com/compiledplatforms/kotlin-multiplatform-library.git"
+            url = "https://github.com/compiledplatforms/kotlin-multiplatform-library-template/"
+            connection = "scm:git:git://github.com/compiledplatforms/kotlin-multiplatform-library-template.git"
+            developerConnection = "scm:git:ssh://git@github.com/compiledplatforms/kotlin-multiplatform-library-template.git"
         }
     }
 }

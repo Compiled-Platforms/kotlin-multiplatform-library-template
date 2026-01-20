@@ -14,7 +14,7 @@ A template for managing multiple Kotlin Multiplatform libraries in a single mono
 ## 📁 Project Structure
 
 ```
-kotlin-multiplatform-library/
+kotlin-multiplatform-library-template/
 ├── buildSrc/                          # Convention plugin for shared configuration
 │   ├── build.gradle.kts
 │   └── src/main/kotlin/
@@ -50,7 +50,7 @@ kotlin-multiplatform-library/
 
 ```bash
 git clone <your-repo-url>
-cd kotlin-multiplatform-library
+cd kotlin-multiplatform-library-template
 ./gradlew build
 ```
 
