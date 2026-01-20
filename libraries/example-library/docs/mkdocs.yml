@@ -1,0 +1,4 @@
+site_name: Example Library
+docs_dir: ./
+nav:
+  - Home: index.md
