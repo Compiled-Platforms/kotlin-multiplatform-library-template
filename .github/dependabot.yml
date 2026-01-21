@@ -1,0 +1,82 @@
+version: 2
+updates:
+  # Gradle dependencies (includes libs.versions.toml)
+  - package-ecosystem: "gradle"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "03:00"
+      timezone: "America/Los_Angeles"
+    open-pull-requests-limit: 10
+    groups:
+      # Group all Kotlin ecosystem updates together
+      kotlin:
+        patterns:
+          - "org.jetbrains.kotlin*"
+          - "org.jetbrains.kotlinx*"
+        update-types:
+          - "minor"
+          - "patch"
+      
+      # Group Android/AGP updates together
+      android:
+        patterns:
+          - "com.android*"
+        update-types:
+          - "minor"
+          - "patch"
+      
+      # Group development tools together
+      dev-tools:
+        patterns:
+          - "*detekt*"
+          - "*dokka*"
+          - "*kover*"
+          - "*binary-compatibility-validator*"
+          - "*vanniktech*"
+        update-types:
+          - "minor"
+          - "patch"
+    
+    # Labels for Gradle PRs
+    labels:
+      - "dependencies"
+      - "gradle"
+    
+    # Commit message prefix
+    commit-message:
+      prefix: "chore(deps)"
+
+  # GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    groups:
+      github-actions:
+        patterns:
+          - "*"
+    labels:
+      - "dependencies"
+      - "github-actions"
+    commit-message:
+      prefix: "chore(ci)"
+
+  # Python dependencies (MkDocs)
+  - package-ecosystem: "pip"
+    directory: "/docs"
+    schedule:
+      interval: "monthly"
+    groups:
+      mkdocs:
+        patterns:
+          - "*mkdocs*"
+        update-types:
+          - "minor"
+          - "patch"
+    labels:
+      - "dependencies"
+      - "documentation"
+    commit-message:
+      prefix: "chore(docs)"

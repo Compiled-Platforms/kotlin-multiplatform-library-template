@@ -1,0 +1,9 @@
+public final class com/compiledplatforms/kmp/library/fibonacci/CustomFibiKt {
+	public static final fun generateFibi ()Lkotlin/sequences/Sequence;
+}
+
+public final class com/compiledplatforms/kmp/library/fibonacci/Fibiprops_jvmKt {
+	public static final fun getFirstElement ()I
+	public static final fun getSecondElement ()I
+}
+

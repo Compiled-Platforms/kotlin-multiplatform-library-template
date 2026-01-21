@@ -1,0 +1,64 @@
+# Lefthook configuration for Git hooks
+# Install: brew install lefthook (macOS) or see https://github.com/evilmartians/lefthook
+# Setup: lefthook install
+
+pre-commit:
+  parallel: true
+  commands:
+    detekt:
+      glob: "*.{kt,kts}"
+      run: ./gradlew detekt --daemon
+      stage_fixed: true
+    
+    check-secrets:
+      glob: "*.{properties,yml,yaml,json}"
+      run: |
+        # Check for actual hardcoded secrets (not GitHub Actions template syntax)
+        for file in {staged_files}; do
+          # Skip GitHub Actions workflows (they use ${{ secrets.* }} which is fine)
+          if [[ "$file" == .github/workflows/* || "$file" == lefthook.yml ]]; then
+            continue
+          fi
+          
+          if grep -i "password\|secret\|token\|key" "$file" | grep -iv "secrets\." | grep -v "SIGNING_KEY\|MAVEN_CENTRAL\|github_token" | grep -qE ":\s*['\"]?[a-zA-Z0-9]{20,}"; then
+            echo "❌ Potential hardcoded secret found in $file"
+            exit 1
+          fi
+        done
+
+commit-msg:
+  commands:
+    validate-message:
+      run: |
+        commit_msg=$(cat {1})
+        if ! echo "$commit_msg" | grep -qE "^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\(.+\))?: .+"; then
+          echo "❌ Invalid commit message format!"
+          echo "Expected: <type>[optional scope]: <description>"
+          echo "Types: feat, fix, docs, style, refactor, perf, test, build, ci, chore, revert"
+          echo ""
+          echo "Examples:"
+          echo "  feat: add BOM support"
+          echo "  fix(detekt): resolve code quality issues"
+          echo "  docs: update README with setup instructions"
+          exit 1
+        fi
+
+pre-push:
+  commands:
+    build:
+      run: ./gradlew build --daemon
+      
+    check-branch:
+      run: |
+        branch=$(git rev-parse --abbrev-ref HEAD)
+        if [[ "$branch" == "main" || "$branch" == "master" ]]; then
+          echo "⚠️  WARNING: You are pushing to $branch!"
+          read -p "Are you sure? (yes/no): " confirm
+          if [[ "$confirm" != "yes" ]]; then
+            exit 1
+          fi
+        fi
+
+skip_output:
+  - meta
+  - success

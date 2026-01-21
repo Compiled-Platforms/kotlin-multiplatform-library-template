@@ -1,0 +1,23 @@
+# Funding and Sponsorship Configuration
+# https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/displaying-a-sponsor-button-in-your-repository
+
+# GitHub Sponsors
+# github: [your-github-username]
+
+# Open Collective
+# open_collective: your-project
+
+# Ko-fi
+# ko_fi: your-username
+
+# Patreon
+# patreon: your-username
+
+# Custom sponsorship URLs
+# custom: ["https://your-sponsorship-url.com", "https://another-url.com"]
+
+# Example configuration:
+# github: [compiled-platforms]
+# custom: ["https://buymeacoffee.com/compiledplatforms"]
+
+# Note: Uncomment and configure the platforms you want to use for sponsorship
