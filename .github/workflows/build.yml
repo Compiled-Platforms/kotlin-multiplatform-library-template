@@ -145,7 +145,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v3
         
       - name: Build with Gradle
-        run: ./gradlew build -x test --no-daemon --stacktrace
+        run: ./gradlew build --daemon
 
   # Validate that the project follows best practices
   code-quality:
