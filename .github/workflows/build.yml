@@ -45,19 +45,17 @@ jobs:
         uses: gradle/actions/setup-gradle@v3
         with:
           cache-read-only: ${{ github.ref != 'refs/heads/main' && github.ref != 'refs/heads/develop' }}
+          gradle-home-cache-cleanup: true
           
       - name: Build with Gradle
-        run: ./gradlew build --daemon --parallel
-        
-      - name: Run Detekt
-        run: ./gradlew detekt --daemon --parallel
+        run: ./gradlew build --daemon --parallel --configuration-cache
         
       - name: Generate Dokka Documentation
-        run: ./gradlew dokkaGeneratePublicationHtml --daemon --parallel
+        run: ./gradlew dokkaGeneratePublicationHtml --daemon --parallel --configuration-cache
         if: matrix.os == 'ubuntu-latest' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
         
       - name: Generate Coverage Reports
-        run: ./gradlew koverXmlReport koverHtmlReport koverVerify --daemon --parallel
+        run: ./gradlew koverXmlReport koverHtmlReport koverVerify --daemon --parallel --configuration-cache
         if: matrix.os == 'ubuntu-latest' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
         
       - name: Upload build artifacts
@@ -127,7 +125,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v3
         
       - name: Run Linux Native Tests
-        run: ./gradlew linuxX64Test --daemon --parallel
+        run: ./gradlew linuxX64Test --daemon --parallel --configuration-cache
         continue-on-error: true
 
   # Separate job for iOS tests (requires macOS)
@@ -159,7 +157,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v3
         
       - name: Run iOS Simulator Tests
-        run: ./gradlew iosSimulatorArm64Test --daemon --parallel
+        run: ./gradlew iosSimulatorArm64Test --daemon --parallel --configuration-cache
 
   # Check that the build would succeed on Windows (optional)
   build-windows:
@@ -190,7 +188,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v3
         
       - name: Build with Gradle
-        run: ./gradlew build --daemon --parallel
+        run: ./gradlew build --daemon --parallel --configuration-cache
 
   # Validate that the project follows best practices
   code-quality:
@@ -219,12 +217,14 @@ jobs:
         uses: gradle/actions/setup-gradle@v3
         
       - name: Run Detekt
-        run: ./gradlew detekt --daemon --parallel
+        run: ./gradlew detekt --daemon --parallel --configuration-cache
         
       - name: Upload Detekt report
         uses: actions/upload-artifact@v4
         if: always()
         with:
           name: detekt-report
-          path: build/reports/detekt/
+          path: |
+            build/reports/detekt/
+            libraries/*/build/reports/detekt/
           retention-days: 7

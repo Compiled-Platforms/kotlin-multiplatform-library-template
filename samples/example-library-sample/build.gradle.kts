@@ -11,15 +11,6 @@ kotlin {
             implementation(project(":libraries:example-library"))
         }
     }
-    
-    // Configure JVM binary for running the sample
-    jvm().compilations.getByName("main") {
-        compileTaskProvider.configure {
-            compilerOptions {
-                freeCompilerArgs.add("-Xmain-class=JvmMainKt")
-            }
-        }
-    }
 }
 
 // Task to run the sample
