@@ -32,6 +32,8 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       ci-enabled: ${{ steps.load.outputs.ci-enabled }}
+      current-branch: ${{ steps.load.outputs.current-branch }}
+      enabled-branches: ${{ steps.load.outputs.enabled-branches }}
       java-version: ${{ steps.load.outputs.java-version }}
       python-version: ${{ steps.load.outputs.python-version }}
       pages-enabled: ${{ steps.load.outputs.pages-enabled }}
@@ -69,9 +71,40 @@ jobs:
           fi
           
           echo "ci-enabled=$CI_ENABLED" >> $GITHUB_OUTPUT
+          echo "current-branch=$BRANCH" >> $GITHUB_OUTPUT
+          echo "enabled-branches=$ENABLED_BRANCHES" >> $GITHUB_OUTPUT
           echo "java-version=$(yq '.versions.java' project.yml)" >> $GITHUB_OUTPUT
           echo "python-version=$(yq '.versions.python' project.yml)" >> $GITHUB_OUTPUT
           echo "pages-enabled=$(yq '.documentation.github_pages.enabled' project.yml)" >> $GITHUB_OUTPUT
+      
+      - name: CI Status
+        run: |
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "📋 CI Configuration Status"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "Current branch:    ${{ steps.load.outputs.current-branch }}"
+          echo "Enabled branches:  ${{ steps.load.outputs.enabled-branches }}"
+          echo "CI enabled:        ${{ steps.load.outputs.ci-enabled }}"
+          echo "Pages enabled:     ${{ steps.load.outputs.pages-enabled }}"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          
+          if [[ "${{ steps.load.outputs.ci-enabled }}" == "false" ]]; then
+            echo "⏭️  Docs job will be SKIPPED (CI disabled for this branch)"
+            echo ""
+            echo "To enable CI for this branch, update project.yml:"
+            echo "  ci:"
+            echo "    enabled_branches: [${{ steps.load.outputs.current-branch }}]"
+          elif [[ "${{ steps.load.outputs.pages-enabled }}" == "false" ]]; then
+            echo "⏭️  Docs job will be SKIPPED (GitHub Pages disabled)"
+            echo ""
+            echo "To enable Pages, update project.yml:"
+            echo "  documentation:"
+            echo "    github_pages:"
+            echo "      enabled: true"
+          else
+            echo "✅ Docs job will RUN"
+          fi
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
   
   build-docs:
     name: Build Documentation
