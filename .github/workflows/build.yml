@@ -45,7 +45,6 @@ jobs:
         uses: gradle/actions/setup-gradle@v3
         with:
           cache-read-only: ${{ github.ref != 'refs/heads/main' && github.ref != 'refs/heads/develop' }}
-          gradle-home-cache-cleanup: true
           
       - name: Build with Gradle
         run: ./gradlew build --daemon --parallel --configuration-cache
