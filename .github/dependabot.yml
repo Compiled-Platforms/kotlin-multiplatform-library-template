@@ -9,6 +9,13 @@ updates:
       time: "03:00"
       timezone: "America/Los_Angeles"
     open-pull-requests-limit: 1
+    
+    # Ignore ALL updates due to KMP compatibility constraints - manually managed
+    ignore:
+      - dependency-name: "com.android.tools.build:gradle"
+      - dependency-name: "org.jetbrains.kotlin*"
+      - dependency-name: "gradle"
+    
     groups:
       # Group ALL Gradle updates into one PR
       all-dependencies:
