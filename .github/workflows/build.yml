@@ -1,5 +1,10 @@
 name: Build & Test
 
+# CI Strategy:
+# - PRs: Fast feedback (~2-5 min) - JVM tests + Detekt only
+# - Main/Develop: Comprehensive (~10-15 min) - All platforms, docs, coverage
+# This saves CI minutes and provides faster feedback for developers
+
 on:
   pull_request:
     branches: [ main, develop ]
@@ -14,7 +19,9 @@ jobs:
     
     strategy:
       matrix:
-        os: [ ubuntu-latest, macos-latest ]
+        # PRs: Only ubuntu (faster feedback)
+        # Main/Develop: Both ubuntu and macOS (comprehensive testing)
+        os: ${{ github.event_name == 'pull_request' && fromJSON('["ubuntu-latest"]') || fromJSON('["ubuntu-latest", "macos-latest"]') }}
         
     steps:
       - name: Checkout code
@@ -25,29 +32,35 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '17'
+      
+      - name: Cache Kotlin/Native dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.konan
+          key: ${{ runner.os }}-konan-${{ hashFiles('gradle/libs.versions.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-konan-
           
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
         with:
           cache-read-only: ${{ github.ref != 'refs/heads/main' && github.ref != 'refs/heads/develop' }}
+          gradle-home-cache-cleanup: true
           
       - name: Build with Gradle
-        run: ./gradlew build --daemon
-        
-      - name: Run Detekt
-        run: ./gradlew detekt --daemon
+        run: ./gradlew build --daemon --parallel --configuration-cache
         
       - name: Generate Dokka Documentation
-        run: ./gradlew dokkaGeneratePublicationHtml --daemon
-        if: matrix.os == 'ubuntu-latest'
+        run: ./gradlew dokkaGeneratePublicationHtml --daemon --parallel --configuration-cache
+        if: matrix.os == 'ubuntu-latest' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
         
       - name: Generate Coverage Reports
-        run: ./gradlew koverXmlReport koverHtmlReport koverVerify --daemon
-        if: matrix.os == 'ubuntu-latest'
+        run: ./gradlew koverXmlReport koverHtmlReport koverVerify --daemon --parallel --configuration-cache
+        if: matrix.os == 'ubuntu-latest' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
         
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
-        if: matrix.os == 'ubuntu-latest'
+        if: matrix.os == 'ubuntu-latest' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
         with:
           name: build-artifacts
           path: |
@@ -57,7 +70,7 @@ jobs:
           
       - name: Upload test results
         uses: actions/upload-artifact@v4
-        if: always() && matrix.os == 'ubuntu-latest'
+        if: always() && matrix.os == 'ubuntu-latest' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
         with:
           name: test-results
           path: |
@@ -67,7 +80,7 @@ jobs:
           
       - name: Upload Dokka documentation
         uses: actions/upload-artifact@v4
-        if: matrix.os == 'ubuntu-latest'
+        if: matrix.os == 'ubuntu-latest' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
         with:
           name: dokka-docs
           path: libraries/*/build/dokka/html/
@@ -75,7 +88,7 @@ jobs:
           
       - name: Upload coverage reports
         uses: actions/upload-artifact@v4
-        if: matrix.os == 'ubuntu-latest'
+        if: matrix.os == 'ubuntu-latest' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
         with:
           name: coverage-reports
           path: |
@@ -87,6 +100,8 @@ jobs:
   test-linux:
     name: Test Linux Native
     runs-on: ubuntu-latest
+    # Only run on main/develop branches (not on PRs for faster feedback)
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'
     
     steps:
       - name: Checkout code
@@ -97,18 +112,28 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '17'
+      
+      - name: Cache Kotlin/Native dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.konan
+          key: ${{ runner.os }}-konan-${{ hashFiles('gradle/libs.versions.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-konan-
           
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
         
       - name: Run Linux Native Tests
-        run: ./gradlew linuxX64Test --no-daemon
+        run: ./gradlew linuxX64Test --daemon --parallel --configuration-cache
         continue-on-error: true
 
   # Separate job for iOS tests (requires macOS)
   test-ios:
     name: Test iOS
     runs-on: macos-latest
+    # Only run on main/develop branches (not on PRs for faster feedback)
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'
     
     steps:
       - name: Checkout code
@@ -119,17 +144,27 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '17'
+      
+      - name: Cache Kotlin/Native dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.konan
+          key: ${{ runner.os }}-konan-${{ hashFiles('gradle/libs.versions.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-konan-
           
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
         
       - name: Run iOS Simulator Tests
-        run: ./gradlew iosSimulatorArm64Test --no-daemon
+        run: ./gradlew iosSimulatorArm64Test --daemon --parallel --configuration-cache
 
   # Check that the build would succeed on Windows (optional)
   build-windows:
     name: Build on Windows
     runs-on: windows-latest
+    # Only run on main/develop branches (not on PRs for faster feedback)
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'
     
     steps:
       - name: Checkout code
@@ -140,12 +175,20 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '17'
+      
+      - name: Cache Kotlin/Native dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.konan
+          key: ${{ runner.os }}-konan-${{ hashFiles('gradle/libs.versions.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-konan-
           
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
         
       - name: Build with Gradle
-        run: ./gradlew build -x test --no-daemon --stacktrace
+        run: ./gradlew build --daemon --parallel --configuration-cache
 
   # Validate that the project follows best practices
   code-quality:
@@ -161,17 +204,27 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '17'
+      
+      - name: Cache Kotlin/Native dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.konan
+          key: ${{ runner.os }}-konan-${{ hashFiles('gradle/libs.versions.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-konan-
           
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
         
       - name: Run Detekt
-        run: ./gradlew detekt --no-daemon
+        run: ./gradlew detekt --daemon --parallel --configuration-cache
         
       - name: Upload Detekt report
         uses: actions/upload-artifact@v4
         if: always()
         with:
           name: detekt-report
-          path: build/reports/detekt/
+          path: |
+            build/reports/detekt/
+            libraries/*/build/reports/detekt/
           retention-days: 7
