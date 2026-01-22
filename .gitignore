@@ -5,9 +5,19 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
+# Binary Compatibility Validator - Keep API dumps (they should be committed!)
+# Only ignore the build/ directory dumps (generated during validation)
+!**/api/
+**/build/api/
+
+# Kover - Ignore coverage reports (generated during builds)
+**/build/reports/kover/
+**/.kover/
+
 # Kotlin
 *.kotlin_module
 *.kotlin_builtins
+.kotlin/
 
 # IntelliJ IDEA
 .idea/
@@ -46,3 +56,9 @@ captures/
 *.dSYM.zip
 *.dSYM
 xcuserdata/
+
+# Setup script backups
+.setup-backup-*/
+
+# Lefthook
+.lefthook-local.yml

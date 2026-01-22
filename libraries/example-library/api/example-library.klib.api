@@ -1,0 +1,14 @@
+// Klib ABI Dump
+// Targets: [iosArm64, iosSimulatorArm64, iosX64, linuxX64]
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: true
+// - Show declarations: true
+
+// Library unique name: <kotlin-multiplatform-library-template.libraries:example-library>
+final val com.compiledplatforms.kmp.library.fibonacci/firstElement // com.compiledplatforms.kmp.library.fibonacci/firstElement|{}firstElement[0]
+    final fun <get-firstElement>(): kotlin/Int // com.compiledplatforms.kmp.library.fibonacci/firstElement.<get-firstElement>|<get-firstElement>(){}[0]
+final val com.compiledplatforms.kmp.library.fibonacci/secondElement // com.compiledplatforms.kmp.library.fibonacci/secondElement|{}secondElement[0]
+    final fun <get-secondElement>(): kotlin/Int // com.compiledplatforms.kmp.library.fibonacci/secondElement.<get-secondElement>|<get-secondElement>(){}[0]
+
+final fun com.compiledplatforms.kmp.library.fibonacci/generateFibi(): kotlin.sequences/Sequence<kotlin/Int> // com.compiledplatforms.kmp.library.fibonacci/generateFibi|generateFibi(){}[0]
