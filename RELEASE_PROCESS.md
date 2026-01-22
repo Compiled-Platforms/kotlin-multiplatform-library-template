@@ -2,6 +2,8 @@
 
 This project uses automated tools to streamline the release process.
 
+> **Note**: The initial baseline tag `v0.0.0` has been created. Future releases will automatically show changes since the previous version.
+
 ## Overview
 
 - **Release Drafter**: Auto-generates draft releases from PRs and commits
