@@ -89,12 +89,15 @@ jobs:
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
           
           if [[ "${{ steps.load.outputs.ci-enabled }}" == "false" ]]; then
+            echo "::warning title=CI Skipped::Build job will be SKIPPED - CI disabled for branch '${{ steps.load.outputs.current-branch }}'. To enable, set ci.enabled_branches: [${{ steps.load.outputs.current-branch }}] in project.yml"
+            echo ""
             echo "⏭️  Build job will be SKIPPED (CI disabled for this branch)"
             echo ""
             echo "To enable CI for this branch, update project.yml:"
             echo "  ci:"
             echo "    enabled_branches: [${{ steps.load.outputs.current-branch }}]"
           else
+            echo "::notice title=CI Enabled::Build job will run for branch '${{ steps.load.outputs.current-branch }}'"
             echo "✅ Build job will RUN"
           fi
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"

@@ -89,12 +89,16 @@ jobs:
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
           
           if [[ "${{ steps.load.outputs.ci-enabled }}" == "false" ]]; then
+            echo "::warning title=CI Skipped::Docs job will be SKIPPED - CI disabled for branch '${{ steps.load.outputs.current-branch }}'. To enable, set ci.enabled_branches: [${{ steps.load.outputs.current-branch }}] in project.yml"
+            echo ""
             echo "⏭️  Docs job will be SKIPPED (CI disabled for this branch)"
             echo ""
             echo "To enable CI for this branch, update project.yml:"
             echo "  ci:"
             echo "    enabled_branches: [${{ steps.load.outputs.current-branch }}]"
           elif [[ "${{ steps.load.outputs.pages-enabled }}" == "false" ]]; then
+            echo "::warning title=Pages Disabled::Docs job will be SKIPPED - GitHub Pages disabled. To enable, set documentation.github_pages.enabled: true in project.yml"
+            echo ""
             echo "⏭️  Docs job will be SKIPPED (GitHub Pages disabled)"
             echo ""
             echo "To enable Pages, update project.yml:"
@@ -102,6 +106,7 @@ jobs:
             echo "    github_pages:"
             echo "      enabled: true"
           else
+            echo "::notice title=Docs Enabled::Docs job will run and deploy to GitHub Pages"
             echo "✅ Docs job will RUN"
           fi
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
