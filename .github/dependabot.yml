@@ -8,36 +8,12 @@ updates:
       day: "monday"
       time: "03:00"
       timezone: "America/Los_Angeles"
-    open-pull-requests-limit: 10
+    open-pull-requests-limit: 1
     groups:
-      # Group all Kotlin ecosystem updates together
-      kotlin:
+      # Group ALL Gradle updates into one PR
+      all-dependencies:
         patterns:
-          - "org.jetbrains.kotlin*"
-          - "org.jetbrains.kotlinx*"
-        update-types:
-          - "minor"
-          - "patch"
-      
-      # Group Android/AGP updates together
-      android:
-        patterns:
-          - "com.android*"
-        update-types:
-          - "minor"
-          - "patch"
-      
-      # Group development tools together
-      dev-tools:
-        patterns:
-          - "*detekt*"
-          - "*dokka*"
-          - "*kover*"
-          - "*binary-compatibility-validator*"
-          - "*vanniktech*"
-        update-types:
-          - "minor"
-          - "patch"
+          - "*"
     
     # Labels for Gradle PRs
     labels:
@@ -68,13 +44,11 @@ updates:
     directory: "/docs"
     schedule:
       interval: "monthly"
+    open-pull-requests-limit: 1
     groups:
-      mkdocs:
+      all-python:
         patterns:
-          - "*mkdocs*"
-        update-types:
-          - "minor"
-          - "patch"
+          - "*"
     labels:
       - "dependencies"
       - "documentation"
