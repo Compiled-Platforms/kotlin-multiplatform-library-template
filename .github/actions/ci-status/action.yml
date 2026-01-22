@@ -1,0 +1,57 @@
+name: 'CI Status Checker'
+description: 'Checks project.yml configuration and reports CI status for current branch'
+author: 'Compiled Platforms'
+
+inputs:
+  config-file:
+    description: 'Path to project.yml configuration file'
+    required: false
+    default: 'project.yml'
+
+outputs:
+  ci-enabled:
+    description: 'Whether CI is enabled for the current branch (true/false)'
+    value: ${{ steps.check.outputs.ci-enabled }}
+  current-branch:
+    description: 'Current branch name'
+    value: ${{ steps.check.outputs.current-branch }}
+  enabled-branches:
+    description: 'Configured enabled branches'
+    value: ${{ steps.check.outputs.enabled-branches }}
+  java-version:
+    description: 'Java version from config'
+    value: ${{ steps.check.outputs.java-version }}
+  python-version:
+    description: 'Python version from config'
+    value: ${{ steps.check.outputs.python-version }}
+  runner:
+    description: 'Primary runner from config'
+    value: ${{ steps.check.outputs.runner }}
+  gradle-flags:
+    description: 'Gradle flags from config'
+    value: ${{ steps.check.outputs.gradle-flags }}
+  kotlin-native-cache:
+    description: 'Whether Kotlin/Native caching is enabled'
+    value: ${{ steps.check.outputs.kotlin-native-cache }}
+  pages-enabled:
+    description: 'Whether GitHub Pages is enabled'
+    value: ${{ steps.check.outputs.pages-enabled }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Install Python dependencies
+      shell: bash
+      run: |
+        python3 -m pip install --quiet pyyaml
+    
+    - name: Check CI Status
+      id: check
+      shell: bash
+      env:
+        CONFIG_FILE: ${{ inputs.config-file }}
+        GITHUB_EVENT_NAME: ${{ github.event_name }}
+        GITHUB_REF_NAME: ${{ github.ref_name }}
+        GITHUB_BASE_REF: ${{ github.base_ref }}
+      run: |
+        python3 ${{ github.action_path }}/ci_status.py

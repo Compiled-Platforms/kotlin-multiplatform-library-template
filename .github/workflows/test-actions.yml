@@ -1,0 +1,86 @@
+name: Test Custom Actions
+
+on:
+  push:
+    paths:
+      - '.github/actions/**'
+      - '.github/workflows/test-actions.yml'
+  pull_request:
+    paths:
+      - '.github/actions/**'
+      - '.github/workflows/test-actions.yml'
+  workflow_dispatch:
+
+jobs:
+  test-ci-status:
+    name: Test CI Status Action
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+      
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+          cache-dependency-path: '.github/actions/ci-status/requirements-dev.txt'
+      
+      - name: Install dependencies
+        run: |
+          cd .github/actions/ci-status
+          pip install -r requirements-dev.txt
+      
+      - name: Run pytest
+        run: |
+          cd .github/actions/ci-status
+          pytest test_ci_status.py -v --cov=ci_status --cov-report=term-missing --cov-report=html
+      
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: coverage-report
+          path: .github/actions/ci-status/htmlcov/
+          retention-days: 7
+  
+  test-action-integration:
+    name: Integration Test CI Status Action
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+      
+      - name: Test action with current config
+        id: test
+        uses: ./.github/actions/ci-status
+      
+      - name: Verify outputs exist
+        run: |
+          echo "✓ Testing action outputs..."
+          echo "CI Enabled: ${{ steps.test.outputs.ci-enabled }}"
+          echo "Current Branch: ${{ steps.test.outputs.current-branch }}"
+          echo "Enabled Branches: ${{ steps.test.outputs.enabled-branches }}"
+          echo "Java Version: ${{ steps.test.outputs.java-version }}"
+          echo "Python Version: ${{ steps.test.outputs.python-version }}"
+          echo "Runner: ${{ steps.test.outputs.runner }}"
+          echo "Gradle Flags: ${{ steps.test.outputs.gradle-flags }}"
+          echo "Kotlin/Native Cache: ${{ steps.test.outputs.kotlin-native-cache }}"
+          echo "Pages Enabled: ${{ steps.test.outputs.pages-enabled }}"
+          
+          # Verify required outputs are not empty
+          test -n "${{ steps.test.outputs.ci-enabled }}" || (echo "::error::ci-enabled is empty" && exit 1)
+          test -n "${{ steps.test.outputs.current-branch }}" || (echo "::error::current-branch is empty" && exit 1)
+          test -n "${{ steps.test.outputs.java-version }}" || (echo "::error::java-version is empty" && exit 1)
+          
+          echo "✓ All required outputs are present"
+      
+      - name: Verify CI is currently disabled
+        run: |
+          if [[ "${{ steps.test.outputs.ci-enabled }}" != "false" ]]; then
+            echo "::error::Expected ci-enabled to be 'false' (as configured in project.yml)"
+            exit 1
+          fi
+          echo "✓ CI is correctly disabled as per project.yml configuration"

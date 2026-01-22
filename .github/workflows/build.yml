@@ -25,82 +25,22 @@ on:
   workflow_dispatch:
 
 jobs:
-  # Load configuration from project.yml
+  # Load configuration from project.yml using custom action
   config:
     runs-on: ubuntu-latest
     outputs:
-      ci-enabled: ${{ steps.load.outputs.ci-enabled }}
-      current-branch: ${{ steps.load.outputs.current-branch }}
-      enabled-branches: ${{ steps.load.outputs.enabled-branches }}
-      java-version: ${{ steps.load.outputs.java-version }}
-      runner: ${{ steps.load.outputs.runner }}
-      gradle-flags: ${{ steps.load.outputs.gradle-flags }}
-      kotlin-native-cache: ${{ steps.load.outputs.kotlin-native-cache }}
+      ci-enabled: ${{ steps.check.outputs.ci-enabled }}
+      java-version: ${{ steps.check.outputs.java-version }}
+      runner: ${{ steps.check.outputs.runner }}
+      gradle-flags: ${{ steps.check.outputs.gradle-flags }}
+      kotlin-native-cache: ${{ steps.check.outputs.kotlin-native-cache }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
       
-      - name: Load project configuration
-        id: load
-        run: |
-          # Install yq for YAML parsing
-          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
-          sudo chmod +x /usr/local/bin/yq
-          
-          # Get current branch name
-          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
-            BRANCH="${{ github.base_ref }}"
-          else
-            BRANCH="${{ github.ref_name }}"
-          fi
-          
-          # Check if CI is enabled for this branch
-          ENABLED_BRANCHES=$(yq '.ci.enabled_branches' project.yml)
-          
-          if [[ "$ENABLED_BRANCHES" == "false" ]]; then
-            CI_ENABLED="false"
-          elif [[ "$ENABLED_BRANCHES" == "all" ]]; then
-            CI_ENABLED="true"
-          else
-            # Check if current branch is in the list
-            if echo "$ENABLED_BRANCHES" | yq ".[] | select(. == \"$BRANCH\")" | grep -q "$BRANCH"; then
-              CI_ENABLED="true"
-            else
-              CI_ENABLED="false"
-            fi
-          fi
-          
-          echo "ci-enabled=$CI_ENABLED" >> $GITHUB_OUTPUT
-          echo "current-branch=$BRANCH" >> $GITHUB_OUTPUT
-          echo "enabled-branches=$ENABLED_BRANCHES" >> $GITHUB_OUTPUT
-          echo "java-version=$(yq '.versions.java' project.yml)" >> $GITHUB_OUTPUT
-          echo "runner=$(yq '.ci.runners.primary' project.yml)" >> $GITHUB_OUTPUT
-          echo "gradle-flags=$(yq '.ci.gradle_flags | join(" ")' project.yml)" >> $GITHUB_OUTPUT
-          echo "kotlin-native-cache=$(yq '.ci.caching.kotlin_native' project.yml)" >> $GITHUB_OUTPUT
-      
-      - name: CI Status
-        run: |
-          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          echo "📋 CI Configuration Status"
-          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          echo "Current branch:    ${{ steps.load.outputs.current-branch }}"
-          echo "Enabled branches:  ${{ steps.load.outputs.enabled-branches }}"
-          echo "CI enabled:        ${{ steps.load.outputs.ci-enabled }}"
-          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          
-          if [[ "${{ steps.load.outputs.ci-enabled }}" == "false" ]]; then
-            echo "::warning title=CI Skipped::Build job will be SKIPPED - CI disabled for branch '${{ steps.load.outputs.current-branch }}'. To enable, set ci.enabled_branches: [${{ steps.load.outputs.current-branch }}] in project.yml"
-            echo ""
-            echo "⏭️  Build job will be SKIPPED (CI disabled for this branch)"
-            echo ""
-            echo "To enable CI for this branch, update project.yml:"
-            echo "  ci:"
-            echo "    enabled_branches: [${{ steps.load.outputs.current-branch }}]"
-          else
-            echo "::notice title=CI Enabled::Build job will run for branch '${{ steps.load.outputs.current-branch }}'"
-            echo "✅ Build job will RUN"
-          fi
-          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+      - name: Check CI Status
+        id: check
+        uses: ./.github/actions/ci-status
   
   build:
     needs: config
