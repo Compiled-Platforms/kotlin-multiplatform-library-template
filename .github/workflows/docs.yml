@@ -1,11 +1,19 @@
 name: Deploy Documentation
 
+# CI behavior controlled by project.yml:
+# - ci.enabled_branches: Controls which branches run CI
+# - documentation.github_pages.enabled: Controls if docs deploy
+#
+# NOTE: GitHub Pages is public even for private repos
+
 on:
-  push:
-    branches: [ main ]
-  release:
-    types: [ published ]
+  # Disabled - GitHub Pages is public even for private repos
+  # Enable this workflow when ready to make docs public
   workflow_dispatch:
+  # push:
+  #   branches: [ main ]
+  # release:
+  #   types: [ published ]
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
@@ -19,19 +27,67 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  # Load configuration from project.yml
+  config:
+    runs-on: ubuntu-latest
+    outputs:
+      ci-enabled: ${{ steps.load.outputs.ci-enabled }}
+      java-version: ${{ steps.load.outputs.java-version }}
+      python-version: ${{ steps.load.outputs.python-version }}
+      pages-enabled: ${{ steps.load.outputs.pages-enabled }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+      
+      - name: Load project configuration
+        id: load
+        run: |
+          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
+          
+          # Get current branch name
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            BRANCH="${{ github.base_ref }}"
+          else
+            BRANCH="${{ github.ref_name }}"
+          fi
+          
+          # Check if CI is enabled for this branch
+          ENABLED_BRANCHES=$(yq '.ci.enabled_branches' project.yml)
+          
+          if [[ "$ENABLED_BRANCHES" == "false" ]]; then
+            CI_ENABLED="false"
+          elif [[ "$ENABLED_BRANCHES" == "all" ]]; then
+            CI_ENABLED="true"
+          else
+            # Check if current branch is in the list
+            if echo "$ENABLED_BRANCHES" | yq ".[] | select(. == \"$BRANCH\")" | grep -q "$BRANCH"; then
+              CI_ENABLED="true"
+            else
+              CI_ENABLED="false"
+            fi
+          fi
+          
+          echo "ci-enabled=$CI_ENABLED" >> $GITHUB_OUTPUT
+          echo "java-version=$(yq '.versions.java' project.yml)" >> $GITHUB_OUTPUT
+          echo "python-version=$(yq '.versions.python' project.yml)" >> $GITHUB_OUTPUT
+          echo "pages-enabled=$(yq '.documentation.github_pages.enabled' project.yml)" >> $GITHUB_OUTPUT
+  
   build-docs:
     name: Build Documentation
+    needs: config
+    if: needs.config.outputs.ci-enabled == 'true' && needs.config.outputs.pages-enabled == 'true'
     runs-on: ubuntu-latest
     
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
         
-      - name: Set up JDK 17
+      - name: Set up JDK
         uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
-          java-version: '17'
+          java-version: ${{ needs.config.outputs.java-version }}
           
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v5
@@ -39,7 +95,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v6
         with:
-          python-version: '3.11'
+          python-version: ${{ needs.config.outputs.python-version }}
           cache: 'pip'
           
       - name: Install MkDocs and dependencies

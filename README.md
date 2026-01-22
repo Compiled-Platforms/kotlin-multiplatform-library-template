@@ -4,6 +4,7 @@ A template for managing multiple Kotlin Multiplatform libraries in a single mono
 
 ## 🚀 Features
 
+- **Centralized Configuration**: Single `project.yml` file for all tooling, CI/CD, and project settings
 - **Monorepo Structure**: Manage multiple KMP libraries in one repository
 - **Auto-Discovery**: Libraries are automatically detected from the `libraries/` directory
 - **Convention Plugin**: Shared Gradle configuration to reduce boilerplate
@@ -25,6 +26,41 @@ A template for managing multiple Kotlin Multiplatform libraries in a single mono
 - **Setup Scripts**: Interactive scripts to customize the template
 
 ## 🎬 Getting Started
+
+### Configuration System
+
+This template uses a **centralized configuration file** (`project.yml`) as a single source of truth for all tooling:
+
+```bash
+# Read any config value
+python scripts/get-config.py versions.java
+python scripts/get-config.py ci.runners.primary
+python scripts/get-config.py platforms.enabled
+```
+
+**Benefits:**
+- ✅ Change Java version once, updates everywhere (CI, docs, scripts)
+- ✅ Self-documenting project setup
+- ✅ Easy to enable/disable features (GitHub Pages, coverage, etc.)
+- ✅ Branch-specific CI control (enable on main only, main+develop, or all branches)
+- ✅ Consistent behavior between local and CI
+
+📖 **See [PROJECT_CONFIG.md](PROJECT_CONFIG.md) for complete documentation**
+
+**Quick Examples:**
+```yaml
+# Only run CI on main branch
+ci:
+  enabled_branches: [main]
+
+# Run on main and develop
+ci:
+  enabled_branches: [main, develop]
+
+# Disable all CI
+ci:
+  enabled_branches: false
+```
 
 ### First Time Setup
 
