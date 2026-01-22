@@ -47,17 +47,6 @@ pre-push:
   commands:
     build:
       run: ./gradlew build --daemon
-      
-    check-branch:
-      run: |
-        branch=$(git rev-parse --abbrev-ref HEAD)
-        if [[ "$branch" == "main" || "$branch" == "master" ]]; then
-          echo "⚠️  WARNING: You are pushing to $branch!"
-          read -p "Are you sure? (yes/no): " confirm
-          if [[ "$confirm" != "yes" ]]; then
-            exit 1
-          fi
-        fi
 
 skip_output:
   - meta
