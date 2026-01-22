@@ -25,16 +25,16 @@ jobs:
         
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
           java-version: '17'
       
       - name: Cache Kotlin/Native dependencies
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             ~/.konan
@@ -44,7 +44,7 @@ jobs:
             ${{ runner.os }}-konan-
           
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
+        uses: gradle/actions/setup-gradle@v5
         with:
           cache-read-only: ${{ github.ref != 'refs/heads/main' && github.ref != 'refs/heads/develop' }}
           
@@ -60,7 +60,7 @@ jobs:
         if: matrix.os == 'ubuntu-latest' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
         
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         if: matrix.os == 'ubuntu-latest' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
         with:
           name: build-artifacts
@@ -70,7 +70,7 @@ jobs:
           retention-days: 7
           
       - name: Upload test results
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         if: always() && matrix.os == 'ubuntu-latest' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
         with:
           name: test-results
@@ -80,7 +80,7 @@ jobs:
           retention-days: 7
           
       - name: Upload Dokka documentation
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         if: matrix.os == 'ubuntu-latest' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
         with:
           name: dokka-docs
@@ -88,7 +88,7 @@ jobs:
           retention-days: 7
           
       - name: Upload coverage reports
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         if: matrix.os == 'ubuntu-latest' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
         with:
           name: coverage-reports
@@ -106,16 +106,16 @@ jobs:
     
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
           java-version: '17'
       
       - name: Cache Kotlin/Native dependencies
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             ~/.konan
@@ -125,7 +125,7 @@ jobs:
             ${{ runner.os }}-konan-
           
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
+        uses: gradle/actions/setup-gradle@v5
         
       - name: Run Linux Native Tests
         run: ./gradlew linuxX64Test --daemon --parallel --configuration-cache
@@ -140,16 +140,16 @@ jobs:
     
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
           java-version: '17'
       
       - name: Cache Kotlin/Native dependencies
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             ~/.konan
@@ -159,7 +159,7 @@ jobs:
             ${{ runner.os }}-konan-
           
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
+        uses: gradle/actions/setup-gradle@v5
         
       - name: Run iOS Simulator Tests
         run: ./gradlew iosSimulatorArm64Test --daemon --parallel --configuration-cache
@@ -173,16 +173,16 @@ jobs:
     
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
           java-version: '17'
       
       - name: Cache Kotlin/Native dependencies
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             ~/.konan
@@ -192,7 +192,7 @@ jobs:
             ${{ runner.os }}-konan-
           
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
+        uses: gradle/actions/setup-gradle@v5
         
       - name: Build with Gradle
         run: ./gradlew build --daemon --parallel --configuration-cache
@@ -204,16 +204,16 @@ jobs:
     
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
           java-version: '17'
       
       - name: Cache Kotlin/Native dependencies
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             ~/.konan
@@ -223,13 +223,13 @@ jobs:
             ${{ runner.os }}-konan-
           
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
+        uses: gradle/actions/setup-gradle@v5
         
       - name: Run Detekt
         run: ./gradlew detekt --daemon --parallel --configuration-cache
         
       - name: Upload Detekt report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         if: always()
         with:
           name: detekt-report
