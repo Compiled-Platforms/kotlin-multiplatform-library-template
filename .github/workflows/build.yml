@@ -36,7 +36,9 @@ jobs:
       - name: Cache Kotlin/Native dependencies
         uses: actions/cache@v4
         with:
-          path: ~/.konan
+          path: |
+            ~/.konan
+            ~\.konan
           key: ${{ runner.os }}-konan-${{ hashFiles('gradle/libs.versions.toml') }}
           restore-keys: |
             ${{ runner.os }}-konan-
@@ -115,7 +117,9 @@ jobs:
       - name: Cache Kotlin/Native dependencies
         uses: actions/cache@v4
         with:
-          path: ~/.konan
+          path: |
+            ~/.konan
+            ~\.konan
           key: ${{ runner.os }}-konan-${{ hashFiles('gradle/libs.versions.toml') }}
           restore-keys: |
             ${{ runner.os }}-konan-
@@ -147,7 +151,9 @@ jobs:
       - name: Cache Kotlin/Native dependencies
         uses: actions/cache@v4
         with:
-          path: ~/.konan
+          path: |
+            ~/.konan
+            ~\.konan
           key: ${{ runner.os }}-konan-${{ hashFiles('gradle/libs.versions.toml') }}
           restore-keys: |
             ${{ runner.os }}-konan-
@@ -178,7 +184,9 @@ jobs:
       - name: Cache Kotlin/Native dependencies
         uses: actions/cache@v4
         with:
-          path: ~/.konan
+          path: |
+            ~/.konan
+            ~\.konan
           key: ${{ runner.os }}-konan-${{ hashFiles('gradle/libs.versions.toml') }}
           restore-keys: |
             ${{ runner.os }}-konan-
@@ -207,7 +215,9 @@ jobs:
       - name: Cache Kotlin/Native dependencies
         uses: actions/cache@v4
         with:
-          path: ~/.konan
+          path: |
+            ~/.konan
+            ~\.konan
           key: ${{ runner.os }}-konan-${{ hashFiles('gradle/libs.versions.toml') }}
           restore-keys: |
             ${{ runner.os }}-konan-
