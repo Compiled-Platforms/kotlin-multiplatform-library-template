@@ -1,4 +1,13 @@
 [versions]
+# Tool versions for CI/CD
+python-ci = "3.11"       # Python version for GitHub Actions runners
+java-ci = "17"           # Java version for GitHub Actions runners
+
+# Java versions for build
+java-toolchain = "17"    # JVM toolchain for Kotlin compilation
+java-target = "11"       # Target JVM bytecode version (for compatibility)
+
+# Build tool versions
 agp = "8.13.0"
 kotlin = "2.3.0"
 android-minSdk = "24"

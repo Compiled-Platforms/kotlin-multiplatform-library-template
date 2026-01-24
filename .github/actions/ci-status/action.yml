@@ -18,12 +18,6 @@ outputs:
   enabled-branches:
     description: 'Configured enabled branches'
     value: ${{ steps.check.outputs.enabled-branches }}
-  java-version:
-    description: 'Java version from config'
-    value: ${{ steps.check.outputs.java-version }}
-  python-version:
-    description: 'Python version from config'
-    value: ${{ steps.check.outputs.python-version }}
   runner:
     description: 'Primary runner from config'
     value: ${{ steps.check.outputs.runner }}

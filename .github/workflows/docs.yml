@@ -32,8 +32,6 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       ci-enabled: ${{ steps.check.outputs.ci-enabled }}
-      java-version: ${{ steps.check.outputs.java-version }}
-      python-version: ${{ steps.check.outputs.python-version }}
       pages-enabled: ${{ steps.check.outputs.pages-enabled }}
     steps:
       - name: Checkout code
@@ -52,12 +50,16 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
+      
+      - name: Parse Versions
+        id: versions
+        uses: ./.github/actions/parse-versions
         
       - name: Set up JDK
         uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
-          java-version: ${{ needs.config.outputs.java-version }}
+          java-version: ${{ steps.versions.outputs.java-version }}
           
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v5
@@ -65,7 +67,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v6
         with:
-          python-version: ${{ needs.config.outputs.python-version }}
+          python-version: ${{ steps.versions.outputs.python-version }}
           cache: 'pip'
           
       - name: Install MkDocs and dependencies

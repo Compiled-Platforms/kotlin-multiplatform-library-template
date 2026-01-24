@@ -30,7 +30,6 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       ci-enabled: ${{ steps.check.outputs.ci-enabled }}
-      java-version: ${{ steps.check.outputs.java-version }}
       runner: ${{ steps.check.outputs.runner }}
       gradle-flags: ${{ steps.check.outputs.gradle-flags }}
       kotlin-native-cache: ${{ steps.check.outputs.kotlin-native-cache }}
@@ -50,12 +49,16 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
+      
+      - name: Parse Versions
+        id: versions
+        uses: ./.github/actions/parse-versions
         
       - name: Set up JDK
         uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
-          java-version: ${{ needs.config.outputs.java-version }}
+          java-version: ${{ steps.versions.outputs.java-version }}
       
       - name: Cache Kotlin/Native dependencies
         if: needs.config.outputs.kotlin-native-cache == 'true'

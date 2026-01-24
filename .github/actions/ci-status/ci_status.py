@@ -102,7 +102,6 @@ def main():
         
         # Extract configuration values
         ci_config = config.get('ci', {})
-        versions = config.get('versions', {})
         docs_config = config.get('documentation', {})
         
         enabled_branches = ci_config.get('enabled_branches', False)
@@ -112,8 +111,6 @@ def main():
         set_output('ci-enabled', str(ci_enabled).lower())
         set_output('current-branch', current_branch)
         set_output('enabled-branches', format_list(enabled_branches))
-        set_output('java-version', versions.get('java', '17'))
-        set_output('python-version', versions.get('python', '3.11'))
         set_output('runner', ci_config.get('runners', {}).get('primary', 'ubuntu-latest'))
         
         # Format gradle flags

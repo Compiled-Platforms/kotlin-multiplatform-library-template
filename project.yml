@@ -20,23 +20,6 @@ project:
     discussions: true
     issues: true
 
-# Version requirements for all tools
-versions:
-  # Runtime versions
-  java: '17'
-  kotlin: '2.3.0'
-  gradle: '9.0.0'
-  
-  # Documentation tools
-  python: '3.11'
-  mkdocs: '1.5.3'
-  
-  # Minimum supported versions for consumers
-  minimum:
-    android_api: 24
-    ios: '13.0'
-    jvm: '11'
-
 # Platform configuration
 platforms:
   # Enabled targets

@@ -1,215 +1,232 @@
 #!/usr/bin/env python3
-
 """
 Kotlin Multiplatform Library Template Setup Script
-This script helps you customize the template with your own values
+Reads configuration from project.yml and updates all project files
 """
 
-import os
-import re
-import shutil
 import sys
-from datetime import datetime
-from pathlib import Path
+import re
 
 
-class Colors:
-    """ANSI color codes for terminal output"""
-    RED = '\033[0;31m'
-    GREEN = '\033[0;32m'
-    YELLOW = '\033[1;33m'
-    NC = '\033[0m'  # No Color
+def get_input(prompt: str, required: bool = True) -> str:
+    """Get input from user with optional validation."""
+    while True:
+        value = input(prompt).strip()
+        if value or not required:
+            return value
+        print("❌ Error: This field is required. Please enter a value.")
 
 
-def print_error(message: str) -> None:
-    """Print error message in red"""
-    print(f"{Colors.RED}{message}{Colors.NC}")
-
-
-def print_success(message: str) -> None:
-    """Print success message in green"""
-    print(f"{Colors.GREEN}{message}{Colors.NC}")
-
-
-def print_warning(message: str) -> None:
-    """Print warning message in yellow"""
-    print(f"{Colors.YELLOW}{message}{Colors.NC}")
-
-
-def get_input(prompt: str) -> str:
-    """Get input from user with validation"""
-    value = input(prompt).strip()
-    if not value:
-        print_error("Error: Value cannot be empty")
-        sys.exit(1)
-    return value
-
-
-def replace_in_file(file_path: Path, old: str, new: str) -> None:
-    """Replace text in a file"""
-    if not file_path.exists():
-        return
+def parse_domain(domain: str) -> str:
+    """
+    Parse domain from various formats and return clean domain name.
     
-    try:
-        content = file_path.read_text(encoding='utf-8')
-        content = content.replace(old, new)
-        file_path.write_text(content, encoding='utf-8')
-    except Exception as e:
-        print_error(f"Error processing {file_path}: {e}")
+    Accepts formats:
+    - https://mycompany.com
+    - http://www.mycompany.com
+    - mycompany.com
+    - www.mycompany.com
+    
+    Returns: mycompany.com (clean domain without protocol or www)
+    """
+    # Remove protocol
+    domain = re.sub(r'^https?://', '', domain)
+    
+    # Remove www.
+    domain = re.sub(r'^www\.', '', domain)
+    
+    # Remove trailing slash
+    domain = domain.rstrip('/')
+    
+    # Remove any path
+    domain = domain.split('/')[0]
+    
+    # Basic validation - should have at least one dot
+    if '.' not in domain:
+        raise ValueError("Invalid domain format - must include TLD (e.g., .com, .io)")
+    
+    return domain.lower()
 
 
-def find_files_with_pattern(pattern: str, extensions: list[str], exclude_dirs: list[str]) -> list[Path]:
-    """Find all files containing a pattern"""
-    files_with_pattern = []
+def domain_to_group_id(domain: str) -> str:
+    """
+    Convert domain to reverse notation group ID.
     
-    for ext in extensions:
-        for file_path in Path('.').rglob(f'*{ext}'):
-            # Check if file is in excluded directory
-            if any(excluded in str(file_path) for excluded in exclude_dirs):
-                continue
-            
-            try:
-                content = file_path.read_text(encoding='utf-8')
-                if pattern in content:
-                    files_with_pattern.append(file_path)
-            except Exception:
-                # Skip files that can't be read
-                continue
+    Examples:
+    - mycompany.com → com.mycompany
+    - stripe.io → io.stripe
+    - touchlab.co → co.touchlab
+    """
+    parts = domain.split('.')
+    return '.'.join(reversed(parts))
+
+
+def parse_github_url(url: str) -> tuple[str, str]:
+    """
+    Parse GitHub URL to extract organization and repository name.
     
-    return files_with_pattern
+    Accepts formats:
+    - https://github.com/org/repo
+    - https://github.com/org/repo.git
+    - git@github.com:org/repo.git
+    - org/repo
+    
+    Returns: (organization, repository)
+    """
+    # Remove .git suffix if present
+    url = url.rstrip('/').replace('.git', '')
+    
+    # Try HTTPS format
+    match = re.search(r'github\.com[:/]([^/]+)/([^/]+)', url)
+    if match:
+        return match.group(1), match.group(2)
+    
+    # Try simple org/repo format
+    match = re.match(r'^([^/]+)/([^/]+)$', url)
+    if match:
+        return match.group(1), match.group(2)
+    
+    raise ValueError("Invalid GitHub URL format")
 
 
 def main():
-    """Main setup function"""
+    """Main setup function."""
     print("🚀 Kotlin Multiplatform Library Template Setup")
-    print("=" * 46)
+    print("=" * 50)
     print()
     
-    # Check if we're in the right directory
-    if not Path('settings.gradle.kts').exists():
-        print_error("Error: This script must be run from the root of the project")
-        sys.exit(1)
-    
-    # Check if template has already been set up
-    template_file = Path('.template')
-    if template_file.exists():
-        content = template_file.read_text().strip()
-        if content == 'configured':
-            print_warning("Note: Template has already been configured once")
-            response = input("Do you want to reconfigure? (y/n): ").strip().lower()
-            if response != 'y':
-                print("Setup cancelled")
-                sys.exit(0)
-    
+    # Determine project type
+    print("What type of project is this?")
     print()
-    print("Please provide the following information:")
+    print("1. Personal project (GitHub username)")
+    print("2. Company project (with owned domain)")
+    print("3. Open source organization")
     print()
     
-    # Get user input
-    group_id = get_input("📦 Enter your Maven group ID (e.g., com.example.libraries): ")
-    project_name = get_input("📝 Enter your project name (e.g., my-kmp-libraries): ")
-    github_org = get_input("🐙 Enter your GitHub username or organization: ")
-    developer_name = get_input("👤 Enter developer name (for POM files): ")
-    developer_username = get_input("🔗 Enter developer GitHub username: ")
+    while True:
+        choice = get_input("Enter your choice (1, 2, or 3): ")
+        if choice in ['1', '2', '3']:
+            break
+        print("❌ Please enter 1, 2, or 3")
+        print()
     
-    # Show summary
-    print()
-    print("Summary of changes:")
-    print("-" * 19)
-    print(f"Group ID: com.compiledplatforms.kmp.library → {group_id}")
-    print(f"Project Name: kotlin-multiplatform-library-template → {project_name}")
-    print(f"GitHub Org: compiledplatforms → {github_org}")
-    print(f"Developer Name: Developer Name → {developer_name}")
-    print(f"Developer Username: developer → {developer_username}")
-    print()
-    
-    response = input("Proceed with these changes? (y/n): ").strip().lower()
-    if response != 'y':
-        print("Setup cancelled")
-        sys.exit(0)
+    project_type = {
+        '1': 'personal',
+        '2': 'company',
+        '3': 'organization'
+    }[choice]
     
     print()
-    print("🔧 Applying changes...")
+    print(f"✓ Project type: {project_type}")
     
-    # Create backup
-    print("📋 Creating backup...")
-    backup_dir = Path(f'.setup-backup-{int(datetime.now().timestamp())}')
-    backup_dir.mkdir(exist_ok=True)
-    
-    items_to_backup = ['settings.gradle.kts', 'README.md', 'buildSrc', 
-                       'libraries', 'bom', 'samples', 'scripts']
-    for item in items_to_backup:
-        item_path = Path(item)
-        if item_path.exists():
+    # Ask for domain if company project
+    domain = None
+    if project_type == 'company':
+        print()
+        print("Enter your company domain (e.g., mycompany.com):")
+        
+        while True:
+            domain_input = get_input("Domain: ")
             try:
-                if item_path.is_dir():
-                    shutil.copytree(item_path, backup_dir / item, dirs_exist_ok=True)
-                else:
-                    shutil.copy2(item_path, backup_dir / item)
-            except Exception:
-                pass  # Continue even if some items fail to backup
-    
-    exclude_dirs = ['build', '.gradle', '.git', '.setup-backup-']
-    
-    # Replace group ID
-    print("📦 Updating group ID...")
-    extensions = ['.gradle.kts', '.kt', '.md', '.sh', '.py']
-    files = find_files_with_pattern('com.compiledplatforms.kmp.library', extensions, exclude_dirs)
-    for file_path in files:
-        replace_in_file(file_path, 'com.compiledplatforms.kmp.library', group_id)
-    
-    # Replace project name
-    print("📝 Updating project name...")
-    replace_in_file(Path('settings.gradle.kts'), 
-                   'kotlin-multiplatform-library-template', project_name)
-    
-    extensions = ['.md', '.gradle.kts']
-    files = find_files_with_pattern('kotlin-multiplatform-library-template', extensions, exclude_dirs)
-    for file_path in files:
-        replace_in_file(file_path, 'kotlin-multiplatform-library-template', project_name)
-    
-    # Replace GitHub org
-    print("🐙 Updating GitHub URLs...")
-    extensions = ['.gradle.kts', '.md']
-    files = find_files_with_pattern('compiledplatforms', extensions, exclude_dirs)
-    for file_path in files:
-        replace_in_file(file_path, 'compiledplatforms', github_org)
-    
-    # Replace developer info
-    print("👤 Updating developer information...")
-    extensions = ['.gradle.kts']
-    files = find_files_with_pattern('Developer Name', extensions, exclude_dirs)
-    for file_path in files:
-        replace_in_file(file_path, 'Developer Name', developer_name)
-    
-    files = find_files_with_pattern('id = "developer"', extensions, exclude_dirs)
-    for file_path in files:
-        replace_in_file(file_path, 'id = "developer"', f'id = "{developer_username}"')
-        replace_in_file(file_path, 'url = "https://github.com/developer"', 
-                       f'url = "https://github.com/{developer_username}"')
-    
-    # Update namespace in convention plugin
-    print("🔧 Updating Android namespaces...")
-    for file_path in Path('buildSrc').rglob('*.gradle.kts'):
-        if 'build' not in str(file_path):
-            replace_in_file(file_path, 'com.compiledplatforms.kmp.library', group_id)
-    
-    # Mark as configured
-    template_file.write_text('configured\n')
+                domain = parse_domain(domain_input)
+                print(f"✓ Domain: {domain}")
+                break
+            except ValueError as e:
+                print(f"❌ Error: {e}")
+                print("Please enter a valid domain (e.g., mycompany.com, stripe.io)")
     
     print()
-    print_success("✅ Setup complete!")
+    
+    # Get GitHub URL
+    print("Next, let's get your GitHub repository information:")
     print()
-    print("Next steps:")
-    print("1. Review the changes with: git diff")
-    print("2. Test the build: ./gradlew build")
-    print("3. Remove the example library if not needed: rm -rf libraries/example-library")
-    print("4. Create your first library: python scripts/create-library.py <library-name>")
-    print("5. Update README.md with your project details")
+    
+    while True:
+        github_url = get_input("Enter your GitHub repository URL: ")
+        
+        try:
+            organization, repository = parse_github_url(github_url)
+            print()
+            print(f"✓ Organization: {organization}")
+            print(f"✓ Repository: {repository}")
+            print()
+            
+            confirm = input("Is this correct? (y/n): ").strip().lower()
+            if confirm == 'y':
+                break
+            print()
+        except ValueError as e:
+            print(f"❌ Error: {e}")
+            print("Please use format: https://github.com/org/repo or org/repo")
+            print()
+    
+    # Get project name (default to repository name)
     print()
-    print(f"Backup saved to: {backup_dir}")
-    print("You can remove it after verifying everything works correctly.")
+    project_name_input = input(f"Project name [{repository}]: ").strip()
+    project_name = project_name_input if project_name_input else repository
+    
+    if project_name != repository:
+        print(f"✓ Using custom project name: {project_name}")
+    else:
+        print(f"✓ Using repository name: {project_name}")
+    
+    # Get Maven Group ID (with suggestions based on project type)
     print()
+    print("Maven Group ID (reverse domain notation):")
+    
+    # Suggest group_id based on project type
+    if project_type == 'personal':
+        suggestion = f"io.github.{organization.lower()}"
+        print(f"  Suggestion for personal project: {suggestion}")
+    elif project_type == 'company':
+        if domain:
+            suggestion = domain_to_group_id(domain)
+            print(f"  Based on your domain: {suggestion}")
+        else:
+            print(f"  Example: com.yourcompany.kmp")
+            suggestion = ""
+    else:  # organization
+        # Try to make a suggestion from org name
+        org_lower = organization.lower().replace('-', '')
+        suggestion = f"org.{org_lower}.libs"
+        print(f"  Suggestion for organization: {suggestion}")
+    
+    print("  Format: reverse.domain.notation (no hyphens)")
+    print()
+    
+    if suggestion:
+        group_id_input = input(f"Maven Group ID [{suggestion}]: ").strip()
+        group_id = group_id_input if group_id_input else suggestion
+    else:
+        group_id = get_input("Maven Group ID: ", required=True)
+    
+    print(f"✓ Maven Group ID: {group_id}")
+    
+    # Get Android namespace prefix (default to group_id)
+    print()
+    namespace_input = input(f"Android namespace [{group_id}]: ").strip()
+    namespace_prefix = namespace_input if namespace_input else group_id
+    
+    if namespace_prefix != group_id:
+        print(f"⚠️  Warning: namespace_prefix differs from group_id!")
+        print(f"   Group ID: {group_id}")
+        print(f"   Namespace: {namespace_prefix}")
+    else:
+        print(f"✓ Android namespace: {namespace_prefix}")
+    
+    print()
+    print("=" * 50)
+    print("📋 Configuration Summary")
+    print("=" * 50)
+    print()
+    print(f"Project Type:       {project_type}")
+    if domain:
+        print(f"Company Domain:     {domain}")
+    print(f"Organization:       {organization}")
+    print(f"Repository:         {repository}")
+    print(f"Project Name:       {project_name}")
+    print(f"Maven Group ID:     {group_id}")
+    print(f"Android Namespace:  {namespace_prefix}")
 
 
 if __name__ == '__main__':
@@ -217,5 +234,5 @@ if __name__ == '__main__':
         main()
     except KeyboardInterrupt:
         print()
-        print_error("Setup cancelled by user")
+        print("❌ Setup cancelled by user")
         sys.exit(1)

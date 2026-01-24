@@ -25,6 +25,104 @@ A template for managing multiple Kotlin Multiplatform libraries in a single mono
 - **CI/CD Ready**: GitHub Actions workflows for build and publish
 - **Setup Scripts**: Interactive scripts to customize the template
 
+## 🎯 For New Users (Start Here!)
+
+**Just created a repository from this template?** Follow these steps to customize it for your project:
+
+### Step 1: Configure Your Project
+
+Copy the template file and fill in your project details:
+
+```bash
+# Copy the template
+cp project.yml.template project.yml
+
+# Edit with your favorite editor
+nano project.yml  # or vim, code, etc.
+```
+
+The template file includes detailed descriptions for each field, including:
+- What each setting is used for
+- Suggestions and examples
+- Common patterns for different project types
+
+Fill in all fields marked with `<<REQUIRED>>`:
+
+```yaml
+project:
+  name: your-project-name                    # e.g., my-kmp-libraries
+  organization: YourGitHubOrg                # Your GitHub username or org
+  repository: your-repo-name                 # Your repository name
+  license: Apache-2.0                        # Your chosen license
+  
+  maintainers:
+    - name: Your Name
+      github: yourusername
+  
+  support:
+    email: support@yourcompany.com
+
+platforms:
+  android:
+    namespace_prefix: com.yourcompany.kmp    # Your Android package prefix
+
+publishing:
+  group_id: com.yourcompany.kmp              # Your Maven Group ID
+```
+
+### Step 2: Run Setup Script
+
+The setup script will read your `project.yml` and update all files automatically:
+
+```bash
+python3 scripts/project-setup.py
+```
+
+This updates:
+- 📦 Package names in all Kotlin source files
+- 🔧 Gradle configuration files
+- 📚 Documentation and README files
+- 🏷️ Maven POM metadata
+- 🔗 GitHub repository URLs
+
+### Step 3: Update Your License
+
+The template includes an Apache 2.0 license by default. If you want a different license:
+
+1. Update `project.yml`:
+   ```yaml
+   project:
+     license: MIT  # Or GPL-3.0, BSD-3-Clause, etc.
+   ```
+
+2. Replace the `LICENSE` file with your chosen license text
+
+**Tip:** You can find license templates at [choosealicense.com](https://choosealicense.com/) or use GitHub's license generator.
+
+### Step 4: Commit and Push
+
+```bash
+git add .
+git commit -m "chore: configure template for my project"
+git push
+```
+
+### Step 5: Enable CI (Optional)
+
+By default, CI is **disabled** (`ci.enabled_branches: false` in `project.yml`) to avoid using your GitHub Actions minutes while setting up.
+
+When you're ready to enable CI:
+
+```yaml
+# In project.yml
+ci:
+  enabled_branches: [main]  # Enable on main branch only
+```
+
+Then commit and push to activate GitHub Actions.
+
+---
+
 ## 🎬 Getting Started
 
 ### Configuration System
@@ -62,32 +160,6 @@ ci:
   enabled_branches: false
 ```
 
-### First Time Setup
-
-After cloning this template, run the setup script to customize it with your own values:
-
-```bash
-python3 scripts/project-setup.py
-```
-
-The script will prompt you for:
-- **Maven Group ID**: Your package identifier (e.g., `com.example.libraries`)
-- **Project Name**: Your project name (e.g., `my-kmp-libraries`)
-- **GitHub Organization**: Your GitHub username or organization
-- **Developer Info**: Name and GitHub username for POM files
-
-The setup script will automatically update all configuration files, package names, and documentation.
-
-### Manual Setup (Alternative)
-
-If you prefer to set things up manually, update the following:
-
-1. **Group ID**: Replace `com.compiledplatforms.kmp.library` throughout the project
-2. **Project Name**: Update `rootProject.name` in `settings.gradle.kts`
-3. **GitHub URLs**: Update repository URLs in POM configurations
-4. **Package Names**: Update package declarations in Kotlin source files
-5. **Developer Info**: Update POM metadata in build files
-
 ## 📁 Project Structure
 
 ```
@@ -120,19 +192,34 @@ kotlin-multiplatform-library-template/
 
 ### Prerequisites
 
-- Java 11 or higher
-- Android SDK (for Android targets)
-- Xcode (for iOS targets, macOS only)
-- Python 3 (for setup scripts)
-- Lefthook (optional, for Git hooks)
-- git-cliff (optional, for changelog generation)
+**Required for setup:**
+- Python 3.11+ (for setup scripts and CI configuration)
 
-### Clone and Build
+**Required for building:**
+- Java 17+ (specified in `project.yml`)
+- Gradle 9.0+ (uses wrapper, no manual install needed)
+
+**Optional (platform-specific):**
+- Android SDK (only if building Android targets)
+- Xcode (only if building iOS targets, macOS only)
+
+**Optional (development tools):**
+- Lefthook (for automated Git hooks - strongly recommended)
+- git-cliff (for changelog generation)
+
+### Build Your Project
+
+After completing the setup steps above:
 
 ```bash
-git clone <your-repo-url>
-cd kotlin-multiplatform-library-template
+# Build all libraries
 ./gradlew build
+
+# Run tests
+./gradlew test
+
+# Build a specific library
+./gradlew :libraries:example-library:build
 ```
 
 ### Setting Up Git Hooks (Lefthook)

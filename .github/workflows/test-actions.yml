@@ -63,8 +63,6 @@ jobs:
           echo "CI Enabled: ${{ steps.test.outputs.ci-enabled }}"
           echo "Current Branch: ${{ steps.test.outputs.current-branch }}"
           echo "Enabled Branches: ${{ steps.test.outputs.enabled-branches }}"
-          echo "Java Version: ${{ steps.test.outputs.java-version }}"
-          echo "Python Version: ${{ steps.test.outputs.python-version }}"
           echo "Runner: ${{ steps.test.outputs.runner }}"
           echo "Gradle Flags: ${{ steps.test.outputs.gradle-flags }}"
           echo "Kotlin/Native Cache: ${{ steps.test.outputs.kotlin-native-cache }}"
@@ -73,7 +71,6 @@ jobs:
           # Verify required outputs are not empty
           test -n "${{ steps.test.outputs.ci-enabled }}" || (echo "::error::ci-enabled is empty" && exit 1)
           test -n "${{ steps.test.outputs.current-branch }}" || (echo "::error::current-branch is empty" && exit 1)
-          test -n "${{ steps.test.outputs.java-version }}" || (echo "::error::java-version is empty" && exit 1)
           
           echo "✓ All required outputs are present"
       
@@ -84,3 +81,60 @@ jobs:
             exit 1
           fi
           echo "✓ CI is correctly disabled as per project.yml configuration"
+  
+  test-parse-versions:
+    name: Test Parse Versions Action
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+      
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+          cache-dependency-path: '.github/actions/parse-versions/requirements-dev.txt'
+      
+      - name: Install dependencies
+        run: |
+          cd .github/actions/parse-versions
+          pip install -r requirements-dev.txt
+      
+      - name: Run pytest
+        run: |
+          cd .github/actions/parse-versions
+          pytest test_parse_versions.py -v --cov=parse_versions --cov-report=term-missing --cov-report=html
+      
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: parse-versions-coverage-report
+          path: .github/actions/parse-versions/htmlcov/
+          retention-days: 7
+  
+  test-parse-versions-integration:
+    name: Integration Test Parse Versions Action
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+      
+      - name: Test action with current config
+        id: test
+        uses: ./.github/actions/parse-versions
+      
+      - name: Verify outputs exist
+        run: |
+          echo "✓ Testing action outputs..."
+          echo "Java Version: ${{ steps.test.outputs.java-version }}"
+          echo "Python Version: ${{ steps.test.outputs.python-version }}"
+          
+          # Verify required outputs are not empty
+          test -n "${{ steps.test.outputs.java-version }}" || (echo "::error::java-version is empty" && exit 1)
+          test -n "${{ steps.test.outputs.python-version }}" || (echo "::error::python-version is empty" && exit 1)
+          
+          echo "✓ All required outputs are present"
