@@ -1,0 +1,19 @@
+---
+globs: **/*.kt
+alwaysApply: false
+---
+## Main thread + UI safety
+- UI-facing reactive work must be collected or observed on the main thread.
+- Do not call iOS UI frameworks from background threads; enforce main-thread execution at the platform boundary.
+
+## Bridging iOS event sources
+- When converting iOS delegates, notifications, or callbacks into `Flow`, always dispose of subscriptions on cancellation or completion.
+- Avoid retaining platform objects unintentionally through reactive pipelines; keep ownership explicit to prevent reference cycles.
+
+## iOS / Native concurrency constraints
+- Do not assume JVM-style threading or memory behavior on iOS.
+- Avoid sharing mutable state across threads in reactive pipelines unless it is explicitly safe; prefer immutability and confinement.
+
+## Stream lifetime management
+- Treat bursty event sources (UI events, notifications) as backpressure-sensitive.
+- Ensure hot streams are not kept alive unintentionally by retained collectors or producers.

@@ -1,0 +1,46 @@
+---
+globs: **/*.kt
+alwaysApply: false
+---
+## Default Preference
+- Prefer reactive streams for ongoing, asynchronous, or event-driven data.
+- Prefer `Flow` over callbacks/listeners at API boundaries unless a callback is explicitly required.
+- Prefer `Flow` over `Channel` unless queue semantics, explicit backpressure, or fan-in/fan-out are required.
+
+## Flow Design
+- Expose streams as read-only `Flow`; keep mutability internal.
+- Prefer cold flows by default; use hot flows only when shared state or shared events are required.
+- Use state-style streams for current state and event-style streams for discrete events; avoid mixing the two unless justified.
+
+## Collection & Lifecycle
+- Do not collect flows without clear ownership and cancellation.
+- Avoid unbounded or fire-and-forget collectors.
+- Do not start background collection in library code unless the component clearly owns the lifecycle and provides a stop/cancel mechanism.
+
+## Composition & Semantics
+- Prefer operator-based composition over manual plumbing.
+- Choose composition and flattening semantics intentionally based on ordering, cancellation, and concurrency needs.
+- Minimize context shifts; use context-changing operators intentionally and locally.
+
+## Errors & Cancellation
+- Do not silently swallow flow errors.
+- Make failure semantics explicit (handle errors or expose them to consumers).
+- Do not catch or suppress cancellation.
+
+## Backpressure & Rate Control
+- Handle producer/consumer speed mismatches intentionally.
+- Only add buffering, conflation, or rate-limiting when required, and document the implications (data loss, ordering, latency).
+
+## Channels (when appropriate)
+- Use channels explicitly as queues or coordination primitives, not as a default stream abstraction.
+- Define ownership and closure semantics clearly.
+- Prefer exposing channels as `Flow` at API boundaries.
+
+## Resource Safety
+- Ensure flows release resources on completion or cancellation.
+- Do not leak producers or collectors; all reactive work must be tied to a cancellable scope.
+
+## Testing
+- Test flows deterministically.
+- Avoid timing-based sleeps; prefer controlled emission and scheduling.
+- Validate success, failure, and cancellation behavior.

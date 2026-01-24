@@ -1,0 +1,24 @@
+---
+description: This rule defines standards for thread safety, shared state ownership, and safe concurrent access.
+alwaysApply: false
+---
+## Defaults
+- Assume code may be accessed concurrently unless explicitly documented otherwise.
+- Prefer immutability by default; mutable state must have a clear owner.
+
+## Shared mutable state
+- Do not access mutable state from multiple threads without an explicit thread-safety strategy (confinement, synchronization, or thread-safe primitives).
+- Avoid exposing mutable internal state directly; prefer immutable views or defensive copies.
+
+## Ownership and confinement
+- Clearly define ownership of mutable state.
+- Prefer thread confinement (single thread / single execution context) over fine-grained locking when practical.
+- Do not rely on accidental scheduling behavior for correctness.
+
+## APIs and documentation
+- Public APIs must document thread-safety expectations when mutable state is involved.
+- If an API is not thread-safe, make that explicit.
+
+## Testing
+- Do not rely on timing or sleeps to validate thread safety.
+- Prefer deterministic tests or stress tests for concurrent behavior.

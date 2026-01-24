@@ -1,0 +1,11 @@
+---
+alwaysApply: true
+---
+- Use version control for all changes; do not work outside tracked history.
+- Make small, logical commits that represent a single coherent change.
+- Write clear commit messages that explain intent (“why”), not just implementation (“what”).
+- Do not mix unrelated changes in the same commit.
+- Do not commit broken builds, failing tests, or incomplete work unless explicitly marked and isolated.
+- Keep diffs reviewable: minimize noise and separate mechanical refactors from behavioral changes.
+- When behavior changes, update relevant tests and documentation in the same change.
+- Preserve history quality: prefer clean reverts or fixes over piling on ad-hoc commits.
