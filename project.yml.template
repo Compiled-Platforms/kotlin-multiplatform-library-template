@@ -1,0 +1,472 @@
+# Central Project Configuration Template
+# Single source of truth for all tooling, CI/CD, and project settings
+#
+# 🚀 SETUP INSTRUCTIONS:
+# 1. Copy this file: cp project.yml.template project.yml
+# 2. Fill in all values marked with <<REQUIRED>>
+# 3. Adjust optional settings as needed
+# 4. Commit your changes
+
+#
+#
+# 📚 COMMON PATTERNS & EXAMPLES:
+#
+# Example 1: Personal project using GitHub username
+#   organization: janesmith
+#   repository: kotlin-utils
+#   group_id: io.github.janesmith
+#   namespace_prefix: io.github.janesmith
+#   Result: Libraries published as io.github.janesmith:library-name:1.0.0
+#
+# Example 2: Company project with owned domain
+#   organization: MyCompany
+#   repository: kmp-libraries
+#   group_id: com.mycompany.kmp
+#   namespace_prefix: com.mycompany.kmp
+#   Result: Libraries published as com.mycompany.kmp:library-name:1.0.0
+#
+# Example 3: Open source organization
+#   organization: awesome-kotlin
+#   repository: awesome-libs
+#   group_id: org.awesomekotlin.libs
+#   namespace_prefix: org.awesomekotlin.libs
+#   Result: Libraries published as org.awesomekotlin.libs:library-name:1.0.0
+
+project:
+  # Project identifier
+  # Used in: settings.gradle.kts, documentation, URLs
+  # Format: lowercase-with-hyphens (kebab-case)
+  # Examples:
+  #   - my-kmp-libraries
+  #   - kotlin-utils
+  #   - awesome-android-tools
+  #   - payment-sdk
+  # Tip: Match repo name: use my-kmp-libraries for repo name github.com/YourOrg/my-kmp-libraries
+  name: ""                                        
+  
+  # Human-readable project name
+  # Used in: Documentation headers, GitHub Pages title, README
+  # Format: Title Case With Spaces
+  # Examples:
+  #   - My KMP Libraries
+  #   - Kotlin Utilities
+  #   - Awesome Android Tools
+  #   - Payment SDK
+  display_name: ""                                     # <<REQUIRED>>
+  
+  # Brief description of your project (1-2 sentences)
+  # Used in: README, Maven POM, build files, GitHub description
+  # Tip: Describe what your libraries do and who they're for
+  # Examples:
+  #   - "Production-ready Kotlin Multiplatform libraries for mobile and backend"
+  #   - "Lightweight networking utilities for KMP projects"
+  #   - "UI components and tools for Android and iOS development"
+  #   - "Payment processing SDK for Kotlin Multiplatform"
+  description: ""                                      # <<REQUIRED>>
+  
+  # GitHub organization or username
+  # Used in: All GitHub URLs, Maven Central metadata, documentation links
+  # Must match your GitHub account/organization name exactly
+  # Examples:
+  #   - janesmith (personal GitHub user)
+  #   - MyCompany (GitHub organization)
+  #   - awesome-kotlin (open source org)
+  #   - stripe (company account)
+  # Tip: Check your GitHub profile URL - github.com/<THIS_VALUE>
+  organization: ""                                     # <<REQUIRED>>
+  
+  # GitHub repository name
+  # Used in: GitHub URLs, clone instructions, issue tracker links
+  # Must match your actual GitHub repository name exactly
+  # Examples:
+  #   - kotlin-utils
+  #   - kmp-libraries
+  #   - android-sdk
+  #   - payment-processor
+  # Tip: Check your repo URL - github.com/org/<THIS_VALUE>
+  repository: ""                                       # <<REQUIRED>>
+  
+  # License identifier (SPDX format)
+  # Used in: LICENSE file reference, Maven POM, package metadata
+  # Must match the LICENSE file in your repo root
+  # Common options:
+  #   - Apache-2.0 (permissive, used by Android, Kotlin)
+  #   - MIT (permissive, very simple)
+  #   - GPL-3.0 (copyleft, requires derivatives to be open source)
+  #   - BSD-3-Clause (permissive, used by many projects)
+  #   - BSD-2-Clause (even simpler BSD variant)
+  # Resources:
+  #   - Choose: https://choosealicense.com/
+  #   - Full list: https://spdx.org/licenses/
+  license: ""                                          # <<REQUIRED>>
+  
+  # Project maintainers (can add multiple)
+  # Used in: Maven POM metadata, CONTRIBUTORS file, documentation
+  maintainers:
+    - name: ""                                         # <<REQUIRED>> Full name (e.g., "Jane Smith", "John Doe")
+      github: ""                                       # <<REQUIRED>> GitHub username (e.g., "janesmith", "johndoe")
+    # Add more maintainers as needed:
+    # - name: "Another Developer"
+    #   github: "anotherdev"
+  
+  # Contact and support channels
+  support:
+    # Support email address
+    # Used in: Maven POM, documentation footer, SECURITY.md
+    # Examples:
+    #   - support@yourcompany.com (team email)
+    #   - libraries@yourcompany.com (specific team)
+    #   - your.name@gmail.com (personal project)
+    #   - hello@yourdomain.com (general contact)
+    email: ""                                          # <<REQUIRED>>
+    
+    discussions: true                                  # Enable GitHub Discussions tab
+    issues: true                                       # Enable GitHub Issues tab
+
+# Platform configuration
+# Note: All version configuration (Java, Python, Kotlin, Gradle, etc.) is now
+# managed in gradle/libs.versions.toml for a single source of truth
+platforms:
+  # Enabled targets (comment out platforms you don't need)
+  enabled:
+    - android
+    - ios
+    - jvm
+    - linux
+  
+  # Platform-specific settings
+  android:
+    min_sdk: 24                                        # Minimum Android API level (24 = Android 7.0)
+    compile_sdk: 35                                    # Target Android SDK for compilation
+    
+    # Android package namespace (reverse domain notation)
+    # Used in: AndroidManifest.xml, R class generation, all Android modules
+    # MUST match your Maven Group ID for consistency
+    # Format: Reverse domain (com.company.product)
+    # Examples:
+    #   - com.mycompany.kmp (if you own mycompany.com)
+    #   - io.github.janesmith (GitHub user janesmith)
+    #   - com.github.janesmith (alternative GitHub format)
+    #   - org.awesomekotlin.libs (organization awesomekotlin)
+    #   - com.stripe.android (company Stripe's Android libs)
+    # Important: Cannot contain hyphens, must be valid Java package name
+    namespace_prefix: ""                               # <<REQUIRED>>
+  
+  ios:
+    deployment_target: '13.0'
+    targets:
+      - iosArm64
+      - iosSimulatorArm64
+      - iosX64
+  
+  jvm:
+    target: '11'
+  
+  native:
+    cache_path: ~/.konan
+    targets:
+      - linuxX64
+
+# CI/CD Configuration
+ci:
+  # Branch-specific CI control
+  # Set to false, list of branches, or "all"
+  enabled_branches: false  # Start with CI disabled, enable when ready: [main] or [main, develop]
+  
+  # Runner configuration
+  runners:
+    primary: ubuntu-latest      # For most builds
+    full: 
+      - ubuntu-latest           # Linux + Android
+      - macos-latest            # iOS + macOS
+  
+  # When to run comprehensive checks (all platforms)
+  full_checks_on:
+    branches: [main]
+    events: [push]
+  
+  # Fast checks for PRs (JVM + code quality only)
+  fast_checks_on:
+    events: [pull_request]
+  
+  # Path filters - skip CI on these changes
+  skip_paths:
+    - '**/*.md'
+    - 'docs/**'
+    - 'LICENSE*'
+    - 'NOTICE*'
+    - '.github/ISSUE_TEMPLATE/**'
+    - '.github/PULL_REQUEST_TEMPLATE.md'
+    - '.github/CODEOWNERS'
+    - '.github/FUNDING.yml'
+  
+  # Code paths that should trigger builds
+  watch_paths:
+    - 'libraries/**'
+    - 'build-logic/**'
+    - 'gradle/**'
+    - 'build.gradle.kts'
+    - 'settings.gradle.kts'
+    - '.github/workflows/**'
+  
+  # Caching configuration
+  caching:
+    gradle: true
+    kotlin_native: true
+    python_deps: true
+    configuration_cache: true
+  
+  # Build optimization
+  gradle_flags:
+    - --parallel
+    - --configuration-cache
+    - --daemon
+  
+  # Artifact retention
+  artifacts:
+    retention_days: 7
+    upload_on_main: true
+    upload_on_pr: false
+
+# Testing Configuration
+testing:
+  frameworks:
+    - kotlin.test
+    - kotlinx-coroutines-test
+    - turbine
+    - mokkery
+    - kotest-assertions
+  
+  coverage:
+    enabled: true
+    tool: kover
+    minimum_percentage: 80
+    report_on_pr: false
+    report_on_main: true
+  
+  # Test execution strategy
+  execution:
+    # Run on PR (fast feedback)
+    pr:
+      - jvm
+      - android_unit
+    
+    # Run on main (comprehensive)
+    main:
+      - jvm
+      - android_unit
+      - ios_simulator
+      - linux
+
+# Code Quality
+code_quality:
+  detekt:
+    enabled: true
+    config: config/detekt/detekt.yaml
+    fail_fast: true
+    run_on_commit: true
+    run_on_ci: true
+  
+  api_validation:
+    enabled: true
+    strict_mode: true
+  
+  formatting:
+    editorconfig: true
+    ktlint: false  # Using EditorConfig + Detekt instead
+  
+  git_hooks:
+    tool: lefthook
+    pre_commit:
+      - detekt
+      - check-secrets
+    pre_push:
+      - build
+    commit_msg:
+      - conventional-commits
+
+# Publishing Configuration
+publishing:
+  enabled: true
+  
+  # Maven coordinates (how users will import your libraries)
+  # Your libraries will be published as: {group_id}:{library-name}:{version}
+  # Example: com.mycompany.kmp:example-library:1.0.0
+  
+  # Maven Group ID (reverse domain notation)
+  # Used in: Maven Central publication, dependency declarations, package names
+  # MUST match your Android namespace_prefix for consistency
+  # Format: reverse.domain.notation (no hyphens, must be valid Java package)
+  # 
+  # Choosing your Group ID:
+  # 
+  # Option 1: Own a domain? Use reverse domain
+  #   Examples:
+  #     - com.mycompany.kmp (from mycompany.com)
+  #     - io.stripe.android (from stripe.io)
+  #     - co.touchlab.kermit (from touchlab.co)
+  # 
+  # Option 2: GitHub user or org? Use GitHub pattern
+  #   Examples:
+  #     - io.github.janesmith (user: janesmith)
+  #     - com.github.janesmith (alternative format)
+  #     - io.github.awesomekotlin (org: awesomekotlin)
+  # 
+  # Option 3: Open source organization
+  #   Examples:
+  #     - org.jetbrains.kotlinx (JetBrains Kotlin extensions)
+  #     - org.apache.commons (Apache Commons)
+  #     - dev.icerock.moko (IceRock Development)
+  #
+  # Important: 
+  #   - Cannot contain hyphens (use dots as separators)
+  #   - Once published to Maven Central, cannot be changed!
+  #   - Must match Android namespace_prefix above
+  group_id: ""                                         # <<REQUIRED>>
+  
+  # Prefix for artifact IDs (optional, for grouping related libraries)
+  # Example: If set to "kmp", libraries become: group_id:kmp-example-library:version
+  # Leave as "kmp" or change to your preferred prefix, or set to "" for no prefix
+  artifact_id_prefix: kmp
+  
+  # Repositories
+  repositories:
+    maven_central:
+      enabled: true
+      auto_release: false
+    
+    github_packages:
+      enabled: false
+  
+  # Signing
+  signing:
+    required: true
+    key_from_secret: true
+  
+  # Documentation in artifacts
+  include_sources: true
+  include_javadoc: true
+  
+  # Version strategy
+  versioning:
+    scheme: semver
+    tag_prefix: v
+    snapshot_suffix: -SNAPSHOT
+
+# Documentation
+documentation:
+  # Build configuration
+  mkdocs:
+    enabled: true
+    theme: material
+    
+  dokka:
+    enabled: true
+    format: html
+    
+  # Deployment
+  github_pages:
+    enabled: false  # Set to true to deploy docs to GitHub Pages
+    branch: gh-pages
+    
+  # Local serving
+  local_port: 8000
+
+# Dependency Management
+dependencies:
+  # Automatic updates
+  dependabot:
+    enabled: true
+    schedule: weekly
+    
+    # Manually managed (KMP compatibility)
+    ignore:
+      - kotlin
+      - gradle
+      - android-gradle-plugin
+    
+    # Grouping strategy
+    groups:
+      kotlin: [kotlinx-*]
+      android: [androidx.*, android.*, agp]
+      dev-tools: [detekt, kover, binary-compatibility-validator]
+      github-actions: [actions/*, gradle/*]
+  
+  # Version catalog
+  catalog:
+    file: gradle/libs.versions.toml
+    auto_generate_report: true
+
+# Release Process
+release:
+  # Changelog generation
+  changelog:
+    enabled: true
+    tool: cliff
+    config: cliff.toml
+  
+  # Automated steps
+  automation:
+    tag_on_merge: false  # Manual tagging preferred
+    publish_on_tag: false  # Manual publishing preferred
+    create_github_release: false
+  
+  # Required checks before release
+  pre_release_checks:
+    - all_tests_pass
+    - code_coverage_met
+    - api_validation_pass
+    - documentation_builds
+    - no_snapshot_dependencies
+
+# Development Workflow
+development:
+  # Branch strategy
+  branches:
+    main: main
+    develop: null  # Single-branch strategy
+    feature_prefix: feature/
+    bugfix_prefix: fix/
+    release_prefix: release/
+  
+  # Commit conventions
+  commits:
+    format: conventional
+    types:
+      - feat
+      - fix
+      - docs
+      - style
+      - refactor
+      - perf
+      - test
+      - chore
+      - ci
+    
+  # PR requirements
+  pull_requests:
+    require_review: false  # Set to true for team projects
+    require_ci_pass: true
+    auto_delete_branch: true
+    squash_merge: true
+
+# Security
+security:
+  # Vulnerability scanning
+  scanning:
+    secrets: true  # Pre-commit hook
+    dependencies: true  # Dependabot
+  
+  # Security policy
+  policy:
+    file: SECURITY.md
+    
+    # Security vulnerability reporting email
+    # Used in: SECURITY.md, Maven POM security contact
+    # Examples:
+    #   - security@yourcompany.com (dedicated security team)
+    #   - vulnerabilities@yourcompany.com (specific alias)
+    #   - your.name@gmail.com (personal project)
+    #   - Same as support email (for small projects)
+    # Important: Monitor this email regularly for security reports!
+    reporting_email: ""                                # <<REQUIRED>>

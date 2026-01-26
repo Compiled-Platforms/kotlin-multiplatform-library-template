@@ -1,0 +1,11 @@
+---
+description: This rule provides standards for KISS principle preferring simple solutions over complex ones
+alwaysApply: true
+---
+# KISS (Keep It Simple, Stupid)
+
+- Prefer simple solutions over complex ones.
+- Simple code is easier to understand, test, debug, and maintain.
+- Avoid unnecessary abstraction, premature optimization, or over-engineering.
+- Choose straightforward implementations unless complexity is justified by clear requirements.
+- If a simpler approach solves the problem adequately, use it.

@@ -1,0 +1,10 @@
+---
+description: This rule provides standards for Dependency Inversion Principle ensuring dependencies point to abstractions not concrete implementations
+alwaysApply: true
+---
+# Dependency Inversion Principle (DIP)
+
+- High-level modules should not depend on low-level modules; both should depend on abstractions.
+- Abstractions should not depend on details; details should depend on abstractions.
+- Define interfaces based on high-level needs, not low-level implementations.
+- Use dependency injection to provide concrete implementations at runtime.

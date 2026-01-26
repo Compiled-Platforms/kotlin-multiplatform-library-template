@@ -1,0 +1,6 @@
+---
+description: Version control standards for maintaining quality history
+alwaysApply: false
+---
+- Use version control for all changes; do not work outside tracked history.
+- Preserve history quality: prefer clean reverts or fixes over piling on ad-hoc commits.

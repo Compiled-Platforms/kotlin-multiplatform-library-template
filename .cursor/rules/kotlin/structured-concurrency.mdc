@@ -1,0 +1,32 @@
+---
+globs: **/*.kt
+alwaysApply: false
+---
+## Structured Concurrency
+- Prefer structured concurrency by default; detached/unstructured concurrency must be explicitly justified and narrowly scoped.
+- Launch coroutines only from an owned or injected `CoroutineScope` with a clear lifecycle/owner.
+- Never use `GlobalScope`.
+- Avoid creating hidden internal scopes unless the type truly owns the lifecycle and provides a reliable stop/cancel mechanism.
+
+## Dispatcher Usage
+- Avoid hardcoding dispatchers in reusable logic; prefer injecting dispatchers/contexts for correctness and testability.
+- Use an appropriate dispatcher/context for the work type (CPU-bound vs blocking work vs UI/main-thread work).
+
+## Error Handling
+- Do not allow coroutine failures to be silently lost.
+- For `launch`, ensure failures are handled (explicit handling or installed error handler on the owning scope).
+- Choose failure semantics deliberately (`SupervisorJob` for independent children; otherwise allow structured failure propagation).
+- Make failures observable to callers via explicit API semantics (return types/state/events), not hidden side effects.
+
+## Cancellation
+- Write suspend code to cooperate with cancellation.
+- Avoid long-running non-suspending work; ensure long operations are cancellable and release resources on cancellation.
+
+## Testing
+- Use `kotlinx-coroutines-test` and `runTest` for coroutine tests.
+- Avoid real time delays; prefer deterministic/virtual time controls.
+- Do not rely on sleeps/waits to stabilize tests.
+
+## Scope Cleanup
+- Cancel owned scopes/jobs when the owning component is done.
+- Ensure all launched work is tied to a parent job/scope that will be cancelled appropriately.

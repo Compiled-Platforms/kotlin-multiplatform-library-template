@@ -1,0 +1,11 @@
+---
+description: This rule provides standards for YAGNI principle avoiding implementing features until actually needed
+alwaysApply: true
+---
+# YAGNI (You Ain't Gonna Need It)
+
+- Don't implement functionality until it's actually needed.
+- Avoid building features based on speculation about future requirements.
+- Every line of code has a maintenance cost; don't add unnecessary code.
+- Focus on current, concrete requirements rather than hypothetical future needs.
+- If a feature is truly needed later, it can be added then with better information.

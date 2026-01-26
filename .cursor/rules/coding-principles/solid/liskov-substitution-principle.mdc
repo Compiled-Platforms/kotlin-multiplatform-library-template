@@ -1,0 +1,10 @@
+---
+description: This rule provides standards for Liskov Substitution Principle ensuring subtypes are substitutable for their base types
+alwaysApply: true
+---
+# Liskov Substitution Principle (LSP)
+
+- Subtypes must be substitutable for their base types without altering program correctness.
+- Derived classes should extend, not replace, the behavior of base classes.
+- Preserve preconditions, postconditions, and invariants of the base type.
+- Avoid throwing new exceptions or requiring stronger preconditions in subtypes.

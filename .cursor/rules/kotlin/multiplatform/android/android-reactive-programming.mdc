@@ -1,0 +1,19 @@
+---
+globs: **/*.kt
+alwaysApply: false
+---
+## Main thread constraints
+- Do not perform blocking I/O or heavy CPU work on the main thread.
+- Ensure main-thread execution is enforced at Android boundaries when required by platform APIs.
+
+## Android lifecycle ownership
+- Any coroutine launched from an Android component must be tied to that component’s lifecycle.
+- Avoid starting long-lived coroutines in Android components without a clear cancellation point.
+
+## Scope ownership
+- Android components that create or own a `CoroutineScope` are responsible for cancelling it at the appropriate lifecycle boundary.
+- Avoid leaking coroutines beyond the lifetime of Activities, Fragments, Views, or Services.
+
+## Thread safety
+- Do not mutate shared state from multiple dispatchers without explicit synchronization.
+- Prefer single-thread confinement for UI-related state mutation.

@@ -1,0 +1,310 @@
+# Central Project Configuration
+# Single source of truth for all tooling, CI/CD, and project settings
+
+project:
+  name: kotlin-multiplatform-library-template
+  display_name: Kotlin Multiplatform Library Template
+  description: Production-ready Kotlin Multiplatform library template with optimized CI/CD
+  organization: Compiled-Platforms
+  repository: kotlin-multiplatform-library-template
+  license: Apache-2.0
+  
+  # Project maintainers
+  maintainers:
+    - name: Andrew
+      github: aiithak
+  
+  # Contact and support
+  support:
+    email: support@compiledplatforms.com
+    discussions: true
+    issues: true
+
+# Platform configuration
+platforms:
+  # Enabled targets
+  enabled:
+    - android
+    - ios
+    - jvm
+    - linux
+  
+  # Platform-specific settings
+  android:
+    min_sdk: 24
+    compile_sdk: 35
+    namespace_prefix: com.compiledplatforms.kmp
+  
+  ios:
+    deployment_target: '13.0'
+    targets:
+      - iosArm64
+      - iosSimulatorArm64
+      - iosX64
+  
+  jvm:
+    target: '11'
+  
+  native:
+    cache_path: ~/.konan
+    targets:
+      - linuxX64
+
+# CI/CD Configuration
+ci:
+  # Branch-specific CI control
+  # Set to false, list of branches, or "all"
+  enabled_branches: false  # Examples: false, [main, develop], "all"
+  
+  # Runner configuration
+  runners:
+    primary: ubuntu-latest      # For most builds
+    full: 
+      - ubuntu-latest           # Linux + Android
+      - macos-latest            # iOS + macOS
+  
+  # When to run comprehensive checks (all platforms)
+  full_checks_on:
+    branches: [main]
+    events: [push]
+  
+  # Fast checks for PRs (JVM + code quality only)
+  fast_checks_on:
+    events: [pull_request]
+  
+  # Path filters - skip CI on these changes
+  skip_paths:
+    - '**/*.md'
+    - 'docs/**'
+    - 'LICENSE*'
+    - 'NOTICE*'
+    - '.github/ISSUE_TEMPLATE/**'
+    - '.github/PULL_REQUEST_TEMPLATE.md'
+    - '.github/CODEOWNERS'
+    - '.github/FUNDING.yml'
+  
+  # Code paths that should trigger builds
+  watch_paths:
+    - 'libraries/**'
+    - 'build-logic/**'
+    - 'gradle/**'
+    - 'build.gradle.kts'
+    - 'settings.gradle.kts'
+    - '.github/workflows/**'
+  
+  # Caching configuration
+  caching:
+    gradle: true
+    kotlin_native: true
+    python_deps: true
+    configuration_cache: true
+  
+  # Build optimization
+  gradle_flags:
+    - --parallel
+    - --configuration-cache
+    - --daemon
+  
+  # Artifact retention
+  artifacts:
+    retention_days: 7
+    upload_on_main: true
+    upload_on_pr: false
+
+# Testing Configuration
+testing:
+  frameworks:
+    - kotlin.test
+    - kotlinx-coroutines-test
+    - turbine
+    - mokkery
+    - kotest-assertions
+  
+  coverage:
+    enabled: true
+    tool: kover
+    minimum_percentage: 80
+    report_on_pr: false
+    report_on_main: true
+  
+  # Test execution strategy
+  execution:
+    # Run on PR (fast feedback)
+    pr:
+      - jvm
+      - android_unit
+    
+    # Run on main (comprehensive)
+    main:
+      - jvm
+      - android_unit
+      - ios_simulator
+      - linux
+
+# Code Quality
+code_quality:
+  detekt:
+    enabled: true
+    config: config/detekt/detekt.yaml
+    fail_fast: true
+    run_on_commit: true
+    run_on_ci: true
+  
+  api_validation:
+    enabled: true
+    strict_mode: true
+  
+  formatting:
+    editorconfig: true
+    ktlint: false  # Using EditorConfig + Detekt instead
+  
+  git_hooks:
+    tool: lefthook
+    pre_commit:
+      - detekt
+      - check-secrets
+    pre_push:
+      - build
+    commit_msg:
+      - conventional-commits
+
+# Publishing Configuration
+publishing:
+  enabled: true
+  
+  # Maven coordinates
+  group_id: com.compiledplatforms.kmp
+  artifact_id_prefix: kmp
+  
+  # Repositories
+  repositories:
+    maven_central:
+      enabled: true
+      auto_release: false
+    
+    github_packages:
+      enabled: false
+  
+  # Signing
+  signing:
+    required: true
+    key_from_secret: true
+  
+  # Documentation in artifacts
+  include_sources: true
+  include_javadoc: true
+  
+  # Version strategy
+  versioning:
+    scheme: semver
+    tag_prefix: v
+    snapshot_suffix: -SNAPSHOT
+
+# Documentation
+documentation:
+  # Build configuration
+  mkdocs:
+    enabled: true
+    theme: material
+    
+  dokka:
+    enabled: true
+    format: html
+    
+  # Deployment
+  github_pages:
+    enabled: false  # Disabled - private project
+    branch: gh-pages
+    
+  # Local serving
+  local_port: 8000
+
+# Dependency Management
+dependencies:
+  # Automatic updates
+  dependabot:
+    enabled: true
+    schedule: weekly
+    
+    # Manually managed (KMP compatibility)
+    ignore:
+      - kotlin
+      - gradle
+      - android-gradle-plugin
+    
+    # Grouping strategy
+    groups:
+      kotlin: [kotlinx-*]
+      android: [androidx.*, android.*, agp]
+      dev-tools: [detekt, kover, binary-compatibility-validator]
+      github-actions: [actions/*, gradle/*]
+  
+  # Version catalog
+  catalog:
+    file: gradle/libs.versions.toml
+    auto_generate_report: true
+
+# Release Process
+release:
+  # Changelog generation
+  changelog:
+    enabled: true
+    tool: cliff
+    config: cliff.toml
+  
+  # Automated steps
+  automation:
+    tag_on_merge: false  # Manual tagging preferred
+    publish_on_tag: false  # Manual publishing preferred
+    create_github_release: false
+  
+  # Required checks before release
+  pre_release_checks:
+    - all_tests_pass
+    - code_coverage_met
+    - api_validation_pass
+    - documentation_builds
+    - no_snapshot_dependencies
+
+# Development Workflow
+development:
+  # Branch strategy
+  branches:
+    main: main
+    develop: null  # Single-branch strategy
+    feature_prefix: feature/
+    bugfix_prefix: fix/
+    release_prefix: release/
+  
+  # Commit conventions
+  commits:
+    format: conventional
+    types:
+      - feat
+      - fix
+      - docs
+      - style
+      - refactor
+      - perf
+      - test
+      - chore
+      - ci
+    
+  # PR requirements
+  pull_requests:
+    require_review: false  # Template project
+    require_ci_pass: true
+    auto_delete_branch: true
+    squash_merge: true
+
+# Security
+security:
+  # Vulnerability scanning
+  scanning:
+    secrets: true  # Pre-commit hook
+    dependencies: true  # Dependabot
+  
+  # Policy
+  policy:
+    file: SECURITY.md
+    reporting_email: security@compiledplatforms.com

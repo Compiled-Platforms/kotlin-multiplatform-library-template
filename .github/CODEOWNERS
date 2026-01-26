@@ -1,0 +1,47 @@
+# Code Owners for Kotlin Multiplatform Library Template
+# These owners will be automatically requested for review when someone opens a pull request.
+# https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Default owners for everything in the repo
+* @Compiled-Platforms/maintainers
+
+# Build configuration
+/gradle/ @Compiled-Platforms/build-maintainers
+/build.gradle.kts @Compiled-Platforms/build-maintainers
+/settings.gradle.kts @Compiled-Platforms/build-maintainers
+/build-logic/ @Compiled-Platforms/build-maintainers
+gradle.properties @Compiled-Platforms/build-maintainers
+/gradle/libs.versions.toml @Compiled-Platforms/build-maintainers
+
+# GitHub Actions and CI/CD
+/.github/workflows/ @Compiled-Platforms/ci-maintainers
+
+# Documentation
+/docs/ @Compiled-Platforms/docs-maintainers
+*.md @Compiled-Platforms/docs-maintainers
+/README.md @Compiled-Platforms/maintainers
+
+# Configuration files
+/.editorconfig @Compiled-Platforms/maintainers
+/.gitignore @Compiled-Platforms/maintainers
+/lefthook.yml @Compiled-Platforms/maintainers
+/cliff.toml @Compiled-Platforms/maintainers
+
+# Quality and analysis
+/config/detekt/ @Compiled-Platforms/quality-maintainers
+
+# Scripts
+/scripts/ @Compiled-Platforms/maintainers
+
+# Community files
+/CODE_OF_CONDUCT.md @Compiled-Platforms/maintainers
+/CONTRIBUTING.md @Compiled-Platforms/maintainers
+/SECURITY.md @Compiled-Platforms/maintainers
+/LICENSE* @Compiled-Platforms/maintainers
+
+# Library examples (for reference)
+/libraries/ @Compiled-Platforms/library-maintainers
+/samples/ @Compiled-Platforms/library-maintainers
+
+# BOM configuration
+/bom/ @Compiled-Platforms/build-maintainers

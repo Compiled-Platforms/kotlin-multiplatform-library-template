@@ -1,0 +1,82 @@
+name: ❓ Question / Help
+description: Ask a question or get help using the template
+title: "[Question]: "
+labels: ["question", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Have a question? We're here to help! Please provide as much context as possible.
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Preflight Checklist
+      description: Please ensure you've completed all of the following
+      options:
+        - label: I have searched existing issues and discussions
+          required: true
+        - label: I have read the documentation
+          required: true
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Question Category
+      options:
+        - Getting Started / Setup
+        - Build Configuration
+        - Testing
+        - Publishing to Maven Central
+        - GitHub Actions / CI/CD
+        - Code Coverage
+        - Documentation Generation
+        - Platform-specific Issues
+        - Best Practices
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: question
+    attributes:
+      label: Your Question
+      description: What would you like to know?
+      placeholder: How do I...?
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: |
+        What are you trying to accomplish? What have you tried so far?
+      placeholder: |
+        I'm trying to X...
+        I've tried Y...
+        I expected Z...
+
+  - type: textarea
+    id: code
+    attributes:
+      label: Relevant Code (Optional)
+      description: If applicable, share relevant code snippets
+      render: kotlin
+      placeholder: |
+        // Your code here
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs/Error Messages (Optional)
+      description: If you're encountering an error, include the relevant logs
+      render: shell
+      placeholder: Paste error messages here
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Information
+      description: Any other details that might help us answer your question
+      placeholder: Environment details, screenshots, links, etc.

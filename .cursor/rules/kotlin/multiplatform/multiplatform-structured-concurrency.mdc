@@ -1,0 +1,22 @@
+---
+globs: **/*.kt
+alwaysApply: false
+---
+## Dispatcher Portability
+- In `commonMain`, do not assume any particular dispatcher exists or behaves consistently across targets.
+- Do not hardcode platform-specific dispatchers in shared code; prefer injecting dispatchers from platform wiring.
+- Treat potentially blocking work as platform-defined and execute it on caller-provided dispatchers.
+
+## `commonMain` vs Platform Source Sets
+- Keep coroutine policy in `commonMain` platform-neutral.
+- Enforce platform-specific threading or scheduling constraints in platform source sets, not in shared code.
+- Use `expect/actual` or platform wiring to supply platform-dependent concurrency primitives when required.
+
+## Cross-target Threading Constraints
+- Do not assume JVM-style threading or memory behavior on all targets.
+- Avoid sharing mutable state across threads in `commonMain` unless it is explicitly safe for every target.
+- Do not encode main-thread or UI-thread assumptions in shared coroutine logic.
+
+## Testing Across Targets
+- Coroutine tests must not rely on target-specific timing, threading, or dispatcher behavior.
+- Prefer injected or configurable dispatchers so tests behave consistently across platforms.

@@ -1,0 +1,76 @@
+name: Build & Test
+
+# CI behavior controlled by project.yml:
+# - ci.enabled_branches: Controls which branches run CI
+#   - [main] = only main branch
+#   - [main, develop] = main and develop branches
+#   - all = every branch
+#   - false = disabled
+
+on:
+  push:
+    branches: [ main ]
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - '.gitignore'
+      - 'LICENSE'
+  pull_request:
+    branches: [ main ]
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - '.gitignore'
+      - 'LICENSE'
+  workflow_dispatch:
+
+jobs:
+  # Load configuration from project.yml using custom action
+  config:
+    runs-on: ubuntu-latest
+    outputs:
+      ci-enabled: ${{ steps.check.outputs.ci-enabled }}
+      runner: ${{ steps.check.outputs.runner }}
+      gradle-flags: ${{ steps.check.outputs.gradle-flags }}
+      kotlin-native-cache: ${{ steps.check.outputs.kotlin-native-cache }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+      
+      - name: Check CI Status
+        id: check
+        uses: ./.github/actions/ci-status
+  
+  build:
+    needs: config
+    if: needs.config.outputs.ci-enabled == 'true'
+    runs-on: ${{ needs.config.outputs.runner }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+      
+      - name: Parse Versions
+        id: versions
+        uses: ./.github/actions/parse-versions
+        
+      - name: Set up JDK
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'temurin'
+          java-version: ${{ steps.versions.outputs.java-version }}
+      
+      - name: Cache Kotlin/Native dependencies
+        if: needs.config.outputs.kotlin-native-cache == 'true'
+        uses: actions/cache@v5
+        with:
+          path: ~/.konan
+          key: ${{ runner.os }}-konan-${{ hashFiles('gradle/libs.versions.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-konan-
+          
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v5
+          
+      - name: Build and Test
+        run: ./gradlew build ${{ needs.config.outputs.gradle-flags }} --stacktrace

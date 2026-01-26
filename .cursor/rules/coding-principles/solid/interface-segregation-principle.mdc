@@ -1,0 +1,10 @@
+---
+description: This rule provides standards for Interface Segregation Principle ensuring clients depend only on interfaces they use
+alwaysApply: true
+---
+# Interface Segregation Principle (ISP)
+
+- Clients should not be forced to depend on interfaces they don't use.
+- Create focused, specific interfaces rather than large, general-purpose ones.
+- Split large interfaces into smaller, cohesive interfaces based on client needs.
+- Avoid empty or no-op implementations that indicate interface bloat.

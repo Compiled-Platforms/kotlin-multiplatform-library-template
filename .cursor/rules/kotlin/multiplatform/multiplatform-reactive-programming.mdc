@@ -1,0 +1,31 @@
+---
+globs: **/*.kt
+alwaysApply: false
+---
+## Portability baseline
+- Shared (`commonMain`) reactive code must not assume a specific scheduler, thread model, or event loop behavior.
+- Expose reactive APIs from `commonMain` as platform-neutral; enforce platform constraints outside shared code.
+
+## Boundary ownership and cleanup
+- Any bridge from a platform event source into `Flow` must guarantee cleanup on cancellation and completion.
+- Subscription ownership must be explicit: the component that starts a subscription is responsible for stopping it.
+- Avoid long-lived or “background forever” producers in shared code unless ownership and shutdown are clearly defined.
+
+## Thread-affinity is not portable
+- Do not rely on emissions or collections occurring on any particular thread in shared code.
+- If thread-affinity is required, enforce it via platform wiring or injected context, not inside shared logic.
+
+## Shared state safety across targets
+- Avoid sharing mutable state across concurrent reactive pipelines unless it is explicitly safe for all targets.
+- Prefer immutable values and clearly defined state boundaries when crossing platform or threading boundaries.
+
+## Time and scheduling assumptions
+- Avoid relying on real-time behavior in shared reactive logic and tests.
+- When timing affects correctness, use deterministic or injectable time/scheduling abstractions.
+
+## Testing across targets
+- Shared reactive tests must not depend on target-specific threading, timing, or event loop behavior.
+- Prefer deterministic collection patterns so test intent holds across all platforms.
+
+## Platform hooks
+- When shared code requires platform-provided primitives, supply them via platform wiring or expect/actual rather than encoding assumptions in shared logic.

@@ -1,0 +1,8 @@
+---
+alwaysApply: true
+---
+- Write code that is clear, readable, and maintainable for future readers.
+- Prioritize clarity over cleverness; code should be easy to read, understand, and modify.
+- Follow established coding standards and keep code well-structured to reduce errors.
+- Refactor when appropriate to improve structure, readability, and maintainability.
+- Leave the codebase cleaner than you found it.

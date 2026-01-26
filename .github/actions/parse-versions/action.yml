@@ -1,0 +1,32 @@
+name: 'Parse Versions'
+description: 'Parses version information from gradle/libs.versions.toml'
+author: 'Compiled Platforms'
+
+inputs:
+  toml-file:
+    description: 'Path to the libs.versions.toml file'
+    required: false
+    default: 'gradle/libs.versions.toml'
+
+outputs:
+  java-version:
+    description: 'Java version from libs.versions.toml (defaults to 17 if not found)'
+    value: ${{ steps.parse.outputs.java-version }}
+  python-version:
+    description: 'Python version from libs.versions.toml (defaults to 3.11 if not found)'
+    value: ${{ steps.parse.outputs.python-version }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Install Python dependencies
+      shell: bash
+      run: |
+        python3 -m pip install --quiet tomli
+    
+    - name: Parse Versions
+      id: parse
+      shell: bash
+      run: |
+        python3 ${{ github.action_path }}/parse_versions.py \
+          --toml-file "${{ inputs.toml-file }}"

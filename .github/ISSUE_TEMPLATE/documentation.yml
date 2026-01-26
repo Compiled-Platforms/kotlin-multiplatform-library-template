@@ -1,0 +1,96 @@
+name: 📚 Documentation Improvement
+description: Suggest improvements to the documentation
+title: "[Docs]: "
+labels: ["documentation", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping improve the documentation!
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Preflight Checklist
+      description: Please ensure you've completed all of the following
+      options:
+        - label: I have searched existing issues to ensure this hasn't been reported before
+          required: true
+
+  - type: dropdown
+    id: type
+    attributes:
+      label: Documentation Issue Type
+      options:
+        - Missing documentation
+        - Incorrect documentation
+        - Unclear/confusing documentation
+        - Outdated documentation
+        - Typo/grammar
+        - Code example doesn't work
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: location
+    attributes:
+      label: Documentation Location
+      description: Where is the documentation issue?
+      options:
+        - README.md
+        - Getting Started Guide
+        - Testing Documentation
+        - Publishing Documentation
+        - API Documentation
+        - GitHub Actions Documentation
+        - Code Coverage Documentation
+        - Code comments
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: current
+    attributes:
+      label: Current Documentation
+      description: What does the current documentation say? (copy/paste or link)
+      placeholder: |
+        Link or quote the current documentation
+    validations:
+      required: true
+
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: Suggested Improvement
+      description: How should the documentation be improved?
+      placeholder: |
+        What should it say instead? What should be added?
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Why is this improvement needed?
+      description: Explain why this change would help users
+      placeholder: |
+        I was confused by X because...
+        This would help users who...
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: Add any other context, screenshots, or links
+      placeholder: Links to relevant documentation, screenshots, etc.
+
+  - type: checkboxes
+    id: willingness
+    attributes:
+      label: Contribution
+      description: Would you be willing to submit a PR to improve the documentation?
+      options:
+        - label: I am willing to submit a pull request for this documentation improvement
+          required: false
