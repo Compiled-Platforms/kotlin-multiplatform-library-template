@@ -13,9 +13,13 @@ updates:
     # Ignore ALL updates due to KMP compatibility constraints - manually managed
     ignore:
       - dependency-name: "com.android.tools.build:gradle"
+        update-types: ["version-update:semver-major", "version-update:semver-minor", "version-update:semver-patch"]
       - dependency-name: "com.android.kotlin.multiplatform.library"
+        update-types: ["version-update:semver-major", "version-update:semver-minor", "version-update:semver-patch"]
       - dependency-name: "org.jetbrains.kotlin*"
+        update-types: ["version-update:semver-major", "version-update:semver-minor", "version-update:semver-patch"]
       - dependency-name: "gradle"
+        update-types: ["version-update:semver-major", "version-update:semver-minor", "version-update:semver-patch"]
     
     groups:
       # Group ALL Gradle updates into one PR
