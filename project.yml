@@ -54,7 +54,7 @@ platforms:
 ci:
   # Branch-specific CI control
   # Set to false, list of branches, or "all"
-  enabled_branches: false  # Examples: false, [main, develop], "all"
+  enabled_branches: [main]  # CI enabled on main branch for automated releases
   
   # Runner configuration
   runners:
@@ -249,14 +249,14 @@ release:
   # Changelog generation
   changelog:
     enabled: true
-    tool: cliff
-    config: cliff.toml
+    tool: semantic-release  # Automated changelog and versioning
+    config: .releaserc.json
   
-  # Automated steps
+  # Automated steps (via semantic-release)
   automation:
-    tag_on_merge: false  # Manual tagging preferred
+    tag_on_merge: true  # semantic-release creates tags on main branch
     publish_on_tag: false  # Manual publishing preferred
-    create_github_release: false
+    create_github_release: true  # semantic-release creates GitHub releases
   
   # Required checks before release
   pre_release_checks:

@@ -119,7 +119,10 @@ class KmpLibraryConventionPlugin : Plugin<Project> {
             // Configure Maven Publishing
             extensions.configure<com.vanniktech.maven.publish.MavenPublishBaseExtension> {
                 publishToMavenCentral()
-                signAllPublications()
+                // Only sign if not explicitly disabled (for local testing)
+                if (project.findProperty("skipSigning") != "true") {
+                    signAllPublications()
+                }
             }
         }
     }
