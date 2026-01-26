@@ -1,0 +1,10 @@
+---
+description: This rule provides standards for Open/Closed Principle ensuring code is open for extension but closed for modification
+alwaysApply: true
+---
+# Open/Closed Principle (OCP)
+
+- Software entities should be open for extension but closed for modification.
+- Add new functionality through inheritance, composition, or interfaces without changing existing code.
+- Use abstractions and dependency injection to enable extension points.
+- Avoid modifying stable, tested code when adding features.

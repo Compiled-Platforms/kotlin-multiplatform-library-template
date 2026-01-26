@@ -1,0 +1,11 @@
+---
+description: This rule provides standards for Composition over Inheritance favoring object composition for flexibility
+alwaysApply: true
+---
+# Composition over Inheritance
+
+- Favor object composition over class inheritance to achieve code reuse.
+- Inheritance creates tight coupling and rigid hierarchies.
+- Composition provides flexibility and allows behavior to be assembled from independent components.
+- Use interfaces and dependency injection to combine behaviors.
+- Inheritance should be reserved for true "is-a" relationships, not just code reuse.

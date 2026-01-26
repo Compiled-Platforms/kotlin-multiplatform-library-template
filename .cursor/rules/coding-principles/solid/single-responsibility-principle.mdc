@@ -1,0 +1,9 @@
+---
+description: This rule provides standards for Single Responsibility Principle ensuring each unit has one reason to change
+alwaysApply: true
+---
+- Each function, class, or module should have one reason to change.
+- Avoid combining multiple responsibilities in a single unit.
+- Split code when a unit starts coordinating unrelated concerns.
+- Name functions and types to reflect a single, well-defined responsibility.
+- Prefer composition over large, multi-purpose abstractions.

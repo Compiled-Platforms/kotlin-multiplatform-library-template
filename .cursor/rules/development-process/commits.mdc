@@ -1,0 +1,8 @@
+---
+description: Commit message and staging best practices for version control
+alwaysApply: false
+---
+- Make small, logical commits that represent a single coherent change.
+- Write clear commit messages that explain intent ("why"), not just implementation ("what").
+- Do not mix unrelated changes in the same commit.
+- Do not commit broken builds, failing tests, or incomplete work unless explicitly marked and isolated.

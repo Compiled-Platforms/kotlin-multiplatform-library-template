@@ -1,0 +1,11 @@
+---
+description: This rule provides standards for DRY principle ensuring single canonical representation of knowledge
+alwaysApply: true
+---
+# DRY (Don't Repeat Yourself)
+
+- Every piece of knowledge should have a single, unambiguous representation in the system.
+- Avoid duplicating code or logic across the codebase.
+- Extract common patterns into reusable functions, classes, or modules.
+- If you need to change something, you should only need to change it in one place.
+- Duplication increases maintenance burden and the likelihood of inconsistent behavior.

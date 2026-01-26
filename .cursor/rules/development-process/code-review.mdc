@@ -1,0 +1,6 @@
+---
+description: Code review and diff quality standards
+alwaysApply: false
+---
+- Keep diffs reviewable: minimize noise and separate mechanical refactors from behavioral changes.
+- When behavior changes, update relevant tests and documentation in the same change.
