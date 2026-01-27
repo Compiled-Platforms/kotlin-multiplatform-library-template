@@ -34,14 +34,6 @@ console-reports:
 
 comments:
   active: true
-  AbsentOrWrongFileLicense:
-    active: false
-    licenseTemplateFile: 'license.template'
-    licenseTemplateIsRegex: false
-  CommentOverPrivateFunction:
-    active: false
-  CommentOverPrivateProperty:
-    active: false
   DeprecatedBlockTag:
     active: false
   EndOfSentenceFormat:
@@ -625,10 +617,6 @@ style:
       - reason: 'Forbidden TODO todo marker in comment, please do the changes.'
         value: 'TODO:'
     allowedPatterns: ''
-  ForbiddenImport:
-    active: false
-    imports: []
-    forbiddenPatterns: ''
   ForbiddenMethodCall:
     active: false
     methods:
@@ -764,8 +752,6 @@ style:
     active: false
     acceptableLength: 4
     allowNonStandardGrouping: false
-  UnnecessaryAnnotationUseSiteTarget:
-    active: false
   UnnecessaryAny:
     active: false
   UnnecessaryApply:
