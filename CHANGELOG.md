@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/Compiled-Platforms/kotlin-multiplatform-library-template/compare/v1.0.0...v1.0.1) (2026-01-27)
+
+
+### Bug Fixes
+
+* explicitly ignore gradle-wrapper in Dependabot ([#27](https://github.com/Compiled-Platforms/kotlin-multiplatform-library-template/issues/27)) ([e5ef602](https://github.com/Compiled-Platforms/kotlin-multiplatform-library-template/commit/e5ef60202d967112fe19e64b0e575bbc39028c9c))
+
 # 1.0.0 (2026-01-27)
 
 
