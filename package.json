@@ -8,6 +8,8 @@
     "url": "https://github.com/Compiled-Platforms/kotlin-multiplatform-library-template.git"
   },
   "devDependencies": {
+    "@commitlint/cli": "^18.4.3",
+    "@commitlint/config-conventional": "^18.4.3",
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/exec": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
