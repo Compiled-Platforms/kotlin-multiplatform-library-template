@@ -30,17 +30,17 @@ This project uses **semantic-release** for fully automated versioning based on [
 
 | Type | Description | Version Bump | Example |
 |------|-------------|--------------|---------|
-| `feat:` | New feature | **Minor** (0.2.0 → 0.3.0) | `feat: add authentication API` |
-| `fix:` | Bug fix | **Patch** (0.2.0 → 0.2.1) | `fix: correct validation logic` |
-| `feat!:` | Breaking change | **Minor** in 0.x (0.2.0 → 0.3.0) | `feat!: redesign API` |
-| `fix!:` | Breaking fix | **Minor** in 0.x (0.2.0 → 0.3.0) | `fix!: remove deprecated method` |
+| `feat:` | New feature | **Minor** (1.2.0 → 1.3.0) | `feat: add authentication API` |
+| `fix:` | Bug fix | **Patch** (1.2.0 → 1.2.1) | `fix: correct validation logic` |
+| `feat!:` | Breaking change | **Major** (1.2.0 → 2.0.0) | `feat!: redesign API` |
+| `fix!:` | Breaking fix | **Major** (1.2.0 → 2.0.0) | `fix!: remove deprecated method` |
 | `chore:` | Maintenance | **None** | `chore: update dependencies` |
 | `docs:` | Documentation | **None** | `docs: improve README` |
 | `ci:` | CI/CD changes | **None** | `ci: fix workflow` |
 | `test:` | Tests only | **None** | `test: add unit tests` |
 | `refactor:` | Code refactoring | **None** | `refactor: simplify logic` |
 | `style:` | Code formatting | **None** | `style: fix indentation` |
-| `perf:` | Performance | **Patch** (0.2.0 → 0.2.1) | `perf: optimize algorithm` |
+| `perf:` | Performance | **Patch** (1.2.0 → 1.2.1) | `perf: optimize algorithm` |
 
 ## When to Trigger a Release
 
@@ -74,8 +74,7 @@ git commit -m "feat: redesign auth API
 BREAKING CHANGE: The login() method signature changed"
 ```
 
-**In 0.x.x:** Both result in **minor** bump (0.2.0 → 0.3.0)  
-**In 1.x.x+:** Both result in **major** bump (1.2.0 → 2.0.0)
+Both formats trigger a **major** version bump (1.2.0 → 2.0.0)
 
 ## Enforcement
 
