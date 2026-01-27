@@ -1,3 +1,10 @@
+## [1.0.2](https://github.com/Compiled-Platforms/kotlin-multiplatform-library-template/compare/v1.0.1...v1.0.2) (2026-01-27)
+
+
+### Bug Fixes
+
+* update detekt config for 2.0.0-alpha.2 compatibility ([#33](https://github.com/Compiled-Platforms/kotlin-multiplatform-library-template/issues/33)) ([3880b02](https://github.com/Compiled-Platforms/kotlin-multiplatform-library-template/commit/3880b02b70fda7be35631ddd585d7991a9c13bd9))
+
 ## [1.0.1](https://github.com/Compiled-Platforms/kotlin-multiplatform-library-template/compare/v1.0.0...v1.0.1) (2026-01-27)
 
 
