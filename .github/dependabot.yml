@@ -34,7 +34,8 @@ updates:
       - "dependencies"
       - "gradle"
     
-    # Commit message prefix
+    # Commit message prefix - MUST be "chore" to prevent version bumps
+    # semantic-release only triggers on: feat, fix, perf
     commit-message:
       prefix: "chore(deps)"
 
@@ -50,6 +51,7 @@ updates:
     labels:
       - "dependencies"
       - "github-actions"
+    # MUST be "chore" to prevent version bumps
     commit-message:
       prefix: "chore(ci)"
 
@@ -66,5 +68,6 @@ updates:
     labels:
       - "dependencies"
       - "documentation"
+    # MUST be "chore" to prevent version bumps  
     commit-message:
       prefix: "chore(docs)"
