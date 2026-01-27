@@ -8,6 +8,8 @@ jobs:
   validate:
     name: Validate Commit Messages
     runs-on: ubuntu-latest
+    # Skip validation for Dependabot PRs (they have long body lines)
+    if: github.actor != 'dependabot[bot]'
     
     steps:
       - name: Checkout code
