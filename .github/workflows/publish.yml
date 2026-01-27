@@ -1,8 +1,12 @@
 name: Publish to Maven Central
 
+# NOTE: Disabled for template repository
+# When using this template for a real library:
+# 1. Add Maven Central secrets (see README)
+# 2. Uncomment the 'release:' trigger below
 on:
-  release:
-    types: [ published ]
+  # release:
+  #   types: [ published ]
   workflow_dispatch:
     inputs:
       version:
