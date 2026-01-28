@@ -4,3 +4,4 @@ alwaysApply: false
 ---
 - Use version control for all changes; do not work outside tracked history.
 - Preserve history quality: prefer clean reverts or fixes over piling on ad-hoc commits.
+- When adding, updating, or removing dependencies, check if `.gitignore` needs updates for library-specific caches, generated files, or platform artifacts.

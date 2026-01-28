@@ -4,6 +4,7 @@ build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
+hs_err_pid*.log
 
 # Binary Compatibility Validator - Keep API dumps (they should be committed!)
 # Only ignore the build/ directory dumps (generated during validation)
@@ -14,10 +15,22 @@ build/
 **/build/reports/kover/
 **/.kover/
 
+# Dokka - Ignore documentation builds
+dokka/
+
+# Detekt
+detekt-baseline.xml
+
 # Kotlin
 *.kotlin_module
 *.kotlin_builtins
 .kotlin/
+.konan/
+
+# Native / C interop
+cmake-build-*/
+.externalNativeBuild/
+.cxx/
 
 # IntelliJ IDEA
 .idea/
@@ -35,6 +48,13 @@ bin/
 # VSCode
 .vscode/
 
+# Fleet
+.fleet/
+
+# Cursor
+.cursor/chat/
+.cursor/settings.json
+
 # macOS
 .DS_Store
 
@@ -44,18 +64,37 @@ local.properties
 # Log files
 *.log
 
+# Memory dumps
+*.hprof
+
 # Android
 *.apk
 *.aab
 *.ap_
 *.dex
 captures/
+mapping.txt
+seeds.txt
+usage.txt
+lint-results.xml
+lint-results.html
 
-# iOS
+# Signing keys (security)
+*.jks
+*.keystore
+key.properties
+
+# iOS / Xcode
 *.ipa
 *.dSYM.zip
 *.dSYM
 xcuserdata/
+*.xcuserstate
+*.moved-aside
+DerivedData/
+*.xcworkspace/xcuserdata/
+*.playground/
+*.swp
 
 # Setup script backups
 .setup-backup-*/
