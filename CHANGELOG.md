@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/Compiled-Platforms/kotlin-multiplatform-library-template/compare/v1.0.2...v1.1.0) (2026-01-31)
+
+
+### Features
+
+* add flexible publishing system and refactor convention plugin ([#36](https://github.com/Compiled-Platforms/kotlin-multiplatform-library-template/issues/36)) ([43f4455](https://github.com/Compiled-Platforms/kotlin-multiplatform-library-template/commit/43f44554e07070d7af1445b95693d7446c3545b8))
+
 ## [1.0.2](https://github.com/Compiled-Platforms/kotlin-multiplatform-library-template/compare/v1.0.1...v1.0.2) (2026-01-27)
 
 
