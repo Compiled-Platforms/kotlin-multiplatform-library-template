@@ -176,19 +176,47 @@ publishing:
   group_id: com.compiledplatforms.kmp
   artifact_id_prefix: kmp
   
-  # Repositories
+  # Repositories - Enable any combination of publishing targets
   repositories:
+    # Maven Central (public)
     maven_central:
-      enabled: true
-      auto_release: false
-    
+      enabled: false
+      auto_release: false  # If true, automatically release from Sonatype staging
+      # Secrets required: MAVEN_CENTRAL_USERNAME, MAVEN_CENTRAL_PASSWORD
+      
+    # GitHub Packages (private or public)
     github_packages:
       enabled: false
+      owner: Compiled-Platforms
+      repository: kotlin-multiplatform-library-template
+      # Secrets required: GITHUB_TOKEN (automatically provided by GitHub Actions)
+      
+    # Custom Maven Repository (Nexus, Artifactory, etc.)
+    custom_maven:
+      enabled: false
+      name: Company Nexus
+      releases_url: https://nexus.example.com/repository/maven-releases/
+      snapshots_url: https://nexus.example.com/repository/maven-snapshots/
+      # Secrets required: CUSTOM_MAVEN_USERNAME, CUSTOM_MAVEN_PASSWORD
+      
+    # JFrog Artifactory Cloud
+    jfrog:
+      enabled: false
+      url: https://example.jfrog.io/artifactory/libs-release/
+      # Secrets required: JFROG_USERNAME, JFROG_PASSWORD (or JFROG_API_KEY)
+      
+    # CloudSmith
+    cloudsmith:
+      enabled: false
+      owner: your-org
+      repository: maven
+      # Secrets required: CLOUDSMITH_API_KEY
   
-  # Signing
+  # Signing configuration
   signing:
     required: true
-    key_from_secret: true
+    key_from_secret: true  # If false, reads from ~/.gnupg
+    # Secrets required: SIGNING_KEY (base64 encoded), SIGNING_PASSWORD
   
   # Documentation in artifacts
   include_sources: true
@@ -199,6 +227,13 @@ publishing:
     scheme: semver
     tag_prefix: v
     snapshot_suffix: -SNAPSHOT
+    
+  # Publishing strategy
+  strategy:
+    # Publish snapshots on every main branch build
+    snapshots_on_main: false
+    # Publish releases only on tagged versions
+    releases_on_tag: true
 
 # Documentation
 documentation:

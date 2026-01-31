@@ -47,14 +47,44 @@ jobs:
         run: |
           echo "$SIGNING_KEY" | base64 --decode > signing-key.gpg
           
-      - name: Publish to Maven Central
+      - name: Validate publishing configuration
+        run: |
+          python3 scripts/get-publishing-config.py --validate
+      
+      - name: Check enabled repositories
+        id: repos
+        run: |
+          REPOS=$(python3 scripts/get-publishing-config.py --list-enabled | tr '\n' ' ')
+          echo "enabled=$REPOS" >> $GITHUB_OUTPUT
+          echo "📦 Enabled repositories: $REPOS"
+      
+      - name: Publish to configured repositories
         env:
+          # Maven Central
           ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
           ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
+          # GitHub Packages
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ORG_GRADLE_PROJECT_gpr_user: ${{ github.actor }}
+          ORG_GRADLE_PROJECT_gpr_token: ${{ secrets.GITHUB_TOKEN }}
+          # Custom Maven
+          ORG_GRADLE_PROJECT_customMaven_username: ${{ secrets.CUSTOM_MAVEN_USERNAME }}
+          ORG_GRADLE_PROJECT_customMaven_password: ${{ secrets.CUSTOM_MAVEN_PASSWORD }}
+          # JFrog
+          ORG_GRADLE_PROJECT_jfrog_username: ${{ secrets.JFROG_USERNAME }}
+          ORG_GRADLE_PROJECT_jfrog_password: ${{ secrets.JFROG_PASSWORD }}
+          # CloudSmith
+          ORG_GRADLE_PROJECT_cloudsmith_apiKey: ${{ secrets.CLOUDSMITH_API_KEY }}
+          # Signing
           ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.SIGNING_KEY }}
           ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.SIGNING_PASSWORD }}
         run: |
-          ./gradlew publishAllPublicationsToMavenCentral --no-daemon --no-configuration-cache
+          # Generate gradle.properties from project.yml
+          python3 scripts/get-publishing-config.py --gradle-properties > /tmp/publishing.properties
+          cat /tmp/publishing.properties >> gradle.properties
+          
+          # Publish to all enabled repositories
+          ./gradlew publish --no-daemon --no-configuration-cache
           
       - name: Cleanup signing key
         if: always()
