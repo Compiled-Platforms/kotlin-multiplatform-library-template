@@ -286,6 +286,17 @@ code_quality:
       - conventional-commits
 
 # Publishing Configuration
+# This template supports flexible publishing to multiple repository types.
+# Configure once here, publish anywhere.
+#
+# Supported repositories:
+#   - Maven Central (public, open-source)
+#   - GitHub Packages (private/public, free for private repos)
+#   - Custom Maven (self-hosted Nexus/Artifactory)
+#   - JFrog Artifactory Cloud (managed hosting)
+#   - CloudSmith (modern package hosting)
+#
+# 📖 Detailed guides: docs/docs/development/publishing*.md
 publishing:
   enabled: true
   
@@ -329,29 +340,221 @@ publishing:
   # Leave as "kmp" or change to your preferred prefix, or set to "" for no prefix
   artifact_id_prefix: kmp
   
-  # Repositories
+  # ============================================================================
+  # Publishing Repositories - Enable any combination you need
+  # ============================================================================
+  
   repositories:
+    # Maven Central (Public)
+    # Use for: Open-source libraries, public distribution
+    # Cost: Free
+    # Setup: Requires Sonatype account, GPG key
+    # Docs: docs/docs/development/publishing-maven-central.md
     maven_central:
-      enabled: true
-      auto_release: false
+      enabled: false               # Set to true to publish to Maven Central
+      auto_release: false          # If true, automatically release from staging
+      # Required secrets: MAVEN_CENTRAL_USERNAME, MAVEN_CENTRAL_PASSWORD
     
+    # GitHub Packages (Private/Public)
+    # Use for: Team/org libraries, private development
+    # Cost: Free for private repos
+    # Setup: Minimal, uses GitHub token
+    # Docs: docs/docs/development/publishing-github-packages.md
     github_packages:
-      enabled: false
+      enabled: false               # Set to true to enable
+      owner: ""                    # GitHub org or username (e.g., "mycompany")
+      repository: ""               # Repository name (e.g., "maven-packages")
+      # Required secrets: GITHUB_TOKEN (automatically provided by GitHub Actions)
+      
+      # Examples:
+      # Same as code repo:
+      #   owner: mycompany
+      #   repository: kotlin-multiplatform-library
+      #
+      # Dedicated package repo (recommended):
+      #   owner: mycompany
+      #   repository: maven-packages
+    
+    # Custom Maven Repository (Private)
+    # Use for: Self-hosted Nexus or Artifactory
+    # Cost: Your infrastructure
+    # Setup: Requires server setup
+    # Docs: docs/docs/development/publishing-custom-maven.md
+    custom_maven:
+      enabled: false               # Set to true to enable
+      name: Company Nexus          # Display name for the repository
+      releases_url: ""             # URL for releases (e.g., https://nexus.company.com/repository/maven-releases/)
+      snapshots_url: ""            # URL for snapshots (e.g., https://nexus.company.com/repository/maven-snapshots/)
+      # Required secrets: CUSTOM_MAVEN_USERNAME, CUSTOM_MAVEN_PASSWORD
+      
+      # Example Nexus:
+      #   releases_url: https://nexus.mycompany.com/repository/maven-releases/
+      #   snapshots_url: https://nexus.mycompany.com/repository/maven-snapshots/
+      #
+      # Example Artifactory:
+      #   releases_url: https://artifactory.mycompany.com/artifactory/maven-releases/
+      #   snapshots_url: https://artifactory.mycompany.com/artifactory/maven-snapshots/
+    
+    # JFrog Artifactory Cloud (Private)
+    # Use for: Managed Artifactory hosting
+    # Cost: From $150/month (free trial available)
+    # Setup: Sign up at jfrog.com
+    # Docs: docs/docs/development/publishing-cloud-services.md#jfrog
+    jfrog:
+      enabled: false               # Set to true to enable
+      url: ""                      # JFrog repository URL (e.g., https://mycompany.jfrog.io/artifactory/libs-release/)
+      # Required secrets: JFROG_USERNAME, JFROG_PASSWORD (or JFROG_API_KEY)
+      
+      # Example:
+      #   url: https://mycompany.jfrog.io/artifactory/maven-releases/
+    
+    # CloudSmith (Private/Public)
+    # Use for: Modern managed package hosting
+    # Cost: From $75/month (free for public packages)
+    # Setup: Sign up at cloudsmith.com
+    # Docs: docs/docs/development/publishing-cloud-services.md#cloudsmith
+    cloudsmith:
+      enabled: false               # Set to true to enable
+      owner: ""                    # CloudSmith org or username
+      repository: maven            # Repository name
+      # Required secrets: CLOUDSMITH_API_KEY
+      
+      # Example:
+      #   owner: mycompany
+      #   repository: maven
   
-  # Signing
+  # ============================================================================
+  # Signing Configuration
+  # ============================================================================
+  # All repositories require or recommend artifact signing
   signing:
-    required: true
-    key_from_secret: true
+    required: true                 # Require artifact signing (recommended)
+    key_from_secret: true          # Use GPG key from GitHub secrets (vs local ~/.gnupg)
+    # Required secrets: SIGNING_KEY (base64-encoded), SIGNING_PASSWORD
   
-  # Documentation in artifacts
-  include_sources: true
-  include_javadoc: true
+  # ============================================================================
+  # Artifact Configuration
+  # ============================================================================
+  # Include source code and documentation in published artifacts
+  include_sources: true            # Include -sources.jar
+  include_javadoc: true            # Include -javadoc.jar (Dokka-generated)
   
-  # Version strategy
+  # ============================================================================
+  # Versioning Strategy
+  # ============================================================================
   versioning:
-    scheme: semver
-    tag_prefix: v
-    snapshot_suffix: -SNAPSHOT
+    scheme: semver                 # Use semantic versioning (MAJOR.MINOR.PATCH)
+    tag_prefix: v                  # Git tag prefix (e.g., v1.0.0)
+    snapshot_suffix: -SNAPSHOT     # Suffix for development versions
+  
+  # ============================================================================
+  # Publishing Strategy
+  # ============================================================================
+  # Control when artifacts are published
+  strategy:
+    snapshots_on_main: false       # Automatically publish snapshots on every main branch commit
+    releases_on_tag: true          # Publish releases when tags are pushed
+    
+    # Example strategies:
+    #
+    # Manual releases only (recommended for open-source):
+    #   snapshots_on_main: false
+    #   releases_on_tag: true
+    #
+    # Continuous delivery (good for internal teams):
+    #   snapshots_on_main: true
+    #   releases_on_tag: true
+    #
+    # Full manual control:
+    #   snapshots_on_main: false
+    #   releases_on_tag: false
+
+# ============================================================================
+# Common Publishing Patterns
+# ============================================================================
+#
+# Pattern 1: Open-Source (Public)
+#   - Publish to Maven Central for public access
+#   - Use GitHub Packages for development snapshots
+#
+# publishing:
+#   group_id: io.github.yourusername
+#   repositories:
+#     maven_central:
+#       enabled: true
+#       auto_release: false     # Manual review before public release
+#     github_packages:
+#       enabled: true           # Private snapshots for team
+#       owner: yourusername
+#       repository: maven-packages
+#   strategy:
+#     snapshots_on_main: true   # Auto snapshots to GitHub Packages
+#     releases_on_tag: true     # Manual releases to Maven Central
+#
+# Pattern 2: Private Team Libraries
+#   - Use GitHub Packages exclusively
+#   - Free and integrated with GitHub
+#
+# publishing:
+#   group_id: com.company.kmp
+#   repositories:
+#     github_packages:
+#       enabled: true
+#       owner: company
+#       repository: maven-packages
+#   strategy:
+#     snapshots_on_main: true
+#     releases_on_tag: true
+#
+# Pattern 3: Enterprise (Private)
+#   - Use self-hosted Nexus or cloud service
+#   - Full control and compliance
+#
+# publishing:
+#   group_id: com.company.kmp
+#   repositories:
+#     custom_maven:  # or jfrog/cloudsmith
+#       enabled: true
+#       name: Company Nexus
+#       releases_url: https://nexus.company.com/repository/maven-releases/
+#       snapshots_url: https://nexus.company.com/repository/maven-snapshots/
+#   strategy:
+#     snapshots_on_main: true
+#     releases_on_tag: true
+#
+# Pattern 4: Multi-Repository
+#   - Publish to multiple repositories simultaneously
+#   - Public releases + Private snapshots
+#
+# publishing:
+#   group_id: io.github.yourusername
+#   repositories:
+#     maven_central:
+#       enabled: true           # Public stable releases
+#     github_packages:
+#       enabled: true           # Private development
+#       owner: yourusername
+#     jfrog:
+#       enabled: true           # Enterprise backup
+#
+# ============================================================================
+# Next Steps
+# ============================================================================
+#
+# 1. Choose your publishing strategy (see patterns above)
+# 2. Update group_id to match your namespace
+# 3. Enable desired repositories
+# 4. Add required secrets to GitHub (see docs)
+# 5. Validate configuration: python3 scripts/get-publishing-config.py --validate
+# 6. Test locally: ./gradlew publishToMavenLocal
+# 7. Publish: Create a release or push a tag
+#
+# 📖 Detailed setup guides:
+#    - docs/docs/development/publishing.md (overview)
+#    - docs/docs/development/publishing-maven-central.md
+#    - docs/docs/development/publishing-github-packages.md
+#    - docs/docs/development/publishing-custom-maven.md
+#    - docs/docs/development/publishing-cloud-services.md
 
 # Documentation
 documentation:

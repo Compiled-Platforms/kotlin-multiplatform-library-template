@@ -1,199 +1,285 @@
-# Publishing
+# Publishing Overview
 
-Guide to publishing your libraries to Maven Central.
+This template supports flexible publishing to multiple repository types. Configure once in `project.yml`, publish anywhere.
 
-## Prerequisites
+## Supported Repositories
 
-Before publishing, you need:
+| Repository | Type | Use Case | Cost |
+|------------|------|----------|------|
+| [Maven Central](publishing-maven-central.md) | Public | Open-source libraries | Free |
+| [GitHub Packages](publishing-github-packages.md) | Private/Public | Team/org libraries | Free for private repos |
+| [Custom Maven](publishing-custom-maven.md) | Private | Self-hosted Nexus/Artifactory | Your infrastructure |
+| [JFrog Cloud](publishing-cloud-services.md#jfrog) | Private | Managed Artifactory | Paid service |
+| [CloudSmith](publishing-cloud-services.md#cloudsmith) | Private | Modern package hosting | Paid service |
 
-1. **Sonatype Account** - Sign up at [Sonatype JIRA](https://issues.sonatype.org)
-2. **GPG Key** - For signing artifacts
-3. **Verified Domain/Group** - Claim your group ID on Sonatype
+## Quick Start
 
-## Configuration
+### 1. Configure in `project.yml`
 
-### 1. Create `gradle.properties`
-
-Create `gradle.properties` in your user home (`~/.gradle/gradle.properties`):
-
-```properties
-# Sonatype credentials
-mavenCentralUsername=your-username
-mavenCentralPassword=your-password
-
-# Signing configuration
-signing.keyId=your-key-id
-signing.password=your-key-password
-signing.secretKeyRingFile=/path/to/secring.gpg
+```yaml
+publishing:
+  enabled: true
+  group_id: com.yourcompany.kmp
+  
+  repositories:
+    maven_central:
+      enabled: true      # ← Enable desired repositories
+      auto_release: false
+    
+    github_packages:
+      enabled: false     # ← Enable/disable as needed
+      owner: your-org
+      repository: your-repo
 ```
 
-!!! warning "Security"
-    Never commit `gradle.properties` with credentials to version control!
+### 2. Add Required Secrets
 
-### 2. GPG Key Setup
+Each repository requires specific secrets in GitHub Actions:
 
-Generate a GPG key if you don't have one:
+| Repository | Required Secrets |
+|------------|------------------|
+| Maven Central | `MAVEN_CENTRAL_USERNAME`, `MAVEN_CENTRAL_PASSWORD` |
+| GitHub Packages | `GITHUB_TOKEN` (automatically provided) |
+| Custom Maven | `CUSTOM_MAVEN_USERNAME`, `CUSTOM_MAVEN_PASSWORD` |
+| JFrog | `JFROG_USERNAME`, `JFROG_PASSWORD` |
+| CloudSmith | `CLOUDSMITH_API_KEY` |
+| All (signing) | `SIGNING_KEY`, `SIGNING_PASSWORD` |
 
-```bash
-# Generate key
-gpg --gen-key
-
-# Export secret key
-gpg --export-secret-keys your-email@example.com > secring.gpg
-
-# Get key ID
-gpg --list-secret-keys --keyid-format SHORT
-```
-
-Upload your public key:
+### 3. Publish
 
 ```bash
-gpg --keyserver keyserver.ubuntu.com --send-keys YOUR_KEY_ID
-```
-
-## Publishing Process
-
-### Publishing to Maven Local (Testing)
-
-Test your library locally first:
-
-```bash
+# Test locally
 ./gradlew publishToMavenLocal
+
+# Publish to configured repositories
+./gradlew publish
+
+# Or let CI/CD handle it on release
+git tag v1.0.0
+git push origin v1.0.0
 ```
 
-This publishes to `~/.m2/repository/`. Test by depending on it in another project.
+## Publishing Strategy
 
-### Publishing to Maven Central
+The template supports two publishing strategies:
 
-1. **Verify Build**
-   ```bash
-   ./gradlew clean build
-   ```
+### Manual Publishing (Recommended)
 
-2. **Publish to Staging**
-   ```bash
-   ./gradlew publish
-   ```
+- **When**: Only on explicit releases
+- **How**: Create GitHub release or push tag
+- **Why**: Full control, review before publish
 
-3. **Release from Staging**
-   - Log in to [Nexus Repository Manager](https://s01.oss.sonatype.org/)
-   - Navigate to "Staging Repositories"
-   - Find your repository
-   - Click "Close" then "Release"
+```yaml
+# project.yml
+publishing:
+  strategy:
+    snapshots_on_main: false
+    releases_on_tag: true
+```
 
-### Automated Publishing
+### Automatic Publishing
 
-For automated releases, use the `vanniktech-maven-publish` plugin tasks:
+- **When**: Every commit to main (snapshots)
+- **How**: CI automatically publishes
+- **Why**: Continuous delivery for internal teams
+
+```yaml
+# project.yml
+publishing:
+  strategy:
+    snapshots_on_main: true
+    releases_on_tag: true
+```
+
+## Configuration Validation
+
+Validate your configuration before publishing:
 
 ```bash
-# Publish and automatically release
-./gradlew publishToMavenCentral --no-configuration-cache
+# Check configuration is valid
+python3 scripts/get-publishing-config.py --validate
+
+# See which repositories are enabled
+python3 scripts/get-publishing-config.py --list-enabled
+
+# Get configuration for specific repository
+python3 scripts/get-publishing-config.py --repository maven_central
+```
+
+## Publishing Workflow
+
+### Local Development
+
+```bash
+# 1. Test build
+./gradlew clean build
+
+# 2. Publish to local Maven repository
+./gradlew publishToMavenLocal
+
+# 3. Test in another project
+# Add mavenLocal() to repositories
+# Then depend on: com.yourcompany.kmp:library-name:1.0.0-SNAPSHOT
+```
+
+### CI/CD Publishing
+
+The workflow automatically:
+
+1. ✅ Validates `project.yml` configuration
+2. ✅ Builds and tests all platforms
+3. ✅ Signs artifacts (if enabled)
+4. ✅ Publishes to all enabled repositories
+5. ✅ Creates GitHub release (optional)
+
+See `.github/workflows/publish.yml` for details.
+
+## Repository-Specific Guides
+
+Choose your publishing target(s):
+
+### Public Publishing
+
+- **[Maven Central](publishing-maven-central.md)** - Industry standard for open-source Kotlin/Java libraries
+
+### Private Publishing
+
+- **[GitHub Packages](publishing-github-packages.md)** - Free, integrated with GitHub, great for org/team libraries
+- **[Custom Maven Repository](publishing-custom-maven.md)** - Self-hosted Nexus or Artifactory
+- **[Cloud Services](publishing-cloud-services.md)** - JFrog Artifactory Cloud or CloudSmith
+
+## Multiple Repositories
+
+You can publish to multiple repositories simultaneously:
+
+```yaml
+# project.yml
+publishing:
+  repositories:
+    maven_central:
+      enabled: true       # Public open-source release
+    
+    github_packages:
+      enabled: true       # Private development snapshots
+      owner: your-org
+      repository: maven-packages
+```
+
+This allows:
+- Public releases → Maven Central
+- Development snapshots → GitHub Packages
+- Keep internal versions private while releasing stable versions publicly
+
+## Artifact Signing
+
+All repositories require or strongly recommend signing artifacts:
+
+### Using GitHub Actions Secrets (Recommended)
+
+```yaml
+# project.yml
+publishing:
+  signing:
+    required: true
+    key_from_secret: true
+```
+
+Add secrets to GitHub:
+- `SIGNING_KEY` - Base64-encoded GPG key
+- `SIGNING_PASSWORD` - GPG key password
+
+See [Maven Central guide](publishing-maven-central.md#gpg-key-setup) for generating keys.
+
+### Using Local GPG (Development)
+
+```yaml
+# project.yml
+publishing:
+  signing:
+    required: true
+    key_from_secret: false  # Uses ~/.gnupg
 ```
 
 ## Versioning
 
-### Library Versions
+Versions are managed through `gradle.properties`:
 
-Each library has its own version in `build.gradle.kts`:
-
-```kotlin
-version = "1.0.0"
+```properties
+# gradle.properties
+VERSION_NAME=1.0.0
 ```
+
+### Version Formats
+
+- **Release**: `1.0.0`
+- **Snapshot**: `1.0.0-SNAPSHOT`
+- **Pre-release**: `1.0.0-alpha.1`
 
 Follow [Semantic Versioning](https://semver.org/):
-- `MAJOR.MINOR.PATCH`
-- Increment MAJOR for breaking changes
-- Increment MINOR for new features
-- Increment PATCH for bug fixes
-
-### BOM Versioning
-
-The BOM has its own version and lists compatible library versions:
-
-```kotlin title="bom/build.gradle.kts"
-version = "1.0.0"  // BOM version
-
-dependencies.constraints {
-    api("com.compiledplatforms.kmp.library:example-library:1.0.0")
-    api("com.compiledplatforms.kmp.library:my-library:2.3.0")
-}
-```
-
-## Release Checklist
-
-Before releasing:
-
-- [ ] All tests pass: `./gradlew test`
-- [ ] Code quality checks pass: `./gradlew detekt`
-- [ ] Documentation is updated
-- [ ] CHANGELOG is updated
-- [ ] Version numbers are bumped
-- [ ] BOM is updated with new library versions
-- [ ] Commit and tag the release
-  ```bash
-  git tag -a v1.0.0 -m "Release 1.0.0"
-  git push origin v1.0.0
-  ```
-
-## CI/CD Integration
-
-### GitHub Actions
-
-Example workflow for automated publishing:
-
-```yaml title=".github/workflows/publish.yml"
-name: Publish to Maven Central
-
-on:
-  release:
-    types: [created]
-
-jobs:
-  publish:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      
-      - name: Set up JDK
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '11'
-      
-      - name: Publish
-        env:
-          ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
-          ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
-          ORG_GRADLE_PROJECT_signingKeyId: ${{ secrets.SIGNING_KEY_ID }}
-          ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.SIGNING_PASSWORD }}
-          ORG_GRADLE_PROJECT_signingKey: ${{ secrets.SIGNING_KEY }}
-        run: ./gradlew publishToMavenCentral --no-configuration-cache
-```
-
-Add secrets in GitHub repository settings.
+- **Major** (x.0.0): Breaking changes
+- **Minor** (1.x.0): New features, backward compatible
+- **Patch** (1.0.x): Bug fixes, backward compatible
 
 ## Troubleshooting
 
-### Common Issues
+### Configuration Issues
 
-**Missing signatures**
-- Ensure GPG key is properly configured
-- Check `signing.keyId` matches your key
+```bash
+# Validate configuration
+python3 scripts/get-publishing-config.py --validate
 
-**Validation errors**
-- Verify POM information is complete
-- Check that group ID is claimed on Sonatype
+# Check required secrets for a repository
+python3 scripts/get-publishing-config.py --required-secrets maven_central
+```
 
-**Timeout errors**
-- Try publishing again
-- Check Sonatype status page
+### Publishing Failures
 
-### Support
+**401 Unauthorized**
+- Check credentials are correct in secrets
+- Verify account is active and has permissions
 
-- [Sonatype Guide](https://central.sonatype.org/publish/)
-- [vanniktech plugin docs](https://vanniktech.github.io/gradle-maven-publish-plugin/)
+**Signature Verification Failed**
+- Ensure `SIGNING_KEY` is complete base64-encoded key
+- Verify `SIGNING_PASSWORD` is correct
+
+**Repository Not Found**
+- Check repository URLs in `project.yml`
+- Verify owner/organization names
+
+### Local Testing
+
+Skip signing for local development:
+
+```bash
+./gradlew publish -PskipSigning=true
+```
+
+## Best Practices
+
+### Security
+
+- ✅ Use GitHub Actions secrets for credentials
+- ✅ Never commit secrets to version control
+- ✅ Rotate credentials regularly
+- ✅ Use API tokens instead of passwords when possible
+
+### Release Process
+
+- ✅ Test locally with `publishToMavenLocal` first
+- ✅ Validate configuration before releasing
+- ✅ Update CHANGELOG.md
+- ✅ Tag releases with semantic versions
+- ✅ Let CI handle publishing (don't publish from local machine)
+
+### Multi-Repository Strategy
+
+- **Public + Private**: Maven Central for releases, GitHub Packages for snapshots
+- **Multi-Org**: Separate repositories for different teams/organizations
+- **Staging**: Custom Maven for staging, production repository for releases
 
 ## Next Steps
 
-- [Configuration](../getting-started/configuration.md) - Advanced configuration
-- [Contributing](../about/contributing.md) - Contribution guidelines
+- [Set up Maven Central](publishing-maven-central.md)
+- [Set up GitHub Packages](publishing-github-packages.md)
+- [Set up Custom Maven](publishing-custom-maven.md)
+- [Set up Cloud Services](publishing-cloud-services.md)
