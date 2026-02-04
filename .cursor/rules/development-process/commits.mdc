@@ -4,5 +4,6 @@ alwaysApply: false
 ---
 - Make small, logical commits that represent a single coherent change.
 - Write clear commit messages that explain intent ("why"), not just implementation ("what").
+- Use [Conventional Commits](https://www.conventionalcommits.org/) for automated versioning: `fix` = PATCH, `feat` = MINOR, `BREAKING CHANGE` = MAJOR
 - Do not mix unrelated changes in the same commit.
 - Do not commit broken builds, failing tests, or incomplete work unless explicitly marked and isolated.

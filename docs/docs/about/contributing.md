@@ -56,7 +56,7 @@ See the [Development Setup](../development/setup.md) guide.
 - **Detekt** - All code must pass Detekt checks
 - **Tests** - Add tests for new functionality
 - **Documentation** - Update docs for user-facing changes
-- **Commit Messages** - Use clear, descriptive messages
+- **Commit Messages** - Follow [Conventional Commits](https://www.conventionalcommits.org/) format (see [Versioning](../development/versioning.md#commit-message-format))
 
 ### Testing
 

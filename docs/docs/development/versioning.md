@@ -19,12 +19,24 @@ This project uses **semantic-release** for fully automated versioning based on [
 ## Commit Message Format
 
 ```
-<type>: <description>
+<type>(optional-scope): <description>
 
 [optional body]
 
-[optional footer]
+[optional footer(s)]
 ```
+
+### Scope (Optional)
+
+Add a scope to provide context about which part of the codebase changed:
+
+```
+feat(auth): add OAuth2 support
+fix(parser): handle null values correctly
+docs(api): update endpoint documentation
+```
+
+Common scopes: `auth`, `api`, `ui`, `core`, `build`, `deps`
 
 ### Commit Types
 
@@ -76,11 +88,36 @@ BREAKING CHANGE: The login() method signature changed"
 
 Both formats trigger a **major** version bump (1.2.0 → 2.0.0)
 
+## Team Workflows
+
+### Multiple Commits
+
+If a change fits multiple types, make separate commits:
+
+```bash
+# Bad: mixing concerns
+git commit -m "feat: add login and fix typo"
+
+# Good: separate commits
+git commit -m "feat(auth): add login feature"
+git commit -m "docs: fix typo in README"
+```
+
+### Squash and Merge
+
+When squashing PRs, the maintainer can clean up commit messages:
+
+1. Review all commits in the PR
+2. Write a single, well-formatted conventional commit
+3. Squash merge with the cleaned-up message
+
+This allows contributors to commit frequently during development without worrying about perfect commit messages.
+
 ## Enforcement
 
 ### Local Validation (Lefthook)
 
-Commits are validated locally via git hooks:
+Commits are validated locally via git hooks using [commitlint](https://github.com/conventional-changelog/commitlint):
 
 ```bash
 lefthook install  # First time only
@@ -88,12 +125,15 @@ git commit -m "invalid message"  # ❌ Blocked!
 git commit -m "feat: valid message"  # ✅ Allowed
 ```
 
+Validation rules are defined in `.commitlintrc.json` at the project root.
+
 ### CI Validation (GitHub Actions)
 
 All PR commits are validated in CI automatically via the "Validate Commit Messages" workflow.
 
 ## Further Reading
 
-- [Conventional Commits](https://www.conventionalcommits.org/)
-- [Semantic Versioning](https://semver.org/)
-- [semantic-release Documentation](https://semantic-release.gitbook.io/)
+- [Conventional Commits](https://www.conventionalcommits.org/) - Commit message specification
+- [commitlint](https://github.com/conventional-changelog/commitlint) - Commit message linting tool
+- [Semantic Versioning](https://semver.org/) - Version numbering scheme
+- [semantic-release Documentation](https://semantic-release.gitbook.io/) - Automated release tool
