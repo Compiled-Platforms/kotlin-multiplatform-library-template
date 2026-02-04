@@ -20,8 +20,14 @@ def parse_toml(file_path):
 
 
 def set_output(name, value):
-    """Set GitHub Actions output."""
-    print(f"::set-output name={name}::{value}")
+    """Set GitHub Actions output via GITHUB_OUTPUT environment file."""
+    github_output = os.environ.get('GITHUB_OUTPUT')
+    if github_output:
+        with open(github_output, 'a', encoding='utf-8') as f:
+            delimiter = 'ghoutput'
+            f.write(f'{name}<<{delimiter}\n')
+            f.write(f'{value}\n')
+            f.write(f'{delimiter}\n')
 
 
 def main():
