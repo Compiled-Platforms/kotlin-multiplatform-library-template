@@ -3,6 +3,7 @@ package config
 import com.android.build.api.dsl.androidLibrary
 import org.gradle.api.Project
 import org.gradle.api.artifacts.VersionCatalog
+import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.kotlin.dsl.configure
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
@@ -10,11 +11,19 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 /**
  * Configures Android library settings within KMP.
  * Responsibility: Android-specific configuration and R8 consumer rules.
+ * Only runs if "android" is in the library's kmp.targets (see KotlinMultiplatformConfig).
  */
 object AndroidLibraryConfig {
-    
+
+    @Suppress("UNCHECKED_CAST")
+    private fun hasAndroidTarget(project: Project): Boolean {
+        val targets = project.extensions.findByType(ExtraPropertiesExtension::class.java)?.get("kmpTargets") as? Set<*> ?: return true
+        return targets.contains("android")
+    }
+
     fun configure(project: Project, libs: VersionCatalog) {
-        // Configure Android library in KMP
+        if (!hasAndroidTarget(project)) return
+
         project.extensions.configure<KotlinMultiplatformExtension> {
             androidLibrary {
                 // Generate namespace from project name
@@ -41,6 +50,10 @@ object AndroidLibraryConfig {
                         }
                     }
                 }
+            }
+            // Publish only release variant for Android (Kotlin target, not androidLibrary block)
+            targets.withType(org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget::class.java).configureEach {
+                publishLibraryVariants("release")
             }
         }
         
