@@ -78,9 +78,9 @@ Both formats trigger a **major** version bump (1.2.0 → 2.0.0)
 
 ## Enforcement
 
-### Local Validation (Lefthook)
+### Local Validation (Lefthook + commitlint)
 
-Commits are validated locally via git hooks:
+Commits are validated locally via git hooks using [commitlint](https://github.com/conventional-changelog/commitlint):
 
 ```bash
 lefthook install  # First time only
@@ -88,12 +88,15 @@ git commit -m "invalid message"  # ❌ Blocked!
 git commit -m "feat: valid message"  # ✅ Allowed
 ```
 
+Validation rules are defined in `.commitlintrc.json` at the project root.
+
 ### CI Validation (GitHub Actions)
 
 All PR commits are validated in CI automatically via the "Validate Commit Messages" workflow.
 
 ## Further Reading
 
-- [Conventional Commits](https://www.conventionalcommits.org/)
-- [Semantic Versioning](https://semver.org/)
-- [semantic-release Documentation](https://semantic-release.gitbook.io/)
+- [Conventional Commits](https://www.conventionalcommits.org/) - Commit message specification
+- [commitlint](https://github.com/conventional-changelog/commitlint) - Commit message linting tool
+- [Semantic Versioning](https://semver.org/) - Version numbering scheme
+- [semantic-release Documentation](https://semantic-release.gitbook.io/) - Automated release tool
