@@ -1,3 +1,10 @@
+## [1.1.1](https://github.com/Compiled-Platforms/kotlin-multiplatform-library-template/compare/v1.1.0...v1.1.1) (2026-02-04)
+
+
+### Bug Fixes
+
+* **actions:** use GITHUB_OUTPUT file instead of deprecated set-output ([#37](https://github.com/Compiled-Platforms/kotlin-multiplatform-library-template/issues/37)) ([392b90a](https://github.com/Compiled-Platforms/kotlin-multiplatform-library-template/commit/392b90a9bbb51869a44fc43011a7830cf80ac04b))
+
 # [1.1.0](https://github.com/Compiled-Platforms/kotlin-multiplatform-library-template/compare/v1.0.2...v1.1.0) (2026-01-31)
 
 
