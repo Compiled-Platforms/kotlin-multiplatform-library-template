@@ -17,7 +17,14 @@ object AndroidLibraryConfig {
 
     @Suppress("UNCHECKED_CAST")
     private fun hasAndroidTarget(project: Project): Boolean {
-        val targets = project.extensions.findByType(ExtraPropertiesExtension::class.java)?.get("kmpTargets") as? Set<*> ?: return true
+        val extraProperties = project.extensions.findByType(ExtraPropertiesExtension::class.java)
+            ?: throw IllegalStateException(
+                "ExtraPropertiesExtension not found. Ensure KotlinMultiplatformConfig.configure() has been applied before AndroidLibraryConfig."
+            )
+        val targets = extraProperties.get("kmpTargets") as? Set<*>
+            ?: throw IllegalStateException(
+                "kmpTargets property not set. Ensure KotlinMultiplatformConfig.configure() sets 'kmpTargets' before AndroidLibraryConfig."
+            )
         return targets.contains("android")
     }
 

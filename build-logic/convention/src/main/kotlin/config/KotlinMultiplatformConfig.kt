@@ -33,6 +33,12 @@ object KotlinMultiplatformConfig {
                     "Valid values: ${VALID_TARGETS.joinToString()}"
             )
         }
+        if (targets.isEmpty()) {
+            throw org.gradle.api.GradleException(
+                "Library ${project.path}: kmp.targets must specify at least one target. " +
+                    "Add e.g. kmp.targets=android,jvm,ios,linux (comma-separated)."
+            )
+        }
         return targets
     }
 

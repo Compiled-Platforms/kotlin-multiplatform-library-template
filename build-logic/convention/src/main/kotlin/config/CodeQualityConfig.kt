@@ -14,7 +14,15 @@ object CodeQualityConfig {
 
     @Suppress("UNCHECKED_CAST")
     private fun getTargets(project: Project): Set<String> {
-        return project.extensions.findByType(ExtraPropertiesExtension::class.java)?.get("kmpTargets") as? Set<String> ?: setOf("android", "jvm", "ios", "linux")
+        val extra = project.extensions.findByType(ExtraPropertiesExtension::class.java)
+            ?: throw IllegalStateException(
+                "ExtraPropertiesExtension not found. Ensure KotlinMultiplatformConfig.configure() has been applied before CodeQualityConfig."
+            )
+        val kmpTargets = extra.get("kmpTargets")
+            ?: throw IllegalStateException(
+                "kmpTargets property not set. Ensure KotlinMultiplatformConfig.configure() sets 'kmpTargets' before CodeQualityConfig."
+            )
+        return (kmpTargets as? Set<String>) ?: emptySet()
     }
 
     fun configure(project: Project) {
