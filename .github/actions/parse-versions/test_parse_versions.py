@@ -3,10 +3,11 @@
 Unit tests for parse_versions.py
 """
 
+import os
 import pytest
 import tempfile
-import os
 from pathlib import Path
+
 from parse_versions import parse_toml, set_output
 
 
@@ -59,6 +60,15 @@ def empty_toml_file():
     
     # Cleanup
     os.unlink(temp_path)
+
+
+@pytest.fixture
+def github_output_file(monkeypatch, tmp_path):
+    """Provide a temp file as GITHUB_OUTPUT for testing."""
+    output_file = tmp_path / 'github_output'
+    output_file.touch()
+    monkeypatch.setenv('GITHUB_OUTPUT', str(output_file))
+    return output_file
 
 
 class TestParseToml:
@@ -134,58 +144,57 @@ class TestVersionExtraction:
 
 
 class TestSetOutput:
-    """Tests for set_output function."""
-    
-    def test_set_output_format(self, capsys):
-        """Test that set_output produces correct GitHub Actions format."""
+    """Tests for set_output function (GITHUB_OUTPUT file format)."""
+
+    def test_set_output_format(self, github_output_file):
+        """Test that set_output writes correct GitHub Actions environment file format."""
         set_output('test-key', 'test-value')
-        
-        captured = capsys.readouterr()
-        assert '::set-output name=test-key::test-value' in captured.out
-    
-    def test_set_output_multiple(self, capsys):
+        content = github_output_file.read_text()
+        assert 'test-key<<ghoutput\n' in content
+        assert 'test-value\n' in content
+        assert 'ghoutput\n' in content
+
+    def test_set_output_multiple(self, github_output_file):
         """Test setting multiple outputs."""
         set_output('key1', 'value1')
         set_output('key2', 'value2')
-        
-        captured = capsys.readouterr()
-        assert '::set-output name=key1::value1' in captured.out
-        assert '::set-output name=key2::value2' in captured.out
+        content = github_output_file.read_text()
+        assert 'key1<<ghoutput\nvalue1\nghoutput\n' in content
+        assert 'key2<<ghoutput\nvalue2\nghoutput\n' in content
 
 
 class TestIntegration:
     """Integration tests for the full parsing flow."""
-    
-    def test_full_parse_flow(self, temp_toml_file, capsys):
+
+    def test_full_parse_flow(self, temp_toml_file, github_output_file):
         """Test the complete parsing flow."""
         data = parse_toml(temp_toml_file)
         versions = data.get('versions', {})
-        
+
         java_ci = versions.get('java-ci', '17')
         python_ci = versions.get('python-ci', '3.11')
-        
+
         set_output('java-version', java_ci)
         set_output('python-version', python_ci)
-        
-        captured = capsys.readouterr()
-        assert '::set-output name=java-version::17' in captured.out
-        assert '::set-output name=python-version::3.11' in captured.out
-    
-    def test_parse_with_missing_versions(self, empty_toml_file, capsys):
+
+        content = github_output_file.read_text()
+        assert 'java-version<<ghoutput\n17\nghoutput\n' in content
+        assert 'python-version<<ghoutput\n3.11\nghoutput\n' in content
+
+    def test_parse_with_missing_versions(self, empty_toml_file, github_output_file):
         """Test parsing when versions are missing (should use defaults)."""
         data = parse_toml(empty_toml_file)
         versions = data.get('versions', {})
-        
+
         java_ci = versions.get('java-ci', '17')
         python_ci = versions.get('python-ci', '3.11')
-        
+
         set_output('java-version', java_ci)
         set_output('python-version', python_ci)
-        
-        captured = capsys.readouterr()
-        # Should output defaults
-        assert '::set-output name=java-version::17' in captured.out
-        assert '::set-output name=python-version::3.11' in captured.out
+
+        content = github_output_file.read_text()
+        assert 'java-version<<ghoutput\n17\nghoutput\n' in content
+        assert 'python-version<<ghoutput\n3.11\nghoutput\n' in content
 
 
 if __name__ == '__main__':
