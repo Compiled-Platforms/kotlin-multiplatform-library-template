@@ -12,12 +12,7 @@ plugins {
     alias(libs.plugins.kover)
 }
 
-allprojects {
-    repositories {
-        google()
-        mavenCentral()
-    }
-}
+// Repositories are configured in settings.gradle.kts via dependencyResolutionManagement.
 
 // Configure Dokka V2 for multi-module documentation
 extensions.configure<org.jetbrains.dokka.gradle.DokkaExtension> {

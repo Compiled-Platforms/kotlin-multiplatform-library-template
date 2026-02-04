@@ -25,13 +25,9 @@ class KmpLibraryConventionPlugin : Plugin<Project> {
     
     override fun apply(target: Project) {
         with(target) {
-            // Apply required plugins
-            applyPlugins()
-            
-            // Access version catalog for dependency management
+            val targets = KotlinMultiplatformConfig.parseTargets(this)
+            applyPlugins(targets)
             val libs = extensions.getByType<VersionCatalogsExtension>().named("libs")
-            
-            // Delegate configuration to focused components
             KotlinMultiplatformConfig.configure(this, libs)
             AndroidLibraryConfig.configure(this, libs)
             CodeQualityConfig.configure(this)
@@ -39,11 +35,13 @@ class KmpLibraryConventionPlugin : Plugin<Project> {
             PublishingConfig.configure(this)
         }
     }
-    
-    private fun Project.applyPlugins() {
+
+    private fun Project.applyPlugins(targets: Set<String>) {
         pluginManager.apply {
             apply("org.jetbrains.kotlin.multiplatform")
-            apply("com.android.kotlin.multiplatform.library")
+            if (targets.contains("android")) {
+                apply("com.android.kotlin.multiplatform.library")
+            }
             apply("com.vanniktech.maven.publish")
             apply("dev.detekt")
             apply("org.jetbrains.dokka")
