@@ -971,37 +971,97 @@ fun goodTest() = runTest {
 
 ## Running Tests
 
+### Manual test commands (reference)
+
+All commands below are run from the project root. CI runs `./gradlew build`, which compiles and runs tests for all targets.
+
+| What | Command |
+|------|---------|
+| **Full build and test** (same as CI) | `./gradlew build` |
+| **All tests, aggregated report** | `./gradlew allTests` |
+| **All checks** (tests + Detekt + API check, etc.) | `./gradlew check` |
+| **JVM tests** (all modules) | `./gradlew jvmTest` |
+| **Android unit tests** (Robolectric, all variants) | `./gradlew testAndroid` |
+| **Android host tests** (androidMain, Robolectric) | `./gradlew testAndroidHostTest` |
+| **JS tests** (browser/Karma) | `./gradlew jsTest` or `./gradlew jsBrowserTest` |
+| **WasmJS tests** (browser/Karma) | `./gradlew wasmJsTest` or `./gradlew wasmJsBrowserTest` |
+| **Linux native tests** | `./gradlew linuxX64Test` |
+| **Windows native tests** | `./gradlew mingwX64Test` |
+| **iOS Simulator tests** (macOS only) | `./gradlew iosSimulatorArm64Test` or `./gradlew iosX64Test` |
+| **Android device tests** (connected device/emulator) | `./gradlew connectedAndroidDeviceTest` or `./gradlew connectedAndroidTest` |
+
+**Single library** (replace `key-value-store` with the library name):
+
+| What | Command |
+|------|---------|
+| All tests for that library | `./gradlew :libraries:key-value-store:allTests` or `./gradlew :libraries:key-value-store:build` |
+| JVM only | `./gradlew :libraries:key-value-store:jvmTest` |
+| Android host tests only | `./gradlew :libraries:key-value-store:testAndroidHostTest` |
+| JS / WasmJS (if the library has JS) | `./gradlew :libraries:key-value-store:jsTest` `./gradlew :libraries:key-value-store:wasmJsTest` |
+| Native (e.g. Linux) | `./gradlew :libraries:key-value-store:linuxX64Test` |
+
+**Coverage and watch mode:**
+
+```bash
+./gradlew allTests koverHtmlReport   # tests + HTML coverage report
+./gradlew allTests --continuous      # re-run on changes
+```
+
+**Single test or test class:**
+
+```bash
+./gradlew :libraries:key-value-store:jvmTest --tests "*.JvmObservableKeyValueStoreFactoryTest"
+./gradlew jvmTest --tests "com.compiledplatforms.kmp.library.keyvaluestore.*"
+```
+
 ### Run All Tests
 
 ```bash
-./gradlew test
+./gradlew allTests
+```
+
+Or run a full build (compile + test, same as CI):
+
+```bash
+./gradlew build
 ```
 
 ### Run Tests for Specific Platform
 
 ```bash
-./gradlew jvmTest           # JVM only
-./gradlew testAndroid       # Android only
-./gradlew iosSimulatorArm64Test  # iOS Simulator
-./gradlew linuxX64Test      # Linux
+./gradlew jvmTest                   # JVM only
+./gradlew testAndroid               # Android unit tests (all variants)
+./gradlew testAndroidHostTest       # Android host tests (androidMain)
+./gradlew iosSimulatorArm64Test     # iOS Simulator (macOS only)
+./gradlew linuxX64Test              # Linux native
+./gradlew jsTest                    # JS (browser)
+./gradlew wasmJsTest                # WasmJS (browser)
 ```
 
 ### Run Tests for Specific Library
 
 ```bash
-./gradlew :libraries:example-library:test
+./gradlew :libraries:key-value-store:allTests
+# or
+./gradlew :libraries:key-value-store:build
+```
+
+For the example library:
+
+```bash
+./gradlew :libraries:example-library:allTests
 ```
 
 ### Run Tests with Coverage
 
 ```bash
-./gradlew test koverHtmlReport
+./gradlew allTests koverHtmlReport
 ```
 
 ### Run Tests in Watch Mode
 
 ```bash
-./gradlew test --continuous
+./gradlew allTests --continuous
 ```
 
 ## Debugging Tests
@@ -1146,20 +1206,30 @@ fun testWithMokkery() = runTest {
 ## Quick Reference
 
 ```bash
-# Run all tests
-./gradlew test
+# Full build and test (same as CI)
+./gradlew build
+
+# Run all tests (aggregated report)
+./gradlew allTests
 
 # Run with coverage
-./gradlew test koverHtmlReport
+./gradlew allTests koverHtmlReport
 
 # Run specific platform
 ./gradlew jvmTest
+./gradlew testAndroidHostTest
+./gradlew iosSimulatorArm64Test
+./gradlew linuxX64Test
+
+# Run tests for one library
+./gradlew :libraries:key-value-store:allTests
 
 # Run continuously
-./gradlew test --continuous
+./gradlew allTests --continuous
 
-# Run specific test
-./gradlew test --tests "MyTest.testFunction"
+# Run specific test or class
+./gradlew jvmTest --tests "MyTest.testFunction"
+./gradlew :libraries:key-value-store:jvmTest --tests "*.JvmObservableKeyValueStoreFactoryTest"
 ```
 
 **Golden Rule:** Write tests that are easy to read, easy to maintain, and test behavior, not implementation!

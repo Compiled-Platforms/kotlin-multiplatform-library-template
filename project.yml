@@ -8,12 +8,12 @@ project:
   organization: Compiled-Platforms
   repository: kotlin-multiplatform-library-template
   license: Apache-2.0
-  
+
   # Project maintainers
   maintainers:
     - name: Andrew
       github: aiithak
-  
+
   # Contact and support
   support:
     email: support@compiledplatforms.com
@@ -28,23 +28,23 @@ platforms:
     - ios
     - jvm
     - linux
-  
+
   # Platform-specific settings
   android:
     min_sdk: 24
     compile_sdk: 35
     namespace_prefix: com.compiledplatforms.kmp
-  
+
   ios:
     deployment_target: '13.0'
     targets:
       - iosArm64
       - iosSimulatorArm64
       - iosX64
-  
+
   jvm:
     target: '11'
-  
+
   native:
     cache_path: ~/.konan
     targets:
@@ -55,23 +55,23 @@ ci:
   # Branch-specific CI control
   # Set to false, list of branches, or "all"
   enabled_branches: [main]  # CI enabled on main branch for automated releases
-  
+
   # Runner configuration
   runners:
     primary: ubuntu-latest      # For most builds
-    full: 
+    full:
       - ubuntu-latest           # Linux + Android
       - macos-latest            # iOS + macOS
-  
+
   # When to run comprehensive checks (all platforms)
   full_checks_on:
     branches: [main]
     events: [push]
-  
+
   # Fast checks for PRs (JVM + code quality only)
   fast_checks_on:
     events: [pull_request]
-  
+
   # Path filters - skip CI on these changes
   skip_paths:
     - '**/*.md'
@@ -82,7 +82,7 @@ ci:
     - '.github/PULL_REQUEST_TEMPLATE.md'
     - '.github/CODEOWNERS'
     - '.github/FUNDING.yml'
-  
+
   # Code paths that should trigger builds
   watch_paths:
     - 'libraries/**'
@@ -91,20 +91,20 @@ ci:
     - 'build.gradle.kts'
     - 'settings.gradle.kts'
     - '.github/workflows/**'
-  
+
   # Caching configuration
   caching:
     gradle: true
     kotlin_native: true
     python_deps: true
     configuration_cache: true
-  
+
   # Build optimization
   gradle_flags:
     - --parallel
     - --configuration-cache
     - --daemon
-  
+
   # Artifact retention
   artifacts:
     retention_days: 7
@@ -119,21 +119,21 @@ testing:
     - turbine
     - mokkery
     - kotest-assertions
-  
+
   coverage:
     enabled: true
     tool: kover
     minimum_percentage: 80
     report_on_pr: false
     report_on_main: true
-  
+
   # Test execution strategy
   execution:
     # Run on PR (fast feedback)
     pr:
       - jvm
       - android_unit
-    
+
     # Run on main (comprehensive)
     main:
       - jvm
@@ -149,15 +149,15 @@ code_quality:
     fail_fast: true
     run_on_commit: true
     run_on_ci: true
-  
+
   api_validation:
     enabled: true
     strict_mode: true
-  
+
   formatting:
     editorconfig: true
     ktlint: false  # Using EditorConfig + Detekt instead
-  
+
   git_hooks:
     tool: lefthook
     pre_commit:
@@ -168,14 +168,21 @@ code_quality:
     commit_msg:
       - conventional-commits
 
+# Scripts (pre-push test_platforms.py, etc.)
+scripts:
+  test_platforms:
+    # Max parallel Gradle runs when testing multiple platforms (default 3).
+    # Too high: machine thrashing, OOM, slower overall; Gradle and emulators are resource-heavy.
+    max_concurrency: 3
+
 # Publishing Configuration
 publishing:
   enabled: true
-  
+
   # Maven coordinates
-  group_id: com.compiledplatforms.kmp
-  artifact_id_prefix: kmp
-  
+  # GROUP is defined in gradle.properties (single source of truth)
+  # Artifact names: key-value-store, in-app-reviews, etc.
+
   # Repositories - Enable any combination of publishing targets
   repositories:
     # Maven Central (public)
@@ -183,14 +190,14 @@ publishing:
       enabled: false
       auto_release: false  # If true, automatically release from Sonatype staging
       # Secrets required: MAVEN_CENTRAL_USERNAME, MAVEN_CENTRAL_PASSWORD
-      
+
     # GitHub Packages (private or public)
     github_packages:
       enabled: false
       owner: Compiled-Platforms
       repository: kotlin-multiplatform-library-template
       # Secrets required: GITHUB_TOKEN (automatically provided by GitHub Actions)
-      
+
     # Custom Maven Repository (Nexus, Artifactory, etc.)
     custom_maven:
       enabled: false
@@ -198,36 +205,36 @@ publishing:
       releases_url: https://nexus.example.com/repository/maven-releases/
       snapshots_url: https://nexus.example.com/repository/maven-snapshots/
       # Secrets required: CUSTOM_MAVEN_USERNAME, CUSTOM_MAVEN_PASSWORD
-      
+
     # JFrog Artifactory Cloud
     jfrog:
       enabled: false
       url: https://example.jfrog.io/artifactory/libs-release/
       # Secrets required: JFROG_USERNAME, JFROG_PASSWORD (or JFROG_API_KEY)
-      
+
     # CloudSmith
     cloudsmith:
       enabled: false
       owner: your-org
       repository: maven
       # Secrets required: CLOUDSMITH_API_KEY
-  
+
   # Signing configuration
   signing:
     required: true
     key_from_secret: true  # If false, reads from ~/.gnupg
     # Secrets required: SIGNING_KEY (base64 encoded), SIGNING_PASSWORD
-  
+
   # Documentation in artifacts
   include_sources: true
   include_javadoc: true
-  
+
   # Version strategy
   versioning:
     scheme: semver
     tag_prefix: v
     snapshot_suffix: -SNAPSHOT
-    
+
   # Publishing strategy
   strategy:
     # Publish snapshots on every main branch build
@@ -241,16 +248,16 @@ documentation:
   mkdocs:
     enabled: true
     theme: material
-    
+
   dokka:
     enabled: true
     format: html
-    
+
   # Deployment
   github_pages:
     enabled: false  # Disabled - private project
     branch: gh-pages
-    
+
   # Local serving
   local_port: 8000
 
@@ -260,20 +267,20 @@ dependencies:
   dependabot:
     enabled: true
     schedule: weekly
-    
+
     # Manually managed (KMP compatibility)
     ignore:
       - kotlin
       - gradle
       - android-gradle-plugin
-    
+
     # Grouping strategy
     groups:
       kotlin: [kotlinx-*]
       android: [androidx.*, android.*, agp]
       dev-tools: [detekt, kover, binary-compatibility-validator]
       github-actions: [actions/*, gradle/*]
-  
+
   # Version catalog
   catalog:
     file: gradle/libs.versions.toml
@@ -286,13 +293,13 @@ release:
     enabled: true
     tool: semantic-release  # Automated changelog and versioning
     config: .releaserc.json
-  
+
   # Automated steps (via semantic-release)
   automation:
     tag_on_merge: true  # semantic-release creates tags on main branch
     publish_on_tag: false  # Manual publishing preferred
     create_github_release: true  # semantic-release creates GitHub releases
-  
+
   # Required checks before release
   pre_release_checks:
     - all_tests_pass
@@ -310,7 +317,7 @@ development:
     feature_prefix: feature/
     bugfix_prefix: fix/
     release_prefix: release/
-  
+
   # Commit conventions
   commits:
     format: conventional
@@ -324,7 +331,7 @@ development:
       - test
       - chore
       - ci
-    
+
   # PR requirements
   pull_requests:
     require_review: false  # Template project
@@ -338,7 +345,7 @@ security:
   scanning:
     secrets: true  # Pre-commit hook
     dependencies: true  # Dependabot
-  
+
   # Policy
   policy:
     file: SECURITY.md

@@ -36,30 +36,32 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
-      
+
       - name: Check CI Status
         id: check
         uses: ./.github/actions/ci-status
-  
+
   build:
     needs: config
     if: needs.config.outputs.ci-enabled == 'true'
     runs-on: ${{ needs.config.outputs.runner }}
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
-      
+        with:
+          fetch-depth: 0
+
       - name: Parse Versions
         id: versions
         uses: ./.github/actions/parse-versions
-        
+
       - name: Set up JDK
         uses: actions/setup-java@v5
         with:
-          distribution: 'temurin'
+          distribution: "temurin"
           java-version: ${{ steps.versions.outputs.java-version }}
-      
+
       - name: Cache Kotlin/Native dependencies
         if: needs.config.outputs.kotlin-native-cache == 'true'
         uses: actions/cache@v5
@@ -68,9 +70,20 @@ jobs:
           key: ${{ runner.os }}-konan-${{ hashFiles('gradle/libs.versions.toml') }}
           restore-keys: |
             ${{ runner.os }}-konan-
-          
+
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v5
-          
-      - name: Build and Test
-        run: ./gradlew build ${{ needs.config.outputs.gradle-flags }} --stacktrace
+
+      - name: Compute commit range for platform script
+        id: range
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            git fetch origin ${{ github.base_ref }}
+            BASE=$(git merge-base origin/${{ github.base_ref }} ${{ github.event.pull_request.head.sha }})
+          else
+            BASE=HEAD~1
+          fi
+          echo "base=$BASE" >> $GITHUB_OUTPUT
+
+      - name: Build and Test (affected platforms only)
+        run: python3 scripts/test_platforms.py --base ${{ steps.range.outputs.base }} --max-concurrency 2

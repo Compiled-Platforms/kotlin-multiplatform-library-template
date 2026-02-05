@@ -26,17 +26,17 @@ object KotlinMultiplatformConfig {
                     "Add e.g. kmp.targets=android,jvm,ios,linux (comma-separated)."
             )
         val targets = raw.split(",").map { it.trim() }.filter { it.isNotEmpty() }.toSet()
+        if (targets.isEmpty()) {
+            throw org.gradle.api.GradleException(
+                "Library ${project.path}: kmp.targets must contain at least one target. " +
+                    "Valid values: ${VALID_TARGETS.joinToString()}"
+            )
+        }
         val invalid = targets - VALID_TARGETS
         if (invalid.isNotEmpty()) {
             throw org.gradle.api.GradleException(
                 "Library ${project.path}: invalid kmp.targets: ${invalid.joinToString()}. " +
                     "Valid values: ${VALID_TARGETS.joinToString()}"
-            )
-        }
-        if (targets.isEmpty()) {
-            throw org.gradle.api.GradleException(
-                "Library ${project.path}: kmp.targets must specify at least one target. " +
-                    "Add e.g. kmp.targets=android,jvm,ios,linux (comma-separated)."
             )
         }
         return targets
