@@ -20,31 +20,33 @@ jobs:
     runs-on: ubuntu-latest
     # Only run if the build workflow succeeded
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
-    
+
     steps:
       - name: Generate GitHub App token
         id: app-token
         uses: actions/create-github-app-token@v2
         with:
-          app-id: ${{ secrets.APP_ID }}
-          private-key: ${{ secrets.APP_PRIVATE_KEY }}
-          
+          app-id: ${{ secrets.INTERNAL_APP_ID }}
+          installation-id: ${{ secrets.INTERNAL_APP_INSTALLATION_ID }}
+          private-key: ${{ secrets.INTERNAL_APP_PRIVATE_KEY }}
+
       - name: Checkout code
         uses: actions/checkout@v6
         with:
           fetch-depth: 0  # Full history for semantic-release
           token: ${{ steps.app-token.outputs.token }}
-          
+
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
           node-version: '20'
           # No cache since package-lock.json is gitignored
-          
+
       - name: Install dependencies
         run: npm ci
-        
+
       - name: Run semantic-release
         env:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
+          LEFTHOOK: 0  # Skip hooks for release commit; commitlint/check-secrets are for human commits
         run: npx semantic-release

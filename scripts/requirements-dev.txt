@@ -1,0 +1,2 @@
+# Dev dependencies for scripts (tests)
+pytest==9.0.2

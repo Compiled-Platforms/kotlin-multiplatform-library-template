@@ -13,13 +13,11 @@ pre-commit:
     check-secrets:
       glob: "*.{properties,yml,yaml,json}"
       run: |
-        # Check for actual hardcoded secrets (not GitHub Actions template syntax)
+        # Check for actual hardcoded secrets (not GitHub Actions template syntax). POSIX sh for CI.
         for file in {staged_files}; do
-          # Skip GitHub Actions workflows (they use ${{ secrets.* }} which is fine)
-          if [[ "$file" == .github/workflows/* || "$file" == lefthook.yml ]]; then
-            continue
-          fi
-          
+          case "$file" in
+            .github/workflows/*|lefthook.yml) continue ;;
+          esac
           if grep -i "password\|secret\|token\|key" "$file" | grep -iv "secrets\." | grep -v "SIGNING_KEY\|MAVEN_CENTRAL\|github_token" | grep -qE ":\s*['\"]?[a-zA-Z0-9]{20,}"; then
             echo "❌ Potential hardcoded secret found in $file"
             exit 1
@@ -28,25 +26,14 @@ pre-commit:
 
 commit-msg:
   commands:
-    validate-message:
-      run: |
-        commit_msg=$(cat {1})
-        if ! echo "$commit_msg" | grep -qE "^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\(.+\))?: .+"; then
-          echo "❌ Invalid commit message format!"
-          echo "Expected: <type>[optional scope]: <description>"
-          echo "Types: feat, fix, docs, style, refactor, perf, test, build, ci, chore, revert"
-          echo ""
-          echo "Examples:"
-          echo "  feat: add BOM support"
-          echo "  fix(detekt): resolve code quality issues"
-          echo "  docs: update README with setup instructions"
-          exit 1
-        fi
+    commitlint:
+      run: npx commitlint --edit {1} --config .commitlintrc.json
 
 pre-push:
   commands:
-    build:
-      run: ./gradlew build --daemon
+    test:
+      # Pass max-concurrency from project.yml (scripts.test_platforms.max_concurrency); fallback 3
+      run: python3 scripts/test_platforms.py --max-concurrency $(python3 scripts/get-config.py scripts.test_platforms.max_concurrency 2>/dev/null || echo 3)
 
 skip_output:
   - meta

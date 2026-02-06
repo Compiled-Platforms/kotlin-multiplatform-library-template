@@ -3,21 +3,42 @@ name: Validate Commits
 on:
   pull_request:
     types: [opened, edited, synchronize]
+  push:
+    branches: [main]
 
 jobs:
   validate:
     name: Validate Commit Messages
     runs-on: ubuntu-latest
     # Skip validation for Dependabot PRs (they have long body lines)
-    if: github.actor != 'dependabot[bot]'
-    
+    if: github.event_name != 'pull_request' || github.actor != 'dependabot[bot]'
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
         with:
           fetch-depth: 0
-          
-      - name: Validate Commit Messages
-        uses: wagoid/commitlint-github-action@v6
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
-          configFile: .commitlintrc.json
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install commitlint
+        run: npm ci
+
+      - name: Validate Commit Messages (PR)
+        if: github.event_name == 'pull_request'
+        run: |
+          BASE_REF="${{ github.event.pull_request.base.ref }}"
+          git fetch origin "$BASE_REF"
+          HEAD_SHA="${{ github.event.pull_request.head.sha }}"
+          MERGE_BASE=$(git merge-base "origin/$BASE_REF" "$HEAD_SHA")
+          npx commitlint --from "$MERGE_BASE" --to "$HEAD_SHA" --config .commitlintrc.json --verbose
+
+      - name: Validate Commit Messages (push to main)
+        if: github.event_name == 'push'
+        run: |
+          # Validate commits that just landed (e.g. merge/squash messages)
+          npx commitlint --from "${{ github.event.before }}" --to "${{ github.sha }}" --config .commitlintrc.json --verbose

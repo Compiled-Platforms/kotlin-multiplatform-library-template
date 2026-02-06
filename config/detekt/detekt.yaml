@@ -103,6 +103,7 @@ complexity:
   LargeClass:
     active: true
     allowedLines: 600
+    excludes: ['**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/androidUnitTest/**', '**/androidInstrumentedTest/**', '**/jsTest/**', '**/iosTest/**']
   LongMethod:
     active: true
     allowedLines: 60
@@ -283,6 +284,7 @@ exceptions:
     allowedExceptionNameRegex: '_|(ignore|expected).*'
   TooGenericExceptionThrown:
     active: true
+    excludes: ['**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/androidUnitTest/**', '**/androidInstrumentedTest/**', '**/jsTest/**', '**/iosTest/**']
     exceptionNames:
       - 'Error'
       - 'Exception'
@@ -306,7 +308,8 @@ naming:
   EnumNaming:
     active: true
     aliases: ['EnumEntryName']
-    enumEntryPattern: '[A-Z][_a-zA-Z0-9]*'
+    # PascalCase only (e.g. Standard, Volatile); disallows UPPER_SNAKE_CASE
+    enumEntryPattern: '[A-Z][a-zA-Z0-9]*'
   ForbiddenClassName:
     active: false
     forbiddenName: []
