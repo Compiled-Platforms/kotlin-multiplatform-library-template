@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/Compiled-Platforms/kotlin-multiplatform-library-template/compare/v1.1.1...v1.2.0) (2026-02-06)
+
+
+### Features
+
+* **ci:** add platform build scripts and update workflows ([#40](https://github.com/Compiled-Platforms/kotlin-multiplatform-library-template/issues/40)) ([8839aa5](https://github.com/Compiled-Platforms/kotlin-multiplatform-library-template/commit/8839aa580736224f71a5ea6cdc17d96ebef61b29))
+
 ## [1.1.1](https://github.com/Compiled-Platforms/kotlin-multiplatform-library-template/compare/v1.1.0...v1.1.1) (2026-02-04)
 
 
