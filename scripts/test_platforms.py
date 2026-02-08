@@ -16,6 +16,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from src.touched_files import get_repo_root, get_touched_files
 from src.platform_core import (
+    get_library_project_paths,
+    scope_tasks_to_libraries,
     platforms_for_changed_files,
     gradle_test_tasks_by_platform,
 )
@@ -38,23 +40,29 @@ def main() -> int:
     args = parser.parse_args()
 
     cwd = get_repo_root()
+    library_projects = get_library_project_paths(cwd)
+
     paths = get_touched_files(args.base)
     if not paths:
-        return run_gradle(["build"], cwd=cwd, dry_run=args.dry_run)
+        tasks = scope_tasks_to_libraries(["build"], library_projects)
+        return run_gradle(tasks, cwd=cwd, dry_run=args.dry_run)
 
     result = platforms_for_changed_files(paths)
     if result is None:
         # Gradle config changed; validate with JVM build only (no native)
-        return run_gradle(["jvmTest"], cwd=cwd, dry_run=args.dry_run)
+        tasks = scope_tasks_to_libraries(["jvmTest"], library_projects)
+        return run_gradle(tasks, cwd=cwd, dry_run=args.dry_run)
 
     main_platforms, test_platforms = result
     platforms_to_test = main_platforms | test_platforms
 
     if not platforms_to_test:
         # Touched files don't affect any platform (e.g. scripts only); validate with JVM only
-        return run_gradle(["jvmTest"], cwd=cwd, dry_run=args.dry_run)
+        tasks = scope_tasks_to_libraries(["jvmTest"], library_projects)
+        return run_gradle(tasks, cwd=cwd, dry_run=args.dry_run)
 
     work = gradle_test_tasks_by_platform(platforms_to_test)
+    work = [(name, scope_tasks_to_libraries(tasks, library_projects)) for name, tasks in work]
     if len(work) == 1:
         _name, tasks = work[0]
         return run_gradle(tasks, cwd=cwd, dry_run=args.dry_run)

@@ -1,5 +1,6 @@
 plugins {
     id("convention.library")
+    alias(libs.plugins.mokkery)
 }
 
 description = "Platform-specific static information with no reactive dependencies"

@@ -10,6 +10,7 @@ plugins {
     alias(libs.plugins.composeCompiler) apply false
     alias(libs.plugins.vanniktech.mavenPublish) apply false
     alias(libs.plugins.detekt) apply false
+    alias(libs.plugins.mokkery) apply false
     alias(libs.plugins.dokka)
     alias(libs.plugins.binaryCompatibilityValidator)
     alias(libs.plugins.kover)

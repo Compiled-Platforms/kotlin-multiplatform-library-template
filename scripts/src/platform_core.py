@@ -5,6 +5,35 @@ Single responsibility: map paths to platforms and platforms to task lists. No gi
 """
 
 import re
+from pathlib import Path
+
+
+def get_library_project_paths(repo_root: Path) -> list[str]:
+    """
+    Return Gradle project paths for all library modules (libraries/* with build.gradle.kts).
+    Used to scope CI to library builds only, excluding samples.
+    """
+    libraries_dir = repo_root / "libraries"
+    if not libraries_dir.is_dir():
+        return []
+    result = []
+    for path in libraries_dir.iterdir():
+        if path.is_dir() and (path / "build.gradle.kts").exists():
+            result.append(f":libraries:{path.name}")
+    return sorted(result)
+
+
+def scope_tasks_to_libraries(
+    tasks: list[str], library_projects: list[str]
+) -> list[str]:
+    """
+    Prefix each task with each library project path so only library projects are built.
+    E.g. ["build"] with [":libraries:example-library"] -> [":libraries:example-library:build"].
+    If library_projects is empty, returns tasks unchanged (no scoping).
+    """
+    if not library_projects or not tasks:
+        return tasks
+    return [f"{proj}:{task}" for proj in library_projects for task in tasks]
 
 
 # Path patterns: source set dir -> platform key(s).
