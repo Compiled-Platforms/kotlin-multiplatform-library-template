@@ -68,10 +68,10 @@ kotlin-multiplatform-library-template/
 
 ```bash
 # Run JVM sample
-./gradlew :samples:example-library-sample:run
+./gradlew :samples:example-library:run
 
 # List all tasks for a sample
-./gradlew :samples:example-library-sample:tasks
+./gradlew :samples:example-library:tasks
 ```
 
 ## Code Quality

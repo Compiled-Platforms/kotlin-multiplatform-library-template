@@ -86,12 +86,12 @@ Platform-specific constants representing the starting values of the Fibonacci se
 
 ## Sample Application
 
-A complete sample application is available at `samples/example-library-sample/`.
+A complete sample application is available at `samples/example-library/`.
 
 Run it with:
 
 ```bash
-./gradlew :samples:example-library-sample:run
+./gradlew :samples:example-library:run
 ```
 
 ## Source Code

@@ -16,7 +16,7 @@ A sample application demonstrating the use of `example-library`.
 
 ```bash
 # From the root of the monorepo
-./gradlew :samples:example-library-sample:run
+./gradlew :samples:example-library:run
 ```
 
 ### Expected Output
