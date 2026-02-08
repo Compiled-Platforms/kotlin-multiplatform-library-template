@@ -83,25 +83,25 @@ The sample will be auto-discovered. Just sync Gradle and run:
 ### ✅ DO
 
 1. **Use project dependencies** - `implementation(project(":libraries:..."))`
-   - Ensures samples always use latest library code
-   - Catches breaking changes immediately
+    - Ensures samples always use latest library code
+    - Catches breaking changes immediately
 
 2. **Keep samples simple** - Focus on demonstrating library features
-   - Clear, commented code
-   - One concept per sample when possible
+    - Clear, commented code
+    - One concept per sample when possible
 
 3. **Make samples runnable** - Users should be able to clone and run
-   - Include clear instructions
-   - Minimal setup required
+    - Include clear instructions
+    - Minimal setup required
 
 4. **Test samples in CI** - Include in build pipeline
-   - Prevents samples from breaking
-   - Validates library changes don't break usage
+    - Prevents samples from breaking
+    - Validates library changes don't break usage
 
 5. **Document what's demonstrated** - Clear README in each sample
-   - What features are shown
-   - How to run it
-   - What to expect
+    - What features are shown
+    - How to run it
+    - What to expect
 
 ### ❌ DON'T
 
@@ -135,7 +135,7 @@ Demonstrate platform-specific features.
 
 ### Run a Specific Sample
 ```bash
-./gradlew :samples:example-library:jvm-cli:run
+./gradlew :samples:example-library:run
 ```
 
 ### Build All Samples
@@ -145,7 +145,7 @@ Demonstrate platform-specific features.
 
 ### List All Sample Tasks
 ```bash
-./gradlew :samples:example-library:jvm-cli:tasks
+./gradlew :samples:example-library:tasks
 ```
 
 ## CI Integration
@@ -156,30 +156,6 @@ If a sample breaks, it means:
 - ✅ Good! The CI caught a breaking change
 - 🔧 Update the sample to work with the new API
 - 📝 Document the breaking change
-
-## Structure
-
-```
-samples/
-├── README.md                    # This file
-├── example-library/      # Sample for example-library
-│   ├── README.md               # Sample-specific docs
-│   ├── build.gradle.kts        # Sample build config
-│   └── src/
-│       ├── commonMain/kotlin/  # Common sample code
-│       └── jvmMain/kotlin/     # JVM entry point
-└── another-sample/             # Another sample
-    └── ...
-```
-
-## Tips
-
-- **Keep samples updated** - They're the first thing users try
-- **Use samples for documentation** - Link to them from library READMEs
-- **Test samples locally** before pushing
-- **Make samples copy-pasteable** - Users often start with samples
-
-## Questions?
 
 ## Sample to KMP Target Mapping
 see: https://kotlinlang.org/api/kotlin-gradle-plugin/kotlin-gradle-plugin-api/org.jetbrains.kotlin.gradle.dsl/-kotlin-multiplatform-source-set-conventions/
@@ -285,5 +261,14 @@ This file structure demonstrates example framework-specific sample directories.
 ├── wasm-wasi-server/                 # WASI server
 └── wasm-wasi-{framework}/            # WASI with other frameworks
 ```
+
+## Tips
+
+- **Keep samples updated** - They're the first thing users try
+- **Use samples for documentation** - Link to them from library READMEs
+- **Test samples locally** before pushing
+- **Make samples copy-pasteable** - Users often start with samples
+
+## Questions?
 
 See the main [README](../README.md) for more information about the monorepo structure.

@@ -1,5 +1,5 @@
 /**
- * JVM-specific entry point for the CLI sample.
+ * JVM entry point for the sample.
  *
  * Run with: ./gradlew :samples:example-library:jvm-cli:run
  */
