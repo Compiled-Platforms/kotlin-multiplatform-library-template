@@ -13,7 +13,7 @@ Demonstrates the use of `example-library` including:
 
 **Run it:**
 ```bash
-./gradlew :samples:example-library:run
+./gradlew :samples:example-library:jvm-cli:run
 ```
 
 ## Creating a New Sample
@@ -135,7 +135,7 @@ Demonstrate platform-specific features.
 
 ### Run a Specific Sample
 ```bash
-./gradlew :samples:example-library:run
+./gradlew :samples:example-library:jvm-cli:run
 ```
 
 ### Build All Samples
@@ -145,7 +145,7 @@ Demonstrate platform-specific features.
 
 ### List All Sample Tasks
 ```bash
-./gradlew :samples:example-library:tasks
+./gradlew :samples:example-library:jvm-cli:tasks
 ```
 
 ## CI Integration

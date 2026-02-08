@@ -91,7 +91,7 @@ A complete sample application is available at `samples/example-library/`.
 Run it with:
 
 ```bash
-./gradlew :samples:example-library:run
+./gradlew :samples:example-library:jvm-cli:run
 ```
 
 ## Source Code
