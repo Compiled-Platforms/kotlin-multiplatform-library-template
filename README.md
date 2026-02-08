@@ -479,7 +479,7 @@ The `samples/` directory contains full sample applications demonstrating library
 
 ```bash
 # Run a sample application
-./gradlew :samples:example-library-sample:run
+./gradlew :samples:example-library:jvm-cli:run
 
 # Build all samples
 ./gradlew :samples:build

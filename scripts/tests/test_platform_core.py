@@ -13,6 +13,8 @@ from src.platform_core import (
     gradle_test_tasks,
     gradle_test_tasks_by_platform,
     gradle_compile_tasks,
+    get_library_project_paths,
+    scope_tasks_to_libraries,
 )
 
 
@@ -302,3 +304,56 @@ class TestGradleTestTasksByPlatform:
         assert by_platform["jvm"] == ["jvmTest"]
         assert by_platform["android"] == ["testDebugUnitTest"]
         assert by_platform["ios"] == ["compileKotlinIosSimulatorArm64"]
+
+
+class TestLibraryScoping:
+    """Tests for library-only CI scoping."""
+
+    def test_get_library_project_paths_empty_when_no_libraries_dir(self, tmp_path):
+        assert get_library_project_paths(tmp_path) == []
+
+    def test_get_library_project_paths_finds_libraries_with_build_gradle(self, tmp_path):
+        (tmp_path / "libraries" / "example-library").mkdir(parents=True)
+        (tmp_path / "libraries" / "example-library" / "build.gradle.kts").write_text("")
+        assert get_library_project_paths(tmp_path) == [":libraries:example-library"]
+
+    def test_get_library_project_paths_ignores_dirs_without_build_gradle(self, tmp_path):
+        (tmp_path / "libraries" / "example-library").mkdir(parents=True)
+        (tmp_path / "libraries" / "no-build").mkdir(parents=True)
+        (tmp_path / "libraries" / "example-library" / "build.gradle.kts").write_text("")
+        assert get_library_project_paths(tmp_path) == [":libraries:example-library"]
+
+    def test_get_library_project_paths_sorted(self, tmp_path):
+        (tmp_path / "libraries" / "b-lib").mkdir(parents=True)
+        (tmp_path / "libraries" / "a-lib").mkdir(parents=True)
+        (tmp_path / "libraries" / "b-lib" / "build.gradle.kts").write_text("")
+        (tmp_path / "libraries" / "a-lib" / "build.gradle.kts").write_text("")
+        assert get_library_project_paths(tmp_path) == [":libraries:a-lib", ":libraries:b-lib"]
+
+    def test_scope_tasks_to_libraries_empty_projects_returns_tasks_unchanged(self):
+        assert scope_tasks_to_libraries(["build"], []) == ["build"]
+        assert scope_tasks_to_libraries(["jvmTest"], []) == ["jvmTest"]
+
+    def test_scope_tasks_to_libraries_empty_tasks_returns_empty(self):
+        assert scope_tasks_to_libraries([], [":libraries:example-library"]) == []
+
+    def test_scope_tasks_to_libraries_single_library_single_task(self):
+        got = scope_tasks_to_libraries(["build"], [":libraries:example-library"])
+        assert got == [":libraries:example-library:build"]
+
+    def test_scope_tasks_to_libraries_single_library_multiple_tasks(self):
+        got = scope_tasks_to_libraries(
+            ["compileKotlinIosSimulatorArm64", "jvmTest"],
+            [":libraries:example-library"],
+        )
+        assert got == [
+            ":libraries:example-library:compileKotlinIosSimulatorArm64",
+            ":libraries:example-library:jvmTest",
+        ]
+
+    def test_scope_tasks_to_libraries_multiple_libraries(self):
+        got = scope_tasks_to_libraries(
+            ["build"],
+            [":libraries:a-lib", ":libraries:b-lib"],
+        )
+        assert got == [":libraries:a-lib:build", ":libraries:b-lib:build"]

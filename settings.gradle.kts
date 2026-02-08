@@ -27,11 +27,20 @@ file("libraries").listFiles()?.forEach { libraryDir ->
     }
 }
 
-// Auto-discover all sample applications in the samples/ directory
+// Auto-discover all sample applications (1-level and 2-level deep)
 file("samples").listFiles()?.forEach { sampleDir ->
-    if (sampleDir.isDirectory && file("${sampleDir.path}/build.gradle.kts").exists()) {
-        val sampleName = sampleDir.name
-        include(":samples:$sampleName")
+    if (sampleDir.isDirectory) {
+        // Check if this directory itself is a sample (has build.gradle.kts)
+        if (file("${sampleDir.path}/build.gradle.kts").exists()) {
+            include(":samples:${sampleDir.name}")
+        } else {
+            // Otherwise, check for nested samples
+            sampleDir.listFiles()?.forEach { nestedSampleDir ->
+                if (nestedSampleDir.isDirectory && file("${nestedSampleDir.path}/build.gradle.kts").exists()) {
+                    include(":samples:${sampleDir.name}:${nestedSampleDir.name}")
+                }
+            }
+        }
     }
 }
 
