@@ -3,7 +3,7 @@ plugins {
     alias(libs.plugins.mokkery)
 }
 
-description = "Platform-specific static information with no reactive dependencies"
+description = "Example Kotlin Multiplatform Fibonacci library"
 
 @OptIn(org.jetbrains.kotlin.gradle.ExperimentalWasmDsl::class)
 kotlin {
