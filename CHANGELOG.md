@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/Compiled-Platforms/kotlin-multiplatform-library-template/compare/v1.2.0...v1.3.0) (2026-02-09)
+
+
+### Features
+
+* AGP 9 migration and tooling updates ([#43](https://github.com/Compiled-Platforms/kotlin-multiplatform-library-template/issues/43)) ([43cbaca](https://github.com/Compiled-Platforms/kotlin-multiplatform-library-template/commit/43cbaca26a79e607e7daad06ee729eaef14a0b56))
+
 # [1.2.0](https://github.com/Compiled-Platforms/kotlin-multiplatform-library-template/compare/v1.1.1...v1.2.0) (2026-02-06)
 
 
