@@ -4,20 +4,28 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
-    alias(libs.plugins.android.application)
+    alias(libs.plugins.android.kotlin.multiplatform.library)
     alias(libs.plugins.jetbrainsCompose)
     alias(libs.plugins.composeCompiler)
 }
 
 kotlin {
-    androidTarget {
+    androidLibrary {
+        namespace = "com.compiledplatforms.kmp.library.fibonacci.sample.shared"
+        compileSdk = libs.versions.android.compileSdk.get().toInt()
+        minSdk = libs.versions.android.minSdk.get().toInt()
+
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_11)
         }
+
+        androidResources {
+            enable = true
+        }
     }
-    
+
     jvm()
-    
+
     listOf(
         iosX64(),
         iosArm64(),
@@ -29,24 +37,19 @@ kotlin {
             binaryOption("bundleId", "com.compiledplatforms.kmp.library.fibonacci.sample")
         }
     }
-    
+
     js(IR) {
         browser()
         binaries.executable()
     }
-    
+
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
         browser()
         binaries.executable()
     }
-    
+
     sourceSets {
-        androidMain.dependencies {
-            implementation(compose.preview)
-            implementation("androidx.activity:activity-compose:1.9.0")
-        }
-        
         commonMain.dependencies {
             implementation(compose.runtime)
             implementation(compose.foundation)
@@ -54,54 +57,20 @@ kotlin {
             implementation(compose.ui)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
-            
+
             implementation(project(":libraries:example-library"))
         }
-        
+
         jvmMain.dependencies {
             implementation(compose.desktop.currentOs)
         }
     }
 }
 
-android {
-    namespace = "com.compiledplatforms.kmp.library.fibonacci.sample"
-    compileSdk = libs.versions.android.compileSdk.get().toInt()
-
-    defaultConfig {
-        applicationId = "com.compiledplatforms.kmp.library.fibonacci.sample"
-        minSdk = libs.versions.android.minSdk.get().toInt()
-        targetSdk = libs.versions.android.compileSdk.get().toInt()
-        versionCode = 1
-        versionName = "1.0"
-    }
-    
-    packaging {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
-    }
-    
-    buildTypes {
-        getByName("release") {
-            isMinifyEnabled = false
-        }
-    }
-    
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
-}
-
-dependencies {
-    debugImplementation(libs.compose.ui.tooling)
-}
-
 compose.desktop {
     application {
         mainClass = "MainKt"
-        
+
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "com.compiledplatforms.kmp.library.fibonacci.sample"
@@ -110,25 +79,13 @@ compose.desktop {
     }
 }
 
-// Custom task to install and run the Android app
-tasks.register<Exec>("runDebug") {
-    group = "application"
-    description = "Install and launch the debug APK on a connected device/emulator"
-    dependsOn("installDebug")
-    
-    commandLine(
-        "adb", "shell", "am", "start",
-        "-n", "com.compiledplatforms.kmp.library.fibonacci.sample/.MainActivity"
-    )
-}
-
 // Task to kill any leftover webpack dev server processes
 tasks.register<Exec>("killWebpack") {
     group = "build"
     description = "Kill any leftover webpack dev server processes"
-    
+
     commandLine("sh", "-c", "pkill -f 'webpack' 2>/dev/null || true")
-    
+
     // Ignore failures if no webpack processes are running
     isIgnoreExitValue = true
 }
@@ -150,14 +107,14 @@ tasks.matching { it.name.contains("BrowserTest") }.configureEach {
 tasks.register<Exec>("iosSimulatorRun") {
     group = "run"
     description = "Build and run the iOS app in the simulator (use -PiosDevice=\"iPhone 16 Pro\" to specify device)"
-    
+
     dependsOn("linkDebugFrameworkIosSimulatorArm64")
-    
+
     val projectDir = file("iosApp/iosApp.xcodeproj")
     val appName = "iosApp"
     val bundleId = "com.compiledplatforms.kmp.library.fibonacci.sample"
     val requestedDevice = project.findProperty("iosDevice") as String? ?: ""
-    
+
     commandLine(
         "sh", "-c", """
             set -e

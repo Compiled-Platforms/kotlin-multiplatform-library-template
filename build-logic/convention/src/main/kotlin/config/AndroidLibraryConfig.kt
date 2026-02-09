@@ -1,6 +1,6 @@
 package config
 
-import com.android.build.api.dsl.androidLibrary
+import com.android.build.api.dsl.KotlinMultiplatformAndroidLibraryTarget
 import org.gradle.api.Project
 import org.gradle.api.artifacts.VersionCatalog
 import org.gradle.api.plugins.ExtraPropertiesExtension
@@ -9,72 +9,60 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
 /**
- * Configures Android library settings within KMP.
- * Responsibility: Android-specific configuration and R8 consumer rules.
- * Only runs if "android" is in the library's kmp.targets (see KotlinMultiplatformConfig).
+ * Configures the Android target within KMP using the
+ * com.android.kotlin.multiplatform.library plugin (AGP 9.0+).
+ *
+ * The plugin registers an `android` extension on `KotlinMultiplatformExtension`.
+ * In a convention plugin there are no generated accessors, so we look it up by name.
+ *
+ * See: https://developer.android.com/kotlin/multiplatform/plugin
  */
 object AndroidLibraryConfig {
 
     @Suppress("UNCHECKED_CAST")
     private fun hasAndroidTarget(project: Project): Boolean {
         val extraProperties = project.extensions.findByType(ExtraPropertiesExtension::class.java)
-            ?: throw IllegalStateException(
-                "ExtraPropertiesExtension not found. Ensure KotlinMultiplatformConfig.configure() has been applied before AndroidLibraryConfig."
-            )
-        val targets = extraProperties.get("kmpTargets") as? Set<*>
-            ?: throw IllegalStateException(
-                "kmpTargets property not set. Ensure KotlinMultiplatformConfig.configure() sets 'kmpTargets' before AndroidLibraryConfig."
-            )
-        return targets.contains("android")
+            ?: return false
+        val targets = extraProperties.get("kmpTargets") as? Set<*> ?: return false
+        return targets.any { it.toString() == "Android" || it.toString().lowercase() == "android" }
     }
 
     fun configure(project: Project, libs: VersionCatalog) {
         if (!hasAndroidTarget(project)) return
 
         project.extensions.configure<KotlinMultiplatformExtension> {
-            androidLibrary {
-                // Generate namespace from project name
+            val android = extensions.findByName("android") as? KotlinMultiplatformAndroidLibraryTarget
+                ?: return@configure
+
+            android.apply {
                 namespace = "com.compiledplatforms.kmp.library.${project.name.replace("-", ".")}"
-                
-                // SDK versions from version catalog
                 compileSdk = libs.findVersion("android-compileSdk").get().toString().toInt()
                 minSdk = libs.findVersion("android-minSdk").get().toString().toInt()
-                
-                // Enable Java compilation support
-                withJava()
-                
-                // Configure test builders
+
+                compilerOptions {
+                    jvmTarget.set(JvmTarget.JVM_11)
+                }
+
+                val consumerRulesFile = project.file("consumer-rules.pro")
+                if (consumerRulesFile.exists()) {
+                    @Suppress("UnstableApiUsage")
+                    (this as com.android.build.api.dsl.KotlinMultiplatformAndroidLibraryExtension)
+                        .optimization.consumerKeepRules.apply {
+                            publish = true
+                            file(consumerRulesFile)
+                        }
+                }
+
                 withHostTestBuilder {}.configure {}
                 withDeviceTestBuilder {
                     sourceSetTreeName = "test"
                 }
-                
-                // Configure compilation options
+
                 compilations.configureEach {
                     compileTaskProvider.configure {
                         compilerOptions {
                             jvmTarget.set(JvmTarget.JVM_11)
                         }
-                    }
-                }
-            }
-            // Publish only release variant for Android (Kotlin target, not androidLibrary block)
-            targets.withType(org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget::class.java).configureEach {
-                publishLibraryVariants("release")
-            }
-        }
-        
-        // Configure R8 consumer rules after evaluation
-        configureR8ConsumerRules(project)
-    }
-    
-    private fun configureR8ConsumerRules(project: Project) {
-        project.afterEvaluate {
-            extensions.findByType(com.android.build.gradle.LibraryExtension::class.java)?.apply {
-                val consumerRulesFile = project.file("consumer-rules.pro")
-                if (consumerRulesFile.exists()) {
-                    defaultConfig {
-                        consumerProguardFiles(consumerRulesFile)
                     }
                 }
             }
