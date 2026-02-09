@@ -35,19 +35,18 @@ Sample applications demonstrating the `example-library` (Fibonacci) across diffe
 ./gradlew :samples:example-library:compose-multiplatform:wasmJsBrowserDevelopmentRun
 ```
 
-### Android - Compose Multiplatform
-- KMP Target: `android`
+### Android - Compose (standalone app)
+The Android app lives in the `compose-android` module. Requires a connected Android device or emulator.
 
-Requires a connected Android device or emulator. To run:
-1. Open Android Studio and start an emulator (Tools → Device Manager)
-2. Or connect a physical device with USB debugging enabled
-3. Run the app:
+1. Open Android Studio and start an emulator (Tools → Device Manager), or connect a physical device with USB debugging enabled.
+2. Run or install:
 
 ```bash
-./gradlew :samples:example-library:compose-multiplatform:runDebug
+./gradlew :samples:example-library:compose-android:runDebug
+./gradlew :samples:example-library:compose-android:installDebug
 ```
 
-_This installs the APK and launches it. To just install without launching, use `:installDebug` instead._
+`runDebug` installs the APK and launches it; `installDebug` only installs.
 
 ### iOS - Compose Multiplatform
 - KMP Target: `iosArm64`, `iosX64`, `iosSimulatorArm64`

@@ -25,6 +25,6 @@ android {
 dependencies {
     implementation(project(":samples:example-library:compose-multiplatform"))
     implementation(libs.androidx.activity.compose)
-    implementation(compose.preview)
+    implementation(libs.compose.ui.tooling.preview)
     implementation(libs.compose.ui.tooling)
 }

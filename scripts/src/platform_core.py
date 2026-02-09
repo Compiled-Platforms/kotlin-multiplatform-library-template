@@ -144,7 +144,7 @@ COMPILE_TASKS_BY_PLATFORM = {
 
 TEST_TASKS_BY_PLATFORM = {
     "jvm": ["jvmTest"],
-    "android": ["testDebugUnitTest"],
+    "android": ["testAndroid"],
     "androidNative": ["compileKotlinAndroidNativeArm64"],
     "ios": ["compileKotlinIosSimulatorArm64"],
     "macos": ["compileKotlinMacosArm64"],

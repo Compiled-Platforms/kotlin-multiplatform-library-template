@@ -21,7 +21,7 @@ from src.platform_core import (
     platforms_for_changed_files,
     gradle_test_tasks_by_platform,
 )
-from src.gradle_runner import run_gradle
+from src.gradle_runner import run_gradle, resolve_library_tasks
 from src.parallel_runner import run_parallel_gradle, DEFAULT_MAX_CONCURRENCY
 
 
@@ -37,6 +37,13 @@ def main() -> int:
         default=DEFAULT_MAX_CONCURRENCY,
         help="Max parallel Gradle runs when testing multiple platforms; fail-fast on first failure (default: %(default)s)",
     )
+    parser.add_argument(
+        "--platforms",
+        type=str,
+        default=None,
+        metavar="PLATFORMS",
+        help="Comma-separated platforms to test (e.g. jvm,android). If set, only these run; others (e.g. ios, wasmJs) are skipped. Omit to test all affected platforms.",
+    )
     args = parser.parse_args()
 
     cwd = get_repo_root()
@@ -44,7 +51,16 @@ def main() -> int:
 
     paths = get_touched_files(args.base)
     if not paths:
-        tasks = scope_tasks_to_libraries(["build"], library_projects)
+        if args.platforms:
+            allowed = {p.strip().lower() for p in args.platforms.split(",") if p.strip()}
+            work = gradle_test_tasks_by_platform(allowed)
+            task_names = [t for _name, tlist in work for t in tlist]
+            tasks = resolve_library_tasks(cwd, library_projects, task_names)
+            if not tasks:
+                print(f"No library tasks for platform(s): {', '.join(sorted(allowed))}", file=sys.stderr)
+                return 0
+        else:
+            tasks = scope_tasks_to_libraries(["build"], library_projects)
         return run_gradle(tasks, cwd=cwd, dry_run=args.dry_run)
 
     result = platforms_for_changed_files(paths)
@@ -56,13 +72,28 @@ def main() -> int:
     main_platforms, test_platforms = result
     platforms_to_test = main_platforms | test_platforms
 
+    if args.platforms:
+        allowed = {p.strip().lower() for p in args.platforms.split(",") if p.strip()}
+        platforms_to_test = platforms_to_test & allowed
+        if not platforms_to_test:
+            platforms_to_test = allowed
+        if not platforms_to_test:
+            print("No platforms to run (--platforms did not match any).", file=sys.stderr)
+            return 1
+
     if not platforms_to_test:
         # Touched files don't affect any platform (e.g. scripts only); validate with JVM only
         tasks = scope_tasks_to_libraries(["jvmTest"], library_projects)
         return run_gradle(tasks, cwd=cwd, dry_run=args.dry_run)
 
     work = gradle_test_tasks_by_platform(platforms_to_test)
-    work = [(name, scope_tasks_to_libraries(tasks, library_projects)) for name, tasks in work]
+    all_task_names = [t for _name, tlist in work for t in tlist]
+    resolved = resolve_library_tasks(cwd, library_projects, all_task_names) if all_task_names else []
+    work = [
+        (name, [t for t in resolved if t.split(":")[-1] in tlist])
+        for name, tlist in work
+    ]
+    work = [(name, tasks) for name, tasks in work if tasks]
     if len(work) == 1:
         _name, tasks = work[0]
         return run_gradle(tasks, cwd=cwd, dry_run=args.dry_run)

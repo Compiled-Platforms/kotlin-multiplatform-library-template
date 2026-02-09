@@ -212,7 +212,7 @@ class TestTestTasksForPlatforms:
         assert gradle_test_tasks({"jvm"}) == ["jvmTest"]
 
     def test_android_returns_unit_test(self):
-        assert gradle_test_tasks({"android"}) == ["testDebugUnitTest"]
+        assert gradle_test_tasks({"android"}) == ["testAndroid"]
 
     def test_ios_returns_ios_compile(self):
         assert gradle_test_tasks({"ios"}) == ["compileKotlinIosSimulatorArm64"]
@@ -220,7 +220,7 @@ class TestTestTasksForPlatforms:
     def test_jvm_and_android_returns_both(self):
         tasks = gradle_test_tasks({"jvm", "android"})
         assert "jvmTest" in tasks
-        assert "testDebugUnitTest" in tasks
+        assert "testAndroid" in tasks
         assert len(tasks) == 2
 
 
@@ -302,7 +302,7 @@ class TestGradleTestTasksByPlatform:
         assert len(result) == 3
         by_platform = dict(result)
         assert by_platform["jvm"] == ["jvmTest"]
-        assert by_platform["android"] == ["testDebugUnitTest"]
+        assert by_platform["android"] == ["testAndroid"]
         assert by_platform["ios"] == ["compileKotlinIosSimulatorArm64"]
 
 
