@@ -1,3 +1,10 @@
+## [1.3.2](https://github.com/Compiled-Platforms/kotlin-multiplatform-library-template/compare/v1.3.1...v1.3.2) (2026-02-11)
+
+
+### Bug Fixes
+
+* **build:** exclude samples from root build task ([cee278e](https://github.com/Compiled-Platforms/kotlin-multiplatform-library-template/commit/cee278e85d7a05211fdf7624661e77e95704feff))
+
 ## [1.3.1](https://github.com/Compiled-Platforms/kotlin-multiplatform-library-template/compare/v1.3.0...v1.3.1) (2026-02-11)
 
 
