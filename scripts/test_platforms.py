@@ -54,11 +54,14 @@ def main() -> int:
         if args.platforms:
             allowed = {p.strip().lower() for p in args.platforms.split(",") if p.strip()}
             work = gradle_test_tasks_by_platform(allowed)
-            task_names = [t for _name, tlist in work for t in tlist]
-            tasks = resolve_library_tasks(cwd, library_projects, task_names)
-            if not tasks:
-                print(f"No library tasks for platform(s): {', '.join(sorted(allowed))}", file=sys.stderr)
-                return 0
+            if args.dry_run:
+                tasks = [t for _name, tlist in work for t in scope_tasks_to_libraries(tlist, library_projects)]
+            else:
+                task_names = [t for _name, tlist in work for t in tlist]
+                tasks = resolve_library_tasks(cwd, library_projects, task_names)
+                if not tasks:
+                    print(f"No library tasks for platform(s): {', '.join(sorted(allowed))}", file=sys.stderr)
+                    return 0
         else:
             tasks = scope_tasks_to_libraries(["build"], library_projects)
         return run_gradle(tasks, cwd=cwd, dry_run=args.dry_run)
@@ -87,12 +90,15 @@ def main() -> int:
         return run_gradle(tasks, cwd=cwd, dry_run=args.dry_run)
 
     work = gradle_test_tasks_by_platform(platforms_to_test)
-    all_task_names = [t for _name, tlist in work for t in tlist]
-    resolved = resolve_library_tasks(cwd, library_projects, all_task_names) if all_task_names else []
-    work = [
-        (name, [t for t in resolved if t.split(":")[-1] in tlist])
-        for name, tlist in work
-    ]
+    if args.dry_run:
+        work = [(name, scope_tasks_to_libraries(tlist, library_projects)) for name, tlist in work]
+    else:
+        all_task_names = [t for _name, tlist in work for t in tlist]
+        resolved = resolve_library_tasks(cwd, library_projects, all_task_names) if all_task_names else []
+        work = [
+            (name, [t for t in resolved if t.split(":")[-1] in tlist])
+            for name, tlist in work
+        ]
     work = [(name, tasks) for name, tasks in work if tasks]
     if len(work) == 1:
         _name, tasks = work[0]

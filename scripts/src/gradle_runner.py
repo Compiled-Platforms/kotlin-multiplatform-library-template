@@ -36,13 +36,19 @@ def resolve_library_tasks(
         text=True,
         timeout=120,
     )
+    if result.returncode != 0:
+        stderr = (result.stderr or "").strip()
+        msg = f"gradlew tasks --all failed (exit {result.returncode})"
+        if stderr:
+            msg += f": {stderr[:500]}" + ("..." if len(stderr) > 500 else "")
+        raise RuntimeError(msg)
     out = (result.stdout or "") + (result.stderr or "")
     tasks = []
     for line in out.splitlines():
         if " - " not in line:
             continue
         path, _ = line.split(" - ", 1)
-        path = path.strip()
+        path = path.strip().lstrip(":")
         if not path or path.count(":") < 2:
             continue
         if not any(path.startswith(prefix) for prefix in lib_prefixes):
