@@ -1,3 +1,10 @@
+## [1.3.1](https://github.com/Compiled-Platforms/kotlin-multiplatform-library-template/compare/v1.3.0...v1.3.1) (2026-02-11)
+
+
+### Bug Fixes
+
+* apply PR30-style build, libs, samples, and script updates ([46a6a02](https://github.com/Compiled-Platforms/kotlin-multiplatform-library-template/commit/46a6a028ae7f5e31f9a48a89f56070269050aac3))
+
 # [1.3.0](https://github.com/Compiled-Platforms/kotlin-multiplatform-library-template/compare/v1.2.0...v1.3.0) (2026-02-09)
 
 
