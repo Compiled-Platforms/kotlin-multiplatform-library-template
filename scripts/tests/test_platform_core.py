@@ -7,13 +7,14 @@ Run from repo root: PYTHONPATH=scripts pytest scripts/tests/test_platform_core.p
 
 import pytest
 from src.platform_core import (
-    is_test_path,
-    platforms_for_path,
-    platforms_for_changed_files,
+    get_library_project_paths,
+    gradle_compile_tasks,
     gradle_test_tasks,
     gradle_test_tasks_by_platform,
-    gradle_compile_tasks,
-    get_library_project_paths,
+    is_test_path,
+    normalize_platforms,
+    platforms_for_changed_files,
+    platforms_for_path,
     scope_tasks_to_libraries,
 )
 
@@ -304,6 +305,19 @@ class TestGradleTestTasksByPlatform:
         assert by_platform["jvm"] == ["jvmTest"]
         assert by_platform["android"] == ["testAndroid"]
         assert by_platform["ios"] == ["compileKotlinIosSimulatorArm64"]
+
+
+class TestNormalizePlatforms:
+    """Tests for normalize_platforms (lowercase -> canonical)."""
+
+    def test_normalizes_case(self):
+        assert normalize_platforms({"wasmjs", "jvm"}) == {"wasmJs", "jvm"}
+
+    def test_ignores_unknown(self):
+        assert normalize_platforms({"wasmjs", "invalid"}) == {"wasmJs"}
+
+    def test_empty_returns_empty(self):
+        assert normalize_platforms(set()) == set()
 
 
 class TestLibraryScoping:

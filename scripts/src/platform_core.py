@@ -158,6 +158,15 @@ TEST_TASKS_BY_PLATFORM = {
     "mingwX64": ["compileKotlinMingwX64"],
 }
 
+KNOWN_PLATFORMS = frozenset(TEST_TASKS_BY_PLATFORM.keys())
+KNOWN_PLATFORMS_LOWER = frozenset(p.lower() for p in KNOWN_PLATFORMS)
+_PLATFORM_LOWER_TO_CANONICAL = {p.lower(): p for p in KNOWN_PLATFORMS}
+
+
+def normalize_platforms(platforms_lower: set[str]) -> set[str]:
+    """Return canonical platform names for the given lowercase platform names."""
+    return {_PLATFORM_LOWER_TO_CANONICAL[p] for p in platforms_lower if p in _PLATFORM_LOWER_TO_CANONICAL}
+
 
 def is_test_path(path: str) -> bool:
     """True if path is under a test source set (e.g. commonTest, jvmTest)."""
