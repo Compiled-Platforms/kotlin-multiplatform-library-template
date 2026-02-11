@@ -103,3 +103,13 @@ subprojects {
         }
     }
 }
+
+// Build only libraries and non-sample projects (exclude samples to save time and avoid iOS OOM)
+tasks.named("build").configure {
+    setDependsOn(
+        subprojects
+            .filter { !it.path.startsWith(":samples") }
+            .filter { it.tasks.findByName("build") != null }
+            .map { it.tasks.named("build") }
+    )
+}
