@@ -10,7 +10,9 @@ java-target = "11"       # Target JVM bytecode version (for compatibility)
 # Build tool versions
 agp = "9.0.0"
 kotlin = "2.3.10"
-compose = "1.7.3"
+compose = "1.10.1"
+# Material3 uses a different version in Compose 1.10 (see kotlinlang.org/docs/multiplatform/whats-new-compose-110)
+compose-material3 = "1.10.0-alpha05"
 android-minSdk = "24"
 android-compileSdk = "36"
 vanniktechMavenPublish = "0.36.0"
@@ -26,6 +28,11 @@ kotlinx-serialization = "1.10.0"
 kotlinx-datetime = "0.7.1-0.6.x-compat"
 turbine = "1.2.1"
 kotest = "6.1.2"
+
+# AndroidX library versions
+androidx-activity-compose = "1.12.3"
+androidx-lifecycle-runtime-compose = "2.7.0"
+androidx-test-core = "1.6.1"
 
 [libraries]
 # Test dependencies
@@ -50,15 +57,18 @@ turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 mokkery-runtime = { module = "dev.mokkery:mokkery-runtime", version.ref = "mokkery" }
 
 # AndroidX libraries
-androidx-activity-compose = { module = "androidx.activity:activity-compose", version = "1.9.0" }
+androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity-compose" }
+androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "androidx-lifecycle-runtime-compose" }
+androidx-test-core = { module = "androidx.test:core", version.ref = "androidx-test-core" }
 
 # Compose Multiplatform libraries
 compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "compose" }
 compose-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "compose" }
-compose-material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "compose" }
+compose-material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "compose-material3" }
 compose-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "compose" }
 compose-ui-tooling = { module = "org.jetbrains.compose.ui:ui-tooling", version.ref = "compose" }
 compose-ui-tooling-preview = { module = "org.jetbrains.compose.ui:ui-tooling-preview", version.ref = "compose" }
+compose-resources = { module = "org.jetbrains.compose.components:components-resources", version.ref = "compose" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

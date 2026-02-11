@@ -51,7 +51,10 @@ object KotlinMultiplatformConfig {
             if (targets.contains("ios")) {
                 iosX64()
                 iosArm64()
-                iosSimulatorArm64()
+                val sim = iosSimulatorArm64()
+                (project.findProperty("iosSimulatorDeviceId") as? String)?.let { deviceId ->
+                    sim.testRuns.forEach { it.deviceId = deviceId }
+                }
             }
             if (targets.contains("linux")) linuxX64()
 

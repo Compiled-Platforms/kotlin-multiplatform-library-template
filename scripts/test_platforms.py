@@ -16,12 +16,15 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from src.touched_files import get_repo_root, get_touched_files
 from src.platform_core import (
+    KNOWN_PLATFORMS,
+    KNOWN_PLATFORMS_LOWER,
     get_library_project_paths,
-    scope_tasks_to_libraries,
-    platforms_for_changed_files,
     gradle_test_tasks_by_platform,
+    normalize_platforms,
+    platforms_for_changed_files,
+    scope_tasks_to_libraries,
 )
-from src.gradle_runner import run_gradle
+from src.gradle_runner import run_gradle, resolve_library_tasks
 from src.parallel_runner import run_parallel_gradle, DEFAULT_MAX_CONCURRENCY
 
 
@@ -37,14 +40,47 @@ def main() -> int:
         default=DEFAULT_MAX_CONCURRENCY,
         help="Max parallel Gradle runs when testing multiple platforms; fail-fast on first failure (default: %(default)s)",
     )
+    parser.add_argument(
+        "--platforms",
+        type=str,
+        default=None,
+        metavar="PLATFORMS",
+        help="Comma-separated platforms to test (e.g. jvm,android). If set, only these run; others (e.g. ios, wasmJs) are skipped. Omit to test all affected platforms.",
+    )
     args = parser.parse_args()
+
+    if args.platforms is not None:
+        allowed_lower = {p.strip().lower() for p in args.platforms.split(",") if p.strip()}
+        if not allowed_lower:
+            print("--platforms specified but no valid platforms provided.", file=sys.stderr)
+            return 1
+        unknown = allowed_lower - KNOWN_PLATFORMS_LOWER
+        if unknown:
+            print(
+                f"Unknown platform(s): {', '.join(sorted(unknown))}. "
+                f"Valid: {', '.join(sorted(KNOWN_PLATFORMS))}",
+                file=sys.stderr,
+            )
+            return 1
+        allowed = normalize_platforms(allowed_lower)
 
     cwd = get_repo_root()
     library_projects = get_library_project_paths(cwd)
 
     paths = get_touched_files(args.base)
     if not paths:
-        tasks = scope_tasks_to_libraries(["build"], library_projects)
+        if args.platforms is not None:
+            work = gradle_test_tasks_by_platform(allowed)
+            if args.dry_run:
+                tasks = [t for _name, tlist in work for t in scope_tasks_to_libraries(tlist, library_projects)]
+            else:
+                task_names = [t for _name, tlist in work for t in tlist]
+                tasks = resolve_library_tasks(cwd, library_projects, task_names)
+                if not tasks:
+                    print(f"No library tasks for platform(s): {', '.join(sorted(allowed))}", file=sys.stderr)
+                    return 0
+        else:
+            tasks = scope_tasks_to_libraries(["build"], library_projects)
         return run_gradle(tasks, cwd=cwd, dry_run=args.dry_run)
 
     result = platforms_for_changed_files(paths)
@@ -56,13 +92,30 @@ def main() -> int:
     main_platforms, test_platforms = result
     platforms_to_test = main_platforms | test_platforms
 
+    if args.platforms is not None:
+        platforms_to_test = platforms_to_test & allowed
+        if not platforms_to_test:
+            platforms_to_test = allowed
+        if not platforms_to_test:
+            print("No platforms to run (--platforms did not match any).", file=sys.stderr)
+            return 1
+
     if not platforms_to_test:
         # Touched files don't affect any platform (e.g. scripts only); validate with JVM only
         tasks = scope_tasks_to_libraries(["jvmTest"], library_projects)
         return run_gradle(tasks, cwd=cwd, dry_run=args.dry_run)
 
     work = gradle_test_tasks_by_platform(platforms_to_test)
-    work = [(name, scope_tasks_to_libraries(tasks, library_projects)) for name, tasks in work]
+    if args.dry_run:
+        work = [(name, scope_tasks_to_libraries(tlist, library_projects)) for name, tlist in work]
+    else:
+        all_task_names = [t for _name, tlist in work for t in tlist]
+        resolved = resolve_library_tasks(cwd, library_projects, all_task_names) if all_task_names else []
+        work = [
+            (name, [t for t in resolved if t.split(":")[-1] in tlist])
+            for name, tlist in work
+        ]
+    work = [(name, tasks) for name, tasks in work if tasks]
     if len(work) == 1:
         _name, tasks = work[0]
         return run_gradle(tasks, cwd=cwd, dry_run=args.dry_run)

@@ -25,6 +25,17 @@ android {
 dependencies {
     implementation(project(":samples:example-library:compose-multiplatform"))
     implementation(libs.androidx.activity.compose)
-    implementation(compose.preview)
+    implementation(libs.compose.ui.tooling.preview)
     implementation(libs.compose.ui.tooling)
+}
+
+tasks.register<Exec>("runDebug") {
+    group = "application"
+    description = "Install and launch the debug APK on a connected device/emulator"
+    dependsOn("installDebug")
+
+    commandLine(
+        "adb", "shell", "am", "start",
+        "-n", "com.compiledplatforms.kmp.library.fibonacci.sample/.MainActivity"
+    )
 }

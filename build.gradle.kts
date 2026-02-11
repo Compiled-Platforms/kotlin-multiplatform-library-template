@@ -76,3 +76,30 @@ kover {
         }
     }
 }
+
+// Show test results and counts for JVM (and other Test tasks). Uses only serializable state for configuration cache.
+subprojects {
+    tasks.withType<Test>().configureEach {
+        testLogging {
+            events("failed", "skipped")
+            exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
+            showExceptions = true
+            showCauses = true
+        }
+        val projectPath = (this as org.gradle.api.Task).path.substringBeforeLast(":")
+        doFirst {
+            addTestListener(object : org.gradle.api.tasks.testing.TestListener {
+                override fun afterSuite(desc: org.gradle.api.tasks.testing.TestDescriptor, result: org.gradle.api.tasks.testing.TestResult) {
+                    if (desc.parent == null) {
+                        val durationMs = result.endTime - result.startTime
+                        val msg = "$projectPath: ${result.testCount} tests, ${result.successfulTestCount} passed, ${result.failedTestCount} failed, ${result.skippedTestCount} skipped (${durationMs}ms)"
+                        org.gradle.api.logging.Logging.getLogger("test").lifecycle(msg)
+                    }
+                }
+                override fun afterTest(desc: org.gradle.api.tasks.testing.TestDescriptor, result: org.gradle.api.tasks.testing.TestResult) {}
+                override fun beforeSuite(suite: org.gradle.api.tasks.testing.TestDescriptor) {}
+                override fun beforeTest(desc: org.gradle.api.tasks.testing.TestDescriptor) {}
+            })
+        }
+    }
+}

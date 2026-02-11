@@ -37,6 +37,7 @@ Sample applications demonstrating the `example-library` (Fibonacci) across diffe
 
 ### Android - Compose Multiplatform
 - KMP Target: `android`
+- The Android app is in the `compose-android` module (AGP application), which depends on `compose-multiplatform`.
 
 Requires a connected Android device or emulator. To run:
 1. Open Android Studio and start an emulator (Tools → Device Manager)
@@ -44,10 +45,10 @@ Requires a connected Android device or emulator. To run:
 3. Run the app:
 
 ```bash
-./gradlew :samples:example-library:compose-multiplatform:runDebug
+./gradlew :samples:example-library:compose-android:runDebug
 ```
 
-_This installs the APK and launches it. To just install without launching, use `:installDebug` instead._
+_This installs the APK and launches it. To just install without launching, use `:samples:example-library:compose-android:installDebug` instead._
 
 ### iOS - Compose Multiplatform
 - KMP Target: `iosArm64`, `iosX64`, `iosSimulatorArm64`

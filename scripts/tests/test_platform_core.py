@@ -7,13 +7,14 @@ Run from repo root: PYTHONPATH=scripts pytest scripts/tests/test_platform_core.p
 
 import pytest
 from src.platform_core import (
-    is_test_path,
-    platforms_for_path,
-    platforms_for_changed_files,
+    get_library_project_paths,
+    gradle_compile_tasks,
     gradle_test_tasks,
     gradle_test_tasks_by_platform,
-    gradle_compile_tasks,
-    get_library_project_paths,
+    is_test_path,
+    normalize_platforms,
+    platforms_for_changed_files,
+    platforms_for_path,
     scope_tasks_to_libraries,
 )
 
@@ -212,7 +213,7 @@ class TestTestTasksForPlatforms:
         assert gradle_test_tasks({"jvm"}) == ["jvmTest"]
 
     def test_android_returns_unit_test(self):
-        assert gradle_test_tasks({"android"}) == ["testDebugUnitTest"]
+        assert gradle_test_tasks({"android"}) == ["testAndroid"]
 
     def test_ios_returns_ios_compile(self):
         assert gradle_test_tasks({"ios"}) == ["compileKotlinIosSimulatorArm64"]
@@ -220,7 +221,7 @@ class TestTestTasksForPlatforms:
     def test_jvm_and_android_returns_both(self):
         tasks = gradle_test_tasks({"jvm", "android"})
         assert "jvmTest" in tasks
-        assert "testDebugUnitTest" in tasks
+        assert "testAndroid" in tasks
         assert len(tasks) == 2
 
 
@@ -302,8 +303,21 @@ class TestGradleTestTasksByPlatform:
         assert len(result) == 3
         by_platform = dict(result)
         assert by_platform["jvm"] == ["jvmTest"]
-        assert by_platform["android"] == ["testDebugUnitTest"]
+        assert by_platform["android"] == ["testAndroid"]
         assert by_platform["ios"] == ["compileKotlinIosSimulatorArm64"]
+
+
+class TestNormalizePlatforms:
+    """Tests for normalize_platforms (lowercase -> canonical)."""
+
+    def test_normalizes_case(self):
+        assert normalize_platforms({"wasmjs", "jvm"}) == {"wasmJs", "jvm"}
+
+    def test_ignores_unknown(self):
+        assert normalize_platforms({"wasmjs", "invalid"}) == {"wasmJs"}
+
+    def test_empty_returns_empty(self):
+        assert normalize_platforms(set()) == set()
 
 
 class TestLibraryScoping:
