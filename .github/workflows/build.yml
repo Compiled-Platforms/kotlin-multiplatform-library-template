@@ -72,7 +72,7 @@ jobs:
             ${{ runner.os }}-konan-
 
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v5
+        uses: gradle/actions/setup-gradle@v6
 
       - name: Compute commit range for platform script
         id: range
