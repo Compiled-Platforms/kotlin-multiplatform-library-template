@@ -1,0 +1,65 @@
+---
+description: Standards for writing Kotlin Multiplatform tests in this project
+alwaysApply: false
+---
+# Testing
+
+## Libraries
+
+Use only:
+- `kotlin.test` — default for all pure logic, data classes, sealed classes
+- `kotlinx.coroutines.test` (`runTest`, `TestScope`, `UnconfinedTestDispatcher`) — any `suspend` function or coroutine scope
+- `app.cash.turbine` (`flow.test { awaitItem() }`) — `Flow` / `StateFlow` / `SharedFlow` emissions
+
+Do not use Kotest, JUnit, Mockk, or any library not listed above.
+
+Add `@file:OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)` at the top of any file using `UnconfinedTestDispatcher` or `TestScope` directly.
+
+## Naming
+
+All test method names follow this exact pattern:
+
+```
+`given <precondition> when <action> then <expected outcome>`
+```
+
+Be specific. Avoid vague names like `given valid input when called then works`.
+
+## File location
+
+Tests live in `commonTest`:
+
+```
+libraries/<name>/src/commonTest/kotlin/com/compiledplatforms/<module>/
+```
+
+## What to cover
+
+- **Type hierarchy / sealed classes** — each subtype is-a parent; siblings are not each other
+- **Identity / equality** — `data object` singletons; `data class` equals + hashCode parity
+- **Data class extras** — `copy()`, destructuring, component functions
+- **Exhaustive `when`** — matching at every level of a sealed hierarchy; smart-cast field access after type check
+- **Null handling** — nullable params, null returns, null vs empty
+- **Boundary values** — zero, one, minimum valid, maximum valid, just-over-max
+- **Edge-case strings** — empty, whitespace-only, very long, special characters
+- **Validation** — `require()` / `check()` blocks throw on bad input
+- **Collection behavior** — `filterIsInstance`, `distinct`, `contains`, `groupBy` where relevant
+- **Order independence** — tests must not depend on execution order
+- **Determinism** — no random values, no wall-clock time (use fakes or fixed values)
+
+## What not to cover
+
+- Kotlin language behavior guaranteed by the compiler
+- Trivially obvious delegation that adds no insight
+- Implementation details not part of the public contract
+
+## Constraints
+
+- No redundant tests — two tests that exercise the same code path with no meaningful difference must be collapsed into one
+- No comments explaining what a test does — the test name is self-documenting
+- No emojis or icons anywhere in test files
+- No production stubs — only write tests, never change production files
+- Every test must earn its place — if removing it would not reduce confidence in the code, it should not exist
+- No dead tests — a test that cannot fail even when the production code is broken must not exist. Every assertion must be capable of failing if the subject behaves incorrectly
+- No pointless tests — do not write tests that only verify language features, trivial getters, or behaviour the compiler already guarantees. If a test teaches nothing about the subject's contract, delete it
+

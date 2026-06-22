@@ -1,0 +1,19 @@
+---
+description: Defines which skill to apply based on the current task context. Read this rule whenever starting a task to select the correct skill, and re-evaluate as context changes.
+alwaysApply: true
+---
+# Skill Context
+
+Always select and read the appropriate skill before starting work. Re-evaluate as the task context changes — if the context shifts, switch skills before continuing.
+
+When activating or switching to a skill, always announce it explicitly to the user, e.g.: "Using skill: `write-code`" or "Switching to skill: `write-tests`".
+
+| Context | Skill |
+|---------|-------|
+| Writing or modifying production Kotlin code | `.cursor/skills/write-code/SKILL.md` |
+| Writing or modifying test files | `.cursor/skills/write-tests/SKILL.md` |
+| Creating a commit or drafting a commit message | `.cursor/skills/make-commit/SKILL.md` |
+| Publishing or releasing a library | `.cursor/skills/publish-library/SKILL.md` |
+| Configuring publishing for a new library | `.cursor/skills/setup-publishing/SKILL.md` |
+| Adding, updating, or removing dependencies | `.cursor/skills/maintain-gitignore/SKILL.md` |
+| Planning a feature or breaking down a task | `.cursor/skills/implementation-checklist/SKILL.md` |

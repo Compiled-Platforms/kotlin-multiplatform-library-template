@@ -19,6 +19,13 @@ alwaysApply: false
 - Public APIs must document thread-safety expectations when mutable state is involved.
 - If an API is not thread-safe, make that explicit.
 
+## Race conditions
+- Never assume a particular interleaving of concurrent operations; code must be correct under all valid orderings.
+- Avoid check-then-act patterns on shared state without holding the same lock or using atomic operations for the entire sequence.
+- Prefer atomic or single-writer patterns over multiple readers racing to initialize or mutate state.
+- Use `Mutex`, `StateFlow`, or actor-style confinement rather than manual flag variables to coordinate concurrent access.
+- Be explicit about visibility: writes on one thread are not guaranteed to be visible on another without a happens-before relationship.
+
 ## Testing
 - Do not rely on timing or sleeps to validate thread safety.
 - Prefer deterministic tests or stress tests for concurrent behavior.

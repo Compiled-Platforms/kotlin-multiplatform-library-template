@@ -1,0 +1,11 @@
+---
+description: This rule provides standards for the Principle of Least Exposure, defaulting all declarations to internal visibility unless explicitly required by external consumers
+alwaysApply: true
+---
+# Principle of Least Exposure
+
+- Default every declaration to `internal` unless an external consumer must reference it by name.
+- Promote to `public` only when a consumer outside the module explicitly needs it.
+- It is easy to make something public later; making something internal is a breaking change.
+- Implementation classes, storage backends, internal interfaces between components, and factory plumbing should always be `internal`.
+- When in doubt, start `internal` and open it up when the need arises.

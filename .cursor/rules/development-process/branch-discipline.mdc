@@ -1,0 +1,39 @@
+---
+description: Branch and commit discipline standards for this monorepo
+alwaysApply: true
+---
+
+# Branch & Commit Discipline
+
+## One branch = one concern
+
+Before creating a branch, write the PR title first. If you can't write a single clear title, the branch is doing too much.
+
+- ✅ `feat(eligibility-gate): add decay mechanism`
+- ✅ `chore: update license to proprietary`
+- ❌ `feature/eligibility-gate-and-publishing-and-license-cleanup`
+
+## What belongs in a branch
+
+A branch should only touch files directly related to its stated concern:
+
+- A library feature branch → only `libraries/<name>/` and its sample
+- A publishing change → only `bom/`, `build-logic/`, `.github/workflows/`, `scripts/`, `project.yml`
+- A docs/rules change → only `docs/`, `.cursor/rules/`, `README.md`
+
+If you catch yourself modifying files outside the branch's concern, stop and ask whether they should be a separate branch.
+
+## Commit often, commit small
+
+Small focused commits are easier to revert, cherry-pick, and review. Prefer many small commits over one large one.
+
+## Squash merge to main
+
+All PRs must be squash-merged. This keeps main history clean — one PR = one commit on main.
+
+## Agent guidance
+
+When helping with git work:
+- Flag immediately if a branch contains commits unrelated to its stated purpose
+- Suggest splitting before the branch is pushed or a PR is opened
+- Never combine library code changes with infra/publishing/docs changes in the same branch without flagging it

@@ -1,0 +1,15 @@
+---
+description: Publishing standards for Compiled Platforms KMP libraries
+alwaysApply: true
+---
+
+# Publishing
+
+- Never publish manually from a local machine. All releases must go through CI via a GitHub Release, which triggers the publish workflow automatically.
+- This ensures published artifacts always match the state of `main`, and credentials never touch developer machines.
+
+## To release
+
+1. Ensure all changes are merged to `main`
+2. Create a GitHub Release: `gh release create v<VERSION> --title "v<VERSION>" --notes "..."`
+3. The publish workflow fires automatically — no manual Gradle commands needed
