@@ -3,6 +3,8 @@ description: Commit message and staging best practices for version control
 alwaysApply: true
 ---
 - Before drafting any commit message, read `.commitlintrc.json` to ensure the message satisfies the project's type enum, header length, and subject rules. Never propose a commit message without checking this file first.
+- When the user asks for a "commit command" (or similar), assume they mean uncommitted changes. Run `git status` and review the diff before proposing a message or command. Do not give a commit command without inspecting the changes first.
+- Never include files that likely contain secrets (`.env`, credentials, tokens, keys, local config with sensitive values). Exclude them from the proposed `git add` and warn the user.
 - Make small, logical commits that represent a single coherent change.
 - Write clear commit messages that explain intent ("why"), not just implementation ("what").
 - Use [Conventional Commits](https://www.conventionalcommits.org/) for automated versioning: `fix` = PATCH, `feat` = MINOR, `BREAKING CHANGE` = MAJOR

@@ -16,24 +16,31 @@ Use this skill when the user asks to:
 - "commit changes"
 - "make a commit"
 - "commit this"
+- "give commit command"
 - Help with commit messages
+
+When the user asks for a "commit command", assume they mean uncommitted changes — not creating the commit yourself unless explicitly asked.
 
 ## Process
 
 ### 1. Review Current State
 
-Check what changes are being committed:
+**Required before any commit message or command.** Check what changes are being committed:
 
 ```bash
-# Check status
 git status --short
-
-# View staged changes
-git diff --staged --stat
-
-# View unstaged changes
 git diff --stat
+git diff --cached --stat
 ```
+
+Review the actual diffs for staged and unstaged files. Do not propose a commit command without completing this step.
+
+**Secret check:** Before staging, scan changed files for likely secrets. Exclude any file that appears to contain credentials, tokens, API keys, or local-only config. Common patterns:
+- `.env`, `.env.*`, `credentials.json`, `secrets.*`
+- Hardcoded passwords, tokens, or keys in properties/yml/json files
+- Local machine config not meant for the repo
+
+If a suspicious file is found, omit it from the proposed `git add` and warn the user. Never use `git add .` when any changed file may contain secrets — stage files explicitly instead.
 
 ### 2. Analyze Recent Commits
 
@@ -165,12 +172,11 @@ fix(auth): resolve session timeout issue
 
 **If changes aren't staged:**
 ```bash
-# Stage specific files
+# Stage specific files (preferred — avoids accidentally staging secrets)
 git add path/to/file1 path/to/file2
-
-# Or stage all
-git add .
 ```
+
+Do not use `git add .` unless you have verified no changed file contains secrets.
 
 **Create commit:**
 ```bash
