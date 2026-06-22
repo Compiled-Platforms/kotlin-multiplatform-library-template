@@ -1,6 +1,6 @@
 ---
 description: Commit message and staging best practices for version control
-alwaysApply: false
+alwaysApply: true
 ---
 - Before drafting any commit message, read `.commitlintrc.json` to ensure the message satisfies the project's type enum, header length, and subject rules. Never propose a commit message without checking this file first.
 - Make small, logical commits that represent a single coherent change.
