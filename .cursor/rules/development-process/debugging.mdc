@@ -1,0 +1,14 @@
+---
+description: Standards for investigating bugs, failures, and unexpected errors
+alwaysApply: false
+---
+# Debugging
+
+- Gather evidence before proposing a fix — read logs, stack traces, CI output, and failing tests first.
+- Reproduce locally before changing production code when possible.
+- Fix root cause, not symptoms — avoid speculative changes.
+- Keep debug fixes minimal and scoped to the failure.
+- Do not disable tests, skip CI checks, suppress errors, or add `@Suppress` to make failures pass.
+- For KMP failures, identify which platform(s) fail — a JVM-only pass does not prove iOS, Android, or native are fixed.
+- State the hypothesis before editing code; confirm or reject it with evidence after each change.
+- When a command fails, treat the exit code and error output as the primary source of truth.

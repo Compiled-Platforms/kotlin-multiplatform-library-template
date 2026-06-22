@@ -6,10 +6,21 @@ alwaysApply: true
 
 Always select and read the appropriate skill before starting work. Re-evaluate as the task context changes — if the context shifts, switch skills before continuing.
 
-When activating or switching to a skill, always announce it explicitly to the user, e.g.: "Using skill: `write-code`" or "Switching to skill: `write-tests`".
+When activating or switching to a skill, always announce it explicitly to the user, e.g.: "Using skill: `write-code`" or "Switching to skill: `debug`".
+
+## Auto-switch to debug
+
+Switch to the debug skill immediately — before continuing any other work — when any of these occur:
+
+- The user pastes error output (stack trace, exception, Gradle failure, CI log, test failure, linter error)
+- A shell command you run exits non-zero or prints clear failure output
+- The user asks to debug, fix an error, or explain why something failed
+
+Do not propose fixes until you have read the error and identified the failing command, test, or file.
 
 | Context | Skill |
 |---------|-------|
+| Investigating bugs, failures, CI errors, pasted error output, or failed commands | `.cursor/skills/debug/SKILL.md` |
 | Writing or modifying production Kotlin code | `.cursor/skills/write-code/SKILL.md` |
 | Writing or modifying test files | `.cursor/skills/write-tests/SKILL.md` |
 | Creating a commit or drafting a commit message | `.cursor/skills/make-commit/SKILL.md` |
