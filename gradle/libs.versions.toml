@@ -7,27 +7,29 @@ java-ci = "17"           # Java version for GitHub Actions runners
 java-toolchain = "17"    # JVM toolchain for Kotlin compilation
 java-target = "11"       # Target JVM bytecode version (for compatibility)
 
-# Build tool versions
-agp = "9.0.0" # https://kotlinlang.org/docs/multiplatform-compatibility-guide.html#version-compatibility
-kotlin = "2.3.10" # https://github.com/JetBrains/kotlin
-compose = "1.10.1" # https://github.com/JetBrains/compose-multiplatform
-# Material3 uses a different version in Compose 1.10 (see kotlinlang.org/docs/multiplatform/whats-new-compose-110)
-compose-material3 = "1.10.0-alpha05"
+# Android versions
 android-minSdk = "24"
 android-compileSdk = "36"
-vanniktechMavenPublish = "0.36.0"
+
+# Build tool versions
+agp = "9.0.0" # https://kotlinlang.org/docs/multiplatform-compatibility-guide.html#version-compatibility
+kotlin = "2.4.0" # https://github.com/JetBrains/kotlin
+compose = "1.10.1" # https://github.com/JetBrains/compose-multiplatform
+# Material3 uses a different version in Compose 1.10 (see kotlinlang.org/docs/multiplatform/whats-new-compose-110)
+compose-material3 = "1.10.0-alpha05" # https://github.com/JetBrains/compose-multiplatform
+vanniktechMavenPublish = "0.36.0" # https://github.com/vanniktech/gradle-maven-publish-plugin
 detekt = "2.0.0-alpha.2" # https://github.com/detekt/detekt
-dokka = "2.1.0"
+dokka = "2.1.0" # https://github.com/kotlin/dokka
 binaryCompatibilityValidator = "0.18.1"
-kover = "0.9.4"
-mokkery = "3.1.1"
+kover = "0.9.8" # https://github.com/Kotlin/kotlinx-kover
+mokkery = "3.4.1" # https://github.com/lupuuss/Mokkery
 
 # Common library versions (examples)
 kotlinx-coroutines = "1.10.2" # https://github.com/Kotlin/kotlinx.coroutines
 kotlinx-serialization = "1.10.0" # https://github.com/Kotlin/kotlinx.serialization
 kotlinx-datetime = "0.7.1-0.6.x-compat" # https://github.com/Kotlin/kotlinx-datetime
-turbine = "1.2.1"
-kotest = "6.1.2"
+turbine = "1.2.1" # https://github.com/cashapp/turbine
+kotest = "6.1.2" # https://github.com/kotest/kotest
 
 # AndroidX library versions
 androidx-activity-compose = "1.12.3" # https://developer.android.com/jetpack/androidx/releases/activity
