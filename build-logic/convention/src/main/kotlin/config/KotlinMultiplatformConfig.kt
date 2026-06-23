@@ -49,7 +49,6 @@ object KotlinMultiplatformConfig {
         project.extensions.configure<KotlinMultiplatformExtension> {
             if (targets.contains("jvm")) jvm()
             if (targets.contains("ios")) {
-                iosX64()
                 iosArm64()
                 val sim = iosSimulatorArm64()
                 (project.findProperty("iosSimulatorDeviceId") as? String)?.let { deviceId ->
