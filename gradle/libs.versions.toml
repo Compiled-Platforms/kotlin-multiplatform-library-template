@@ -8,7 +8,7 @@ java-toolchain = "17"    # JVM toolchain for Kotlin compilation
 java-target = "11"       # Target JVM bytecode version (for compatibility)
 
 # Android versions
-android-minSdk = "24"
+android-minSdk = "26"
 android-compileSdk = "36"
 
 # Build tool versions
