@@ -24,14 +24,14 @@ jobs:
     steps:
       - name: Generate GitHub App token
         id: app-token
-        uses: actions/create-github-app-token@v2
+        uses: actions/create-github-app-token@v3
         with:
           app-id: ${{ secrets.INTERNAL_APP_ID }}
           installation-id: ${{ secrets.INTERNAL_APP_INSTALLATION_ID }}
           private-key: ${{ secrets.INTERNAL_APP_PRIVATE_KEY }}
 
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0  # Full history for semantic-release
           token: ${{ steps.app-token.outputs.token }}

@@ -21,7 +21,7 @@ jobs:
     
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
       
@@ -36,7 +36,7 @@ jobs:
           java-version: ${{ steps.versions.outputs.java-version }}
           
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v5
+        uses: gradle/actions/setup-gradle@v6
         
       - name: Validate Gradle wrapper
         uses: gradle/wrapper-validation-action@v3
@@ -98,7 +98,7 @@ jobs:
     
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
       
       - name: Parse Versions
         id: versions
@@ -111,13 +111,13 @@ jobs:
           java-version: ${{ steps.versions.outputs.java-version }}
           
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v5
+        uses: gradle/actions/setup-gradle@v6
         
       - name: Build release artifacts
         run: ./gradlew build dokkaGeneratePublicationHtml --no-daemon
         
       - name: Upload release artifacts
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           files: |
             **/build/libs/*.jar
