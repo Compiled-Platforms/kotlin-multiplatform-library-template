@@ -1,0 +1,40 @@
+name: Notify Dependabot PR
+
+on:
+  pull_request:
+    types: [opened]
+
+jobs:
+  slack-notify:
+    name: Post to Slack
+    runs-on: ubuntu-latest
+    if: github.actor == 'dependabot[bot]'
+
+    steps:
+      - name: Post Dependabot PR to Slack
+        uses: slackapi/slack-github-action@v2
+        with:
+          webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
+          webhook-type: incoming-webhook
+          payload: |
+            {
+              "text": "New Dependabot PR: <${{ github.event.pull_request.html_url }}|${{ github.event.pull_request.title }}>",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": ":dependabot: *New Dependabot PR* — <${{ github.repository }}>\n<${{ github.event.pull_request.html_url }}|${{ github.event.pull_request.title }}>"
+                  }
+                },
+                {
+                  "type": "context",
+                  "elements": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Branch:* `${{ github.head_ref }}`"
+                    }
+                  ]
+                }
+              ]
+            }
