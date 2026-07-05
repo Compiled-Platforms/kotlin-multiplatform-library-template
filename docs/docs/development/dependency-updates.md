@@ -24,7 +24,7 @@ Dependabot runs on a schedule and:
 
 ## Configuration
 
-Dependabot is configured in `.github/dependabot.yml`:
+Dependabot is configured in `.github/dependabot.yml`. Gradle updates are grouped into a single weekly PR; compatibility-sensitive stacks are ignored and bumped manually.
 
 ```yaml
 version: 2
@@ -35,56 +35,55 @@ updates:
       interval: "weekly"
       day: "monday"
       time: "03:00"
+    open-pull-requests-limit: 1
+    ignore:
+      - dependency-name: "org.jetbrains.kotlin*"
+        update-types: ["version-update:semver-major", "version-update:semver-minor", "version-update:semver-patch"]
+      - dependency-name: "com.android*"
+        update-types: ["version-update:semver-major", "version-update:semver-minor", "version-update:semver-patch"]
+      - dependency-name: "org.jetbrains.compose*"
+        update-types: ["version-update:semver-major", "version-update:semver-minor", "version-update:semver-patch"]
+      - dependency-name: "gradle-wrapper"
+        update-types: ["version-update:semver-major", "version-update:semver-minor", "version-update:semver-patch"]
     groups:
-      kotlin:
+      all-dependencies:
         patterns:
-          - "org.jetbrains.kotlin*"
-      android:
-        patterns:
-          - "com.android*"
-      dev-tools:
-        patterns:
-          - "*detekt*"
-          - "*dokka*"
-          - "*kover*"
+          - "*"
 ```
 
-## Update Groups
+## Manually Managed Dependencies
 
-Dependencies are organized into logical groups to reduce PR noise:
+Kotlin Multiplatform projects must stay within the [KMP compatibility guide](https://kotlinlang.org/docs/multiplatform/multiplatform-compatibility-guide.html). Dependabot cannot pin a maximum version (for example, "AGP ≤ 9.1.0"); it can only skip updates entirely via `ignore`.
 
-### 1. **Kotlin Ecosystem**
-- `org.jetbrains.kotlin` (Kotlin compiler, stdlib)
-- `org.jetbrains.kotlinx` (Coroutines, Serialization, DateTime)
+These ecosystems are **not** updated by Dependabot — bump them together in a deliberate migration:
 
-**Why grouped?** Kotlin ecosystem libraries should be updated together to ensure compatibility.
+| Pattern | Examples in `libs.versions.toml` |
+|---------|----------------------------------|
+| `org.jetbrains.kotlin*` | `kotlin`, Compose compiler plugin, serialization plugin |
+| `com.android*` | AGP, `com.android.application`, KMP Android library plugin |
+| `org.jetbrains.compose*` | Compose plugin, runtime, UI, Material3 |
+| `gradle-wrapper` | Gradle wrapper (must stay within KMP Gradle range) |
 
-### 2. **Android**
-- `com.android.tools.build` (Android Gradle Plugin)
-- `com.android.*` (Android libraries)
+## What Dependabot Still Updates
 
-**Why grouped?** Android plugin updates often require coordinated changes.
+Low-risk dependencies that are not blocked by the ignore list, grouped into one weekly PR:
 
-### 3. **Development Tools**
-- Detekt (static analysis)
-- Dokka (documentation)
-- Kover (code coverage)
-- Binary Compatibility Validator
-- Vanniktech Maven Publish
+- **Dev tools** — Detekt, Dokka, Kover, Binary Compatibility Validator, Vanniktech Maven Publish, Mokkery
+- **KotlinX libraries** — Coroutines, Serialization, DateTime (still verify against your Kotlin version)
+- **Test libraries** — Kotest, Turbine
+- **AndroidX** — Activity Compose, Lifecycle, Test Core
 
-**Why grouped?** Development tools can be updated together without conflicts.
+Review these PRs against changelogs; merge when CI is green.
 
-### 4. **GitHub Actions**
+## Other Ecosystems
+
+### GitHub Actions
 - All action updates grouped together
 - Checked monthly
 
-**Why grouped?** Action updates are low-risk and can be bundled.
-
-### 5. **MkDocs Dependencies**
+### MkDocs Dependencies
 - MkDocs and plugins
 - Checked monthly
-
-**Why grouped?** Documentation dependencies updated together.
 
 ## Update Schedule
 
@@ -123,16 +122,17 @@ For updates like `1.x.x` → `2.0.0`:
 ### Typical Grouped PR
 
 ```
-chore(deps): update kotlin group
-- kotlin: 2.0.0 → 2.0.20
-- kotlinx-coroutines: 1.8.0 → 1.8.1
-- kotlinx-serialization: 1.6.0 → 1.6.3
+chore(deps): bump the following group with 3 updates
+- mokkery: 3.4.1 → 3.4.2
+- kotest: 6.2.1 → 6.2.2
+- detekt: 2.0.0-alpha.5 → 2.0.0-alpha.6
 ```
 
 **What to do:**
-1. Click "Files changed" to see what's updated
-2. Check CI status (all checks should be green)
-3. If tests pass → Merge
+1. Confirm the PR does **not** include Kotlin, AGP, Compose, or Gradle wrapper bumps
+2. Click "Files changed" to see what's updated
+3. Check CI status (all checks should be green)
+4. If tests pass → Merge
 
 ### Security Update PR
 
@@ -170,12 +170,29 @@ groups:
 
 ### Ignore Specific Updates
 
-To ignore certain updates:
+Dependabot does not support max-version pins (for example, `AGP <= 9.1.0`). To freeze a dependency, ignore all semver update types:
 
 ```yaml
 ignore:
-  - dependency-name: "org.jetbrains.kotlin:kotlin-stdlib"
-    versions: ["2.x"]  # Ignore all 2.x updates
+  - dependency-name: "com.android*"
+    update-types:
+      - "version-update:semver-major"
+      - "version-update:semver-minor"
+      - "version-update:semver-patch"
+```
+
+To ignore a specific version range instead of all updates:
+
+```yaml
+ignore:
+  - dependency-name: "com.android.tools.build:gradle"
+    versions: ["9.2.x", "9.3.x"]
+```
+
+If an `ignore` rule in `dependabot.yml` does not take effect for a Gradle **plugin** from the version catalog, comment on the PR:
+
+```
+@dependabot ignore dependency-name com.android.application
 ```
 
 ### Limit Open PRs
@@ -245,24 +262,27 @@ Only merge PRs where CI is passing. If tests fail:
 
 ### 5. Update Dependabot Config
 
-As your project grows, update `.github/dependabot.yml` to add new groups or adjust schedules.
+When you adopt a new Kotlin/AGP/Compose stack, update the ignore list if you start allowing Dependabot to manage a previously manual dependency.
 
 ### 6. Enable Auto-merge for Low-Risk Updates
 
-You can enable auto-merge for patch updates:
-
-```yaml
-groups:
-  kotlin:
-    patterns:
-      - "org.jetbrains.kotlin*"
-    update-types:
-      - "patch"  # Only auto-group patches
-```
+You can enable auto-merge for patch-only Dependabot PRs that only touch allowed dependencies (dev tools, test libs, etc.).
 
 Then use GitHub's auto-merge feature for these PRs.
 
 ## Troubleshooting
+
+### Dependabot Proposes Kotlin, AGP, or Compose Updates
+
+**Possible causes:**
+- Ignore patterns in `dependabot.yml` do not match Gradle plugin IDs from the version catalog ([known limitation](https://github.com/dependabot/dependabot-core/issues/13937))
+- PR was opened before ignore rules were merged
+
+**Solution:**
+1. Close the PR without merging
+2. Add or broaden the `ignore` pattern in `.github/dependabot.yml`
+3. Comment `@dependabot ignore this dependency` on the PR to persist the block
+4. Bump the stack manually when the [KMP compatibility guide](https://kotlinlang.org/docs/multiplatform/multiplatform-compatibility-guide.html) allows it
 
 ### Dependabot Not Creating PRs
 
@@ -354,6 +374,7 @@ If you're considering alternatives:
 | **Gradle catalog support** | ✅ Yes | ✅ Yes |
 | **Setup complexity** | 🟢 Simple | 🟡 Complex |
 | **Customization** | 🟡 Good | 🟢 Excellent |
+| **Max-version pinning** | ❌ No (`ignore` only) | ✅ Yes (`allowedVersions`) |
 | **Dependency dashboard** | ❌ No | ✅ Yes |
 | **Best for** | Templates, simplicity | Complex projects |
 
