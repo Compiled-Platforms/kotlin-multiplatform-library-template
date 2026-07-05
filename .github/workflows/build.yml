@@ -35,7 +35,7 @@ jobs:
       kotlin-native-cache: ${{ steps.check.outputs.kotlin-native-cache }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Check CI Status
         id: check
@@ -48,7 +48,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
@@ -64,7 +64,7 @@ jobs:
 
       - name: Cache Kotlin/Native dependencies
         if: needs.config.outputs.kotlin-native-cache == 'true'
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: ~/.konan
           key: ${{ runner.os }}-konan-${{ hashFiles('gradle/libs.versions.toml') }}
@@ -72,7 +72,7 @@ jobs:
             ${{ runner.os }}-konan-
 
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v5
+        uses: gradle/actions/setup-gradle@v6
 
       - name: Compute commit range for platform script
         id: range
