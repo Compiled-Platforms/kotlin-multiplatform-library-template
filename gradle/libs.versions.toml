@@ -23,7 +23,7 @@ detekt = "2.0.0-alpha.5" # https://github.com/detekt/detekt
 dokka = "2.2.0" # https://github.com/kotlin/dokka
 binaryCompatibilityValidator = "0.18.1" # https://github.com/kotlin/binary-compatibility-validator
 kover = "0.9.8" # https://github.com/Kotlin/kotlinx-kover
-mokkery = "3.4.1" # https://github.com/lupuuss/Mokkery
+mokkery = "3.4.2" # https://github.com/lupuuss/Mokkery
 
 # Common library versions (examples)
 kotlinx-coroutines = "1.11.0" # https://github.com/Kotlin/kotlinx.coroutines
