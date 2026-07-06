@@ -1,0 +1,60 @@
+---
+description: General CI/CD principles and standards
+alwaysApply: true
+---
+
+# CI/CD Principles
+
+## Feedback & Correctness
+
+- Optimize for the shortest possible feedback cycle without reducing confidence.
+- Fail fast — run cheap, high-signal checks first (lint, compile, unit tests) before expensive ones (integration, e2e).
+- Never sacrifice correctness for speed. A faster pipeline that hides failures is worse than a slow one that catches them.
+- Make failures actionable — error messages should point directly to the cause, not require log archaeology.
+- Never ignore failures unless they are explicitly documented as non-blocking. Silent failure suppression must be justified and explained.
+
+## Reliability & Reproducibility
+
+- Builds must be deterministic — the same inputs always produce the same outputs.
+- Pipelines must be deterministic — given the same inputs, a pipeline must follow the same execution path. Avoid behavior that depends on timing, cache state, or prior run history.
+- CI and local environments should behave consistently whenever practical. Differences should be intentional and documented.
+- Pin all tool versions (compilers, runtimes, CLI tools, action versions) to prevent silent breakage from upstream changes.
+- Keep CI stateless — no state should persist between runs unless explicitly stored as an artifact or cache.
+- CI jobs should be idempotent and safe to rerun without unintended side effects.
+- CI should tolerate transient infrastructure failures through bounded retries where appropriate, but never hide deterministic failures.
+
+## Efficiency
+
+- Minimize CI execution time and cost — every unnecessary second costs money and slows the team.
+- Parallelize independent work — jobs and steps that don't depend on each other must not run sequentially.
+- Jobs should declare only the dependencies they actually require. Unnecessary dependency relationships serialize execution and increase wait time.
+- Cache everything that is expensive to recreate, while ensuring cache correctness. Never cache outputs whose validity cannot be verified.
+- Prefer incremental work — only rebuild and retest what changed.
+- Avoid duplicate work — never build or test the same thing twice in the same pipeline run.
+- Use immutable artifacts — once built, an artifact must not be modified. Build once, reuse everywhere.
+- Every produced artifact should be traceable to the exact source revision, build configuration, and pipeline that created it.
+- Validate before expensive work — lightweight checks must gate heavier jobs.
+- Skip unnecessary jobs — use conditions and filters to avoid running jobs with no relevant changes.
+- Cancel obsolete runs — a new push to a branch should cancel any in-progress run for the same branch.
+
+## Structure & Maintainability
+
+- Keep CI configuration DRY — extract repeated logic into reusable workflows, composite actions, or shared scripts.
+- Build, test, and release logic should live in reusable scripts or build tooling, not be duplicated inside CI workflow files. CI workflows should orchestrate, not implement.
+- CI commands should be executable locally whenever practical. Prefer `./gradlew test` over workflow-specific logic that can only run in CI.
+- Keep pipelines modular — each job should have a single, clear responsibility.
+- CI infrastructure is production infrastructure and should be reviewed, tested, versioned, and maintained accordingly.
+- Every CI workflow should have a clear owner responsible for maintaining it.
+- Prefer automation over manual intervention — any manual step in a pipeline is a bottleneck and a reliability risk.
+
+## Security
+
+- Keep secrets secure — never log secrets, never pass them through environment variables unnecessarily, never expose them in artifacts.
+- Apply least privilege permissions — every job and token should have only the permissions it needs. Default to read-only.
+- Verify third-party actions and dependencies before use. Pin to a specific version or commit hash; never use floating tags like `latest` or `main`.
+- Dependency updates should be reviewed before merging — automated bumps must go through the same review process as code changes. Auto-merge without review is not acceptable.
+
+## Observability
+
+- Make pipelines observable — it must always be clear what ran, what passed, what failed, and why.
+- Make logs easy to navigate — use step grouping, clear step names, and summary outputs. Avoid walls of undifferentiated log output.

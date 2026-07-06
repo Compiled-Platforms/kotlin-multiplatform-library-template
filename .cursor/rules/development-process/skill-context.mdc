@@ -8,6 +8,8 @@ Always select and read the appropriate skill before starting work. Re-evaluate a
 
 When activating or switching to a skill, always announce it explicitly to the user, e.g.: "Using skill: `write-code`" or "Switching to skill: `debug`".
 
+When a CI task spans multiple concerns, read the primary CI skill first, then read any secondary CI skills required by the task before making changes. For example: a Docker image release requires both `ci-releases` and `ci-security`; an embedded firmware release may require `ci-embedded`, `ci-releases`, and `ci-observability`.
+
 ## Auto-switch to debug
 
 Switch to the debug skill immediately — before continuing any other work — when any of these occur:
@@ -18,6 +20,12 @@ Switch to the debug skill immediately — before continuing any other work — w
 
 Do not propose fixes until you have read the error and identified the failing command, test, or file.
 
+## Maintenance
+
+This rule must be kept in sync with the skills available in `.cursor/skills/`. Update the table below whenever a skill is added, removed, or renamed.
+
+## Skill Table
+
 | Context | Skill |
 |---------|-------|
 | Investigating bugs, failures, CI errors, pasted error output, or failed commands | `.cursor/skills/debug/SKILL.md` |
@@ -26,5 +34,13 @@ Do not propose fixes until you have read the error and identified the failing co
 | Creating a commit or drafting a commit message | `.cursor/skills/make-commit/SKILL.md` |
 | Publishing or releasing a library | `.cursor/skills/publish-library/SKILL.md` |
 | Configuring publishing for a new library | `.cursor/skills/setup-publishing/SKILL.md` |
-| Adding, updating, or removing dependencies | `.cursor/skills/maintain-gitignore/SKILL.md` |
+| Adding, updating, or removing dependencies (and keeping .gitignore in sync) | `.cursor/skills/maintain-gitignore/SKILL.md` |
 | Planning a feature or breaking down a task | `.cursor/skills/implementation-checklist/SKILL.md` |
+| Designing or refactoring CI pipeline structure, jobs, or workflows | `.cursor/skills/ci-workflow/SKILL.md` |
+| Optimizing CI for speed, cost, caching, or artifact reuse | `.cursor/skills/ci-performance/SKILL.md` |
+| Configuring CI security, secrets, permissions, or supply chain | `.cursor/skills/ci-security/SKILL.md` |
+| Adding or improving CI quality gates (lint, scan, API compat, size checks) | `.cursor/skills/ci-quality-gates/SKILL.md` |
+| Setting up or modifying release pipelines, versioning, or publishing | `.cursor/skills/ci-releases/SKILL.md` |
+| Improving CI observability, monitoring, or debugging pipelines | `.cursor/skills/ci-observability/SKILL.md` |
+| Writing Dockerfiles, configuring container builds, or publishing images | `.cursor/skills/ci-containers/SKILL.md` |
+| CI for embedded or IoT firmware builds, cross-compilation, or OTA | `.cursor/skills/ci-embedded/SKILL.md` |
