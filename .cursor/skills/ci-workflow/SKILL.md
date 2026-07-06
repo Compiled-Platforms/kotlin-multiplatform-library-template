@@ -81,6 +81,7 @@ Always apply `.cursor/rules/development-process/ci.mdc` before making any CI dec
 - Allow concurrent execution when jobs are independent — do not apply concurrency limits where they are not needed.
 - Serialize deployments to the same environment. Concurrent deployments to the same target cause race conditions.
 - Use concurrency to reduce wasted compute. Do not use it to enforce business logic — that belongs in job conditions.
+- When a workflow handles both `pull_request` and `push` triggers, use a conditional group key: group by `github.ref` for pull requests (so rapid pushes cancel the stale run) and by `github.run_id` for push events to protected branches (so every push completes and no validated commit range is skipped). Example: `group: ${{ github.workflow }}-${{ github.event_name == 'pull_request' && github.ref || github.run_id }}`
 
 ## Monorepo CI
 
