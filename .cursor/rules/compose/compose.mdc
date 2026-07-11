@@ -1,0 +1,313 @@
+---
+description: Compose Multiplatform rules — architecture, state, effects, stability, layout, adaptive UI, performance, accessibility, KMP, previews, naming, and testing. MUST = required, SHOULD = strongly recommended, AVOID = actively discouraged.
+globs: **/*.kt
+alwaysApply: false
+---
+
+# Compose Multiplatform Rules
+
+> **Adaptive-first, not mobile-first.** Every screen, component, and layout must be designed for available window constraints — not a fixed phone size. This is the foundational principle behind all layout and architecture decisions.
+
+---
+
+## Architecture
+
+**MUST**
+- State flows down; events flow up. Composables receive state and emit events — they never mutate state directly.
+- Every screen has two composables: `XxxScreen` (stateful, owns ViewModel) and `XxxContent` (stateless, pure UI, previewable).
+- Never pass a ViewModel reference into a composable. Pass derived state and lambda callbacks instead.
+- Side effects (navigation, toasts) are emitted as one-shot `Channel` or `SharedFlow` — not embedded in UI state.
+
+**SHOULD**
+- UI emits intents; Screen decides navigation; navigation logic must not live inside reusable `Content` composables.
+- Navigation libraries and `NavController` must not appear inside reusable UI components.
+
+---
+
+## Public Composable API Design
+
+**MUST**
+- Required parameters come first. `modifier: Modifier = Modifier` is the first optional parameter. Optional event callbacks are last. Required callbacks may be adjacent to their related required value (e.g. `value` + `onValueChange`).
+- Public UI composables should accept one `Modifier` parameter and apply it to the root layout node unless the composable is a pure effect, provider, or scoped/slot API.
+- Composable APIs use strongly typed models — not raw strings or multiple unrelated primitives.
+
+**SHOULD**
+- Prefer sealed classes or enums over multiple `Boolean` parameters that express mutually exclusive states.
+- Default styles and colors live in a companion `XxxDefaults` object with `@Composable` factory functions.
+
+**AVOID**
+- Boolean parameter explosions (`showTitle: Boolean, showIcon: Boolean, showBadge: Boolean …`).
+- Exposing internal layout details in the public API.
+
+---
+
+## State Management & Hoisting
+
+**MUST**
+- Hoist state to the lowest common ancestor that needs it. Never duplicate state.
+- UI state data classes must satisfy the Compose immutability contract. Annotate with `@Immutable` only when the contract is true.
+- Collect state using the most lifecycle-aware API available for the current target. On Android prefer `collectAsStateWithLifecycle()`; on other KMP targets use `collectAsState()` or the appropriate lifecycle-aware API if available.
+- Derived values stay derived — do not copy derived state into a separate `mutableStateOf`.
+
+**SHOULD**
+- Read state as late (deep) in the tree as possible to minimize recomposition scope.
+- Avoid passing frequently changing state through multiple layers of composables — pass it only where it is read.
+- Split composables when different parts of the UI observe different state independently.
+
+**AVOID**
+- `rememberSaveable` by default — use it only when the value must survive process death.
+
+---
+
+## remember
+
+**MUST**
+- Use `remember { }` for values that are expensive to compute or must survive recomposition.
+- Use `remember(key) { }` when the value must be recomputed if the key changes.
+- Use `rememberUpdatedState(value)` when an effect must always see the latest value of a lambda or callback without restarting.
+- Use `rememberCoroutineScope()` only for coroutines launched in response to events — never for work that should start at composition time.
+
+**AVOID**
+- Unnecessary `remember` on trivially cheap values (simple booleans, single arithmetic operations).
+- Using `remember` to hold values that should be in ViewModel state.
+
+---
+
+## Collections
+
+**MUST**
+- Never expose `MutableList`, `MutableMap`, or `MutableSet` in UI state.
+- Never mutate collections that are currently exposed to or observed by Compose.
+- Replace collections with new immutable instances when UI state changes.
+
+**SHOULD**
+- Prefer `ImmutableList`, `ImmutableMap`, and `ImmutableSet` from `kotlinx.collections.immutable` for collections exposed in UI state.
+
+---
+
+## Stability
+
+**MUST**
+- Annotate with `@Stable` only when `equals()` is reliable and mutations notify Compose via snapshot state.
+
+**SHOULD**
+- Prefer immutable models throughout the UI layer.
+- Wrap domain models in `@Immutable` UI models rather than annotating domain classes you don't own.
+- Prefer immutable concrete types for composable parameters. Use interfaces only when polymorphism is required and stability has been considered.
+
+**AVOID**
+- Using `@Stable` to silence recomposition warnings without understanding the actual stability contract.
+
+---
+
+## Side Effects
+
+**MUST**
+- UI events belong in callbacks. Business work belongs in ViewModel. Effects synchronize Compose with external systems.
+- `LaunchedEffect`: coroutines tied to composition lifetime — key must represent when the effect should restart.
+- `DisposableEffect`: non-coroutine resource setup/teardown — always implement `onDispose` fully.
+- `SideEffect`: pushes Compose state to non-Compose systems after every successful composition.
+- Never launch coroutines directly in the composable body — use an effect or event callback.
+- Effects must be restart-safe — re-running an effect with the same key must be idempotent.
+
+**AVOID**
+- Triggering navigation, showing dialogs, or performing side effects during composition.
+
+---
+
+## Modifiers
+
+**MUST**
+- Prefer modifier order: layout/size → padding → decoration → interaction → drawing, unless behavior requires a different order.
+- Never mutate an existing `Modifier` — always chain new modifiers with `.then()` or the extension syntax.
+
+**SHOULD**
+- Extract and reuse `Modifier` chains that appear more than once.
+- Prefer `Modifier.graphicsLayer { }` for opacity, scale, and rotation animations — it avoids triggering layout.
+
+---
+
+## Adaptive UI
+
+**MUST**
+- UI must adapt to available window size — never assume a fixed size, aspect ratio, orientation, or full-screen layout.
+- Never lock orientation or assume portrait-only layout.
+- Support runtime resizing — layouts must respond correctly when the window is resized (foldables, multi-window, desktop).
+- Design every screen for compact, medium, and expanded window widths.
+- Support all platform-appropriate input methods: touch, keyboard, mouse, trackpad, and stylus where applicable.
+
+**SHOULD**
+- Prefer adaptive layouts over device-specific branches. Adapt to window constraints, not device names.
+- Use canonical adaptive layout patterns — list-detail, supporting pane, navigation rail/drawer — at medium and expanded widths.
+- Test UI at compact, medium, and expanded window sizes before considering a screen complete.
+- Prefer `WindowSizeClass` for screen-level decisions and `BoxWithConstraints` or project-provided adaptive abstractions for component-level adaptivity.
+
+---
+
+## Layout
+
+**MUST**
+- Use lazy layouts (`LazyColumn`, `LazyRow`, `LazyGrid`) for any list or grid with an unbounded or large number of items.
+- Lazy layout items must have stable, unique keys when item identity can change, items can be reordered, or item state must be preserved.
+- Use `key()` whenever composable identity must be preserved across recompositions.
+
+**SHOULD**
+- Android targets must follow the platform's current large-screen and orientation requirements.
+- Prefer navigation APIs and patterns that support adaptive multi-pane layouts.
+- Avoid unnecessary layout nesting — prefer `Box`, `ConstraintLayout`, or merged layouts over stacked `Column`/`Row`.
+- Use `Arrangement.spacedBy` instead of manual `Spacer` insertions between items.
+- Use `contentPadding` on lazy layouts rather than `Modifier.padding` on the container.
+
+**AVOID**
+- Using `Box` when `Row` or `Column` is sufficient.
+- Deeply nested layout hierarchies where a single layout node would suffice.
+- Intrinsic measurement (`IntrinsicSize`) without explicit justification — it triggers a second measurement pass.
+
+---
+
+## Performance
+
+**MUST**
+- Avoid creating expensive, stateful, identity-sensitive, or repeatedly allocated objects/collections inside composable bodies without `remember`.
+- Move expensive calculations into `remember(keys) { }` or `derivedStateOf { }`.
+
+**SHOULD**
+- Use `derivedStateOf` when a computed value changes less frequently than its inputs. Do not wrap trivial calculations.
+- Prefer top-level or `companion object` constants for truly static data.
+
+**AVOID**
+- Allocating collections during composition (`listOf(...)`, `mapOf(...)` without `remember`).
+- Avoid repeatedly recreating expensive or identity-sensitive lambdas. Use `remember` only when lambda identity matters or allocation is measurable.
+
+---
+
+## Resources & Hardcoded Values
+
+**MUST**
+- All user-visible strings come from `Res.string.*` — no hardcoded strings in composables.
+- All colors come from `MaterialTheme.colorScheme` or theme-provided tokens — no hardcoded `Color(...)` values.
+- Typography must start from `MaterialTheme.typography` or design-system text styles. Avoid arbitrary hardcoded `fontSize`, `fontWeight`, or `lineHeight` unless creating a named design token.
+- Reusable UI uses design-system spacing/sizing tokens or named `Dp` constants. Small one-off dimensions are acceptable when they are local and intentional.
+
+---
+
+## CompositionLocal
+
+**MUST**
+- Use `CompositionLocal` only for cross-cutting UI concerns such as theme, localization, density, layout direction, or platform UI adapters.
+
+**AVOID**
+- Passing business state through `CompositionLocal`.
+- Using `CompositionLocal` as a service locator.
+- Hiding required dependencies that should be explicit composable parameters.
+
+---
+
+## Theming (Material3)
+
+**MUST**
+- Use Material3 color role tokens (`primary`, `onSurface`, `surfaceVariant`, etc.) — never raw hex values.
+- Custom tokens not in Material3 are provided via `CompositionLocal` — not hardcoded.
+
+**SHOULD**
+- Use `MaterialTheme.shapes` for corner radii. Prefer percentage-based `RoundedCornerShape(percent = N)` for shapes that must scale.
+
+---
+
+## Accessibility
+
+**MUST**
+- Icon-only, image-only, or custom interactive controls must provide a meaningful `contentDescription` or `semantics { }` label.
+- Text-based controls must expose meaningful visible text or semantics.
+- Touch targets must be at least 48×48dp.
+- Decorative images set `contentDescription = null`.
+
+**SHOULD**
+- Verify focus order is logical. Override with `Modifier.focusProperties` if needed.
+
+**AVOID**
+- Conveying information through color alone — always pair with text, icon, or shape.
+
+---
+
+## KMP / commonMain
+
+**MUST**
+- `commonMain` must not use platform SDK APIs such as `android.*`, `java.awt.*`, UIKit, or Android `Context`/`Activity`.
+- Shared Compose UI may use Compose Multiplatform-supported `androidx.compose.*`, `org.jetbrains.compose.*`, and `org.jetbrains.androidx.*` APIs.
+- Platform-specific behavior is gated behind `expect`/`actual` or injected interfaces — never `if (platform == Android)` checks.
+- All platform services (camera, biometrics, notifications) are defined as interfaces in `commonMain` and injected — never implemented directly in shared code.
+- Business logic is platform-agnostic — no platform SDK calls in shared domain or state logic.
+
+**SHOULD**
+- Share as much UI as practical in `commonMain`. Platform-specific composables live in `androidMain`/`iosMain`.
+- Keep `expect` surfaces minimal — shared logic above the boundary, platform detail below it.
+
+---
+
+## Naming & Structure
+
+**MUST**
+- Composable functions are `PascalCase` nouns or noun phrases (`UserCard`, `PinInput`) — not imperative verbs.
+- Screen composables: `XxxScreen` (stateful) and `XxxContent` (stateless).
+- Composable files match the name of the primary composable they export.
+- Preview functions are named `XxxPreview` and annotated with `@Preview`.
+
+**MUST (library / reusable component packages)** — organize like Material3 / Compose Multiplatform, not one giant file:
+
+| File | Owns |
+|---|---|
+| `Xxx.kt` | Public `@Composable` entry (+ thin private UI helpers only if tiny) |
+| `XxxDefaults.kt` | `XxxColors`, `XxxStyle`, animation/spec types, `XxxDefaults` factories, color *resolution* methods on `XxxColors` |
+| `XxxLogic.kt` | Pure Kotlin presentation logic (no Compose) — see compose-logic-extraction |
+| `XxxState.kt` | Public sealed/state models when non-trivial |
+| `XxxPreviews.kt` | `@Preview` functions |
+| `XxxImpl.kt` / `XxxEffect.kt` | Shared internal UI or non-trivial effects when the main file would bloat |
+
+Reference layout: Material `TextField.kt` + `TextFieldDefaults.kt` (+ `TextFieldImpl.kt`); our `SlotInput` package mirrors that with `SlotInputDefaults.kt` / `SlotInputLogic.kt`.
+
+**SHOULD**
+- Match color token naming to the closest Material3 control family — not TextField by default:
+  - Field-like (slots, OTP, outlined inputs) → TextField / OutlinedTextField (`focused*` / `unfocused*` / `disabled*` / `error*`; `*BorderColor` for outlined chrome).
+  - Button-like → `ButtonDefaults` / `ButtonColors` style (`containerColor`, `contentColor`, disabled variants).
+  - Other controls → the matching Material defaults object for that control.
+- Put color resolution on `XxxColors` the way that Material type does (e.g. TextField’s `(enabled, isError, focused)`, Button’s enabled/disabled content+container).
+- Keep `XxxColors` / `XxxStyle` in `XxxDefaults.kt` — do not create a separate `XxxColors.kt` unless the defaults file becomes unwieldy.
+
+---
+
+## Previews
+
+**MUST**
+- Every public screen/content composable must have light and dark `@Preview`s.
+
+**SHOULD**
+- Reusable leaf composables should have previews when they contain non-trivial layout, state, styling, or interaction.
+- Provide previews for: default state, loading state, error state, empty state, and long/overflow text.
+- Define `fun preview(): XxxState` on state classes for reusable preview data.
+- All previews wrap content in `AppTheme` (or `MaterialTheme`).
+
+---
+
+## Edge-to-Edge
+
+**MUST**
+- Call `enableEdgeToEdge()` in every Android `Activity`. Content draws behind system bars by default on Android 15+.
+- Never ignore `innerPadding` from `Scaffold` — failing to apply it hides content behind system bars.
+- Apply `WindowInsets.safeDrawing` or `WindowInsets.safeContent` when laying out content without `Scaffold`.
+- Handle IME insets — use `Modifier.imePadding()` or `WindowInsets.safeContent` so content is not obscured by the soft keyboard.
+
+**SHOULD**
+- Use `contentPadding` on lazy layouts (not `Modifier.padding`) to propagate `innerPadding` correctly.
+- Abstract inset handling behind a `PaddingValues` parameter in KMP `commonMain` components so each platform applies insets appropriately.
+
+---
+
+## Testing
+
+**MUST**
+- Logic that can be extracted from a composable into a pure function or class must be extracted and unit-tested without a UI harness.
+- Interactive composables expose `Modifier.testTag(...)` for reliable semantic targeting in UI tests.
+- UI tests interact only with the public composable API and semantics.
+- UI tests assert on semantics — not pixel positions, internal node counts, or implementation details.
+- Tests use fake/stub state objects — never real ViewModels, repositories, or network calls.
