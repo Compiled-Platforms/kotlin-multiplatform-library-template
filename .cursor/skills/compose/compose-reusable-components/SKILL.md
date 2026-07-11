@@ -156,7 +156,7 @@ component/
 | Testable rules in `XxxLogic.kt` | Compose imports in Logic |
 | Previews in `XxxPreviews.kt` | Mix catalog demos into the library package |
 
-Canonical in-repo example: `libraries/ui-components/.../slotinput/` (`SlotInput.kt`, `SlotInputDefaults.kt`, `SlotInputLogic.kt`, …).
+Canonical external reference: Material3 `TextField.kt` + `TextFieldDefaults.kt` (+ `TextFieldImpl.kt`). Use that split for components you add under `libraries/`.
 
 ---
 

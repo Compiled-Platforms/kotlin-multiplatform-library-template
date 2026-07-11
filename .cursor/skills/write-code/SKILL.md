@@ -45,15 +45,16 @@ After non-trivial Kotlin edits, run the affected module (or root) **before** cla
 ./gradlew detekt
 ```
 
-**Limits that commonly break Compose UI work** — design for these; do not discover them at commit time:
+**Limits that commonly break Compose UI work** — design for these; do not discover them at commit time.
+Confirm every number against `config/detekt/detekt.yaml` in **this** repository (limits can differ across repos):
 
-| Rule | Limit | What to do |
+| Rule | Limit (this repo) | What to do |
 |---|---|---|
 | `LongMethod` | 60 lines | Extract helpers / private composables |
 | `CyclomaticComplexMethod` | 14 | Split branches; extract `when` arms |
 | `NestedBlockDepth` | 4 | Flatten nesting |
-| `TooManyFunctions` | 15 per file | Split file (e.g. `XxxDefaults.kt`, `XxxLogic.kt`) |
+| `TooManyFunctions` | 11 per file | Split file (e.g. `XxxDefaults.kt`, `XxxLogic.kt`) |
 | `LargeClass` | 600 lines | Split types / files |
 | `LongParameterList` | 5 function params | Prefer a params/state holder, or match existing narrow `@Suppress` on large composables |
 
-Prefer extraction over `@Suppress`. Suppress only when the function truly cannot shrink without hurting clarity (e.g. IME wiring already suppressed on `SlotInput`), and keep the annotation as narrow as possible.
+Prefer extraction over `@Suppress`. Suppress only when the function truly cannot shrink without hurting clarity (e.g. dense IME/event wiring), and keep the annotation as narrow as possible.

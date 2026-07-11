@@ -248,7 +248,7 @@ alwaysApply: false
 ## Naming & Structure
 
 **MUST**
-- Composable functions are `PascalCase` nouns or noun phrases (`UserCard`, `PinInput`) — not imperative verbs.
+- Composable functions are `PascalCase` nouns or noun phrases (`UserCard`, `OtpField`) — not imperative verbs.
 - Screen composables: `XxxScreen` (stateful) and `XxxContent` (stateless).
 - Composable files match the name of the primary composable they export.
 - Preview functions are named `XxxPreview` and annotated with `@Preview`.
@@ -264,7 +264,7 @@ alwaysApply: false
 | `XxxPreviews.kt` | `@Preview` functions |
 | `XxxImpl.kt` / `XxxEffect.kt` | Shared internal UI or non-trivial effects when the main file would bloat |
 
-Reference layout: Material `TextField.kt` + `TextFieldDefaults.kt` (+ `TextFieldImpl.kt`); our `SlotInput` package mirrors that with `SlotInputDefaults.kt` / `SlotInputLogic.kt`.
+Reference layout: Material3 `TextField.kt` + `TextFieldDefaults.kt` (+ `TextFieldImpl.kt`) — mirror that split for reusable library components.
 
 **SHOULD**
 - Match color token naming to the closest Material3 control family — not TextField by default:
