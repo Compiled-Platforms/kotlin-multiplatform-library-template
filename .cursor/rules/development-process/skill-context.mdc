@@ -44,3 +44,14 @@ This rule must be kept in sync with the skills available in `.cursor/skills/`. U
 | Improving CI observability, monitoring, or debugging pipelines | `.cursor/skills/ci-observability/SKILL.md` |
 | Writing Dockerfiles, configuring container builds, or publishing images | `.cursor/skills/ci-containers/SKILL.md` |
 | CI for embedded or IoT firmware builds, cross-compilation, or OTA | `.cursor/skills/ci-embedded/SKILL.md` |
+| Adding motion, transitions, AnimatedVisibility, AnimatedContent, or gesture-driven animation in Compose | `.cursor/skills/compose/compose-animation/SKILL.md` |
+| Triggering work tied to composition, managing resources, or choosing the right effect API (LaunchedEffect, DisposableEffect, SideEffect, etc.) | `.cursor/skills/compose/compose-effects/SKILL.md` |
+| Building shared Compose UI across KMP targets, handling source set boundaries, lifecycle, or navigation | `.cursor/skills/compose/compose-kmp/SKILL.md` |
+| Building or debugging UI structure, adaptive/responsive layouts, custom measurement, or lazy layouts | `.cursor/skills/compose/compose-layout/SKILL.md` |
+| Extracting non-UI logic from composables into testable pure Kotlin (validation, state transitions, input handling) | `.cursor/skills/compose/compose-logic-extraction/SKILL.md` |
+| Applying Material3 theming, color roles, typography, dark mode, or building a design system layer | `.cursor/skills/compose/compose-material3/SKILL.md` |
+| Diagnosing janky screens, excessive recompositions, slow lazy lists, or measuring Compose performance | `.cursor/skills/compose/compose-performance/SKILL.md` |
+| Designing or building library-quality reusable composables (Material/CMP file layout, slot APIs, Defaults/Colors, state hoisting, KDoc) | `.cursor/skills/compose/compose-reusable-components/SKILL.md` |
+| Understanding recomposition, restart groups, stability, strong skipping, or snapshot state internals | `.cursor/skills/compose/compose-runtime/SKILL.md` |
+| Managing UI state, lifting state, choosing state mechanisms, or debugging stale/incorrect state | `.cursor/skills/compose/compose-state/SKILL.md` |
+| Writing Compose UI tests, testing composables in isolation, or auditing accessibility semantics | `.cursor/skills/compose/compose-testing/SKILL.md` |

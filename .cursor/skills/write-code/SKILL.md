@@ -32,3 +32,29 @@ Before writing any code, read the following project rules:
 - `.cursor/rules/kotlin/multiplatform/multiplatform-reactive-programming.mdc` — KMP Flow patterns
 - `.cursor/rules/kotlin/multiplatform/android/android-reactive-programming.mdc` — Android-specific Flow/coroutine patterns
 - `.cursor/rules/kotlin/multiplatform/ios/ios-reactive-programming.mdc` — iOS-specific reactive patterns
+
+## Detekt (required before finishing code)
+
+Pre-commit (lefthook) and CI run Detekt. Source of truth: `config/detekt/detekt.yaml`.
+
+After non-trivial Kotlin edits, run the affected module (or root) **before** claiming the work is done or handing the user a commit command:
+
+```bash
+./gradlew :libraries:<name>:detekt
+# or
+./gradlew detekt
+```
+
+**Limits that commonly break Compose UI work** — design for these; do not discover them at commit time.
+Confirm every number against `config/detekt/detekt.yaml` in **this** repository (limits can differ across repos):
+
+| Rule | Limit (this repo) | What to do |
+|---|---|---|
+| `LongMethod` | 60 lines | Extract helpers / private composables |
+| `CyclomaticComplexMethod` | 14 | Split branches; extract `when` arms |
+| `NestedBlockDepth` | 4 | Flatten nesting |
+| `TooManyFunctions` | 11 per file | Split file (e.g. `XxxDefaults.kt`, `XxxLogic.kt`) |
+| `LargeClass` | 600 lines | Split types / files |
+| `LongParameterList` | 5 function params | Prefer a params/state holder, or match existing narrow `@Suppress` on large composables |
+
+Prefer extraction over `@Suppress`. Suppress only when the function truly cannot shrink without hurting clarity (e.g. dense IME/event wiring), and keep the annotation as narrow as possible.

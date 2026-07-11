@@ -6,3 +6,4 @@ alwaysApply: true
 - Follow established coding standards and keep code well-structured to reduce errors.
 - Refactor when appropriate to improve structure, readability, and maintainability.
 - Leave the codebase cleaner than you found it.
+- Stay within Detekt limits in `config/detekt/detekt.yaml` (notably `LongMethod` ≤ 60 lines). Prefer extracting helpers over `@Suppress`. After non-trivial Kotlin changes, run `./gradlew :libraries:<name>:detekt` or `./gradlew detekt` — lefthook/CI will fail otherwise.
