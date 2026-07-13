@@ -29,12 +29,18 @@ extensions.configure<kotlinx.validation.ApiValidationExtension> {
     ignoredPackages.addAll(listOf("internal", "benchmarks"))
     ignoredProjects.addAll(listOf("bom")) // BOM has no API
 
-    // Projects in samples/ are not libraries, exclude them
-    project.subprojects.forEach { subproject ->
-        if (subproject.path.startsWith(":samples:")) {
-            ignoredProjects.add(subproject.name)
-        }
-    }
+    // Samples are not published libraries. Match by name, but never ignore a name that
+    // also belongs to :libraries:* (Gradle intermediate sample parents like
+    // :samples:ui-components share the library's project name and would otherwise
+    // disable apiDump/apiCheck for the real library).
+    val libraryNames = subprojects
+        .filter { it.path.startsWith(":libraries:") }
+        .mapTo(mutableSetOf()) { it.name }
+    subprojects
+        .filter { it.path.startsWith(":samples:") }
+        .map { it.name }
+        .filterNot { it in libraryNames }
+        .forEach { ignoredProjects.add(it) }
 
     // Mark any @InternalApi annotations as non-public
     nonPublicMarkers.add("com.compiledplatforms.kmp.library.InternalApi")
