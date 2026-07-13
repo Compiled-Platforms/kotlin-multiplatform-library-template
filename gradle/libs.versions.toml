@@ -30,7 +30,7 @@ kotlinx-coroutines = "1.11.0" # https://github.com/Kotlin/kotlinx.coroutines
 kotlinx-serialization = "1.11.0" # https://github.com/Kotlin/kotlinx.serialization
 kotlinx-datetime = "0.8.0" # https://github.com/Kotlin/kotlinx-datetime
 turbine = "1.2.1" # https://github.com/cashapp/turbine
-kotest = "6.2.1" # https://github.com/kotest/kotest
+kotest = "6.2.2" # https://github.com/kotest/kotest
 
 # AndroidX library versions
 androidx-activity-compose = "1.13.0" # https://developer.android.com/jetpack/androidx/releases/activity
